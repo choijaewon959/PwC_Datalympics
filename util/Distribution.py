@@ -1,7 +1,7 @@
 """
 Distribution object that is initialized with linear datasets
 """
-from Stat import *
+from . import Stat
 
 class Distribution:
     def __init__(self, columnData):
@@ -12,8 +12,8 @@ class Distribution:
         '''
         self.__dataName = columnData[0]  #denotes the type of the data
         self.__data = columnData[1:] #data with actual values
-        self.__stdDev = stdDv(self.__data)  #standard deviation of the distribution
-        self.__variance = variance(self.__data) #variance of the distribution
+        self.__stdDev = Stat.stdDv(self)  #standard deviation of the distribution
+        self.__variance = Stat.variance(self) #variance of the distribution
 
     def __str__(self):
         '''
@@ -38,7 +38,7 @@ class Distribution:
         :return void
         '''
         newList = self.__data + newSample
-        self.__stdDev = stdDv(newList)
+        self.__stdDev = Stat.stdDv(newList)
 
     def update_variance(self, newSample):
         '''
@@ -48,7 +48,7 @@ class Distribution:
         :return void
         '''
         newList = self.__data + newSample
-        self.__variance = variance(newList)
+        self.__variance = Stat.variance(newList)
 
     def get_stdDv(self):
         '''
@@ -64,6 +64,15 @@ class Distribution:
         Return variance of this distribution
 
         :param: None
-        :return float
+        :return: float
         '''
         return self.__variance
+
+    def get_data(self):
+        '''
+        Return the array of data values
+
+        :param None
+        :return: str or int or float
+        '''
+        return self.__data
