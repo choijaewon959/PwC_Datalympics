@@ -1,11 +1,12 @@
 """
-Filter object that contains the distribution information as well
+Data Preprocessor
 """
 import pandas as pd
 from util.Distribution import Distribution
 from data.FileManager import FileManager
+from sklearn.model_selection import train_test_split
 
-class FeatureFilter:
+class Preprocessor:
     def __init__(self, dataFrame):
         '''
         Constructor
@@ -14,10 +15,14 @@ class FeatureFilter:
         '''
         self.__distributionTable = {} # Table having distribution objects (key: name of data, value: distribution object).
         self.__keys = set(dataFrame.columns.values)    # string type keys for the table.
-        self.__meaingfulFeatures = set() # features to be used after filtering.
         self.__numOfKeys = 0    # number of keys.
+        self.__dataFrame = dataFrame
+        self.__trainDataFrame = None
+        self.__testDataFrame = None
 
-    def data_to_distribution(self, dataFrame):
+        self.__split_data()
+
+    def data_to_distribution(self):
         '''
         Convert input data into distribution objects and store them into Table
 
@@ -26,7 +31,34 @@ class FeatureFilter:
         '''
         # TODO: Deal with string values
         for key in self.__keys:
-            self.__distributionTable[key] = Distribution(dataFrame, key)
+            self.__distributionTable[key] = Distribution(self.__dataFrame, key)
+
+    def __split_data(self):
+        '''
+        Split the dataframe into two datasets: Traning data, test data.
+
+        :param: whole given data frame
+        :return: None
+        '''
+        self.__trainDataFrame , self.__testDataFrame = train_test_split(self.__dataFrame, test_size = 0.2)
+
+    def get_train_data(self):
+        '''
+        Retrieve the data frame for training
+
+        :param: None
+        :return: training data frame
+        '''
+        return self.__trainDataFrame
+
+    def get_test_data(self):
+        '''
+        Retrieve the data frame for testing
+
+        :param: None
+        :return: test data frame
+        '''
+        return self.__testDataFrame
 
     def get_distribution(self):
         '''
@@ -54,12 +86,3 @@ class FeatureFilter:
         :return: Number of all the features (int)
         '''
         return self.__numOfKeys
-
-    def get_meaningful_features(self):
-        '''
-        Return the meaningful features that are no/less dependent to other features.
-
-        :param: None
-        :return: hash set of keys (str)
-        '''
-        return None
