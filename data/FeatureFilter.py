@@ -14,7 +14,7 @@ class featureFilter:
         self.__reducedDimension = 0 # number of meaningful feature vectors
 
     def PCA(self):
-
+        
 
     def get_reduced_dimension(self):
         '''
