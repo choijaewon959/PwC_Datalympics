@@ -36,8 +36,9 @@ class Preprocessor:
         :param: name of file (str)
         :return: data from file
         '''
+        print("retrieve_data running...")
         # TODO: file name should be converted to file path
-        data = pd.read_csv(r"C:\Users\user\Desktop\proj\Data_lympics\Deeplearning\loan.csv")
+        data = pd.read_csv("../loan_data/data/loan.csv")
         self.__colnames= data.columns.values
         self.__loanData = data
 
@@ -59,6 +60,7 @@ class Preprocessor:
         :param: whole given data frame
         :return: None
         '''
+        print("split_data running...")
         # TODO: loan status may not be the label -> change to label accordingly.
         X = self.__loanData.drop('loan_status', axis = 1)
         y = self.__loanData['loan_status']

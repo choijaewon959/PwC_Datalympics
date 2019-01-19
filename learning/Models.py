@@ -18,6 +18,7 @@ class Models:
     def __init__(self):
         self.__algorithms = set() # list containing all the algorithms (str)
         self.__processor = Preprocessor() # processor managing data
+        print("model made")
 
     def binary_logistic_regression(self):
 
@@ -56,6 +57,9 @@ class Models:
         :param: None
         :return None
         '''
+
+        print("training...")
+
         trainAttributes = self.__processor.get_train_attributes()
         trainLabels = self.__processor.get_train_labels()
         testAttributes = self.__processor.get_test_attributes()
