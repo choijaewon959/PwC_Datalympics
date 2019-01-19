@@ -38,7 +38,7 @@ class Preprocessor:
         '''
         print("retrieve_data running...")
         # TODO: file name should be converted to file path
-        data = pd.read_csv("../loan_data/data/loan.csv")
+        data = pd.read_csv("Deeplearning/loan.csv")
         self.__colnames= data.columns.values
         self.__loanData = data
 
@@ -131,8 +131,12 @@ class Preprocessor:
         return self.__numOfKeys
 
     def __temp_data_process(self):
-        print('taemin in')
+
+
         dfTrain = self.__loanData
+        #copied data to refrain from warnings
+        dfTrain= dfTrain.copy()
+
         # TODO: when dealing with real data, columns has to be selected otherwise
         #erase unrelated columns
         dfTrain= dfTrain[['member_id', 'loan_amnt', 'funded_amnt',
@@ -142,7 +146,11 @@ class Preprocessor:
         # TODO: Feature transformation can be done beforehand or after
         # when the data is normalized to numerical data, these steps should be omitted.
         dfTrain['term'].replace(to_replace=' months', value='', regex=True, inplace=True)
-        dfTrain['term']= pd.to_numeric(dfTrain['term'], errors='coerce')
+        dfTrain['term'] = dfTrain['term'].astype(int)
+
+        # dfTrain['term']= pd.to_numeric(dfTrain['term'], errors='coerce')
+        #dfTrain['term'] = dfTrain.term.astype(float)
+
 
         #print('Transform: sub_grade...')
         dfTrain['sub_grade'].replace(to_replace='A', value='0', regex=True, inplace=True)
@@ -167,18 +175,18 @@ class Preprocessor:
 
         #print('Transform: loan_status...')
         # for loan status just gave random 0 / 1 of binary representation of good or bad loan
-        dfTrain['loan_status'].replace('n/a', '0', inplace=True)
-        dfTrain['loan_status'].replace(to_replace='Fully Paid', value='0', regex=True, inplace=True)
-        dfTrain['loan_status'].replace(to_replace='Current', value='1', regex=True, inplace=True)
-        dfTrain['loan_status'].replace(to_replace='Charged Off', value='2', regex=True, inplace=True)
-        dfTrain['loan_status'].replace(to_replace='In Grace Period', value='3', regex=True, inplace=True)
-        dfTrain['loan_status'].replace(to_replace='Late (31-120 days)', value='4', regex=True, inplace=True)
-        dfTrain['loan_status'].replace(to_replace='Late (16-30 days)', value='5', regex=True, inplace=True)
-        dfTrain['loan_status'].replace(to_replace='Issued', value='6', regex=True, inplace=True)
-        dfTrain['loan_status'].replace(to_replace='Default', value='7', regex=True, inplace=True)
-        dfTrain['loan_status'].replace(to_replace='Does not meet the credit policy. Status:Fully Paid Off', value='8', regex=True, inplace=True)
-        dfTrain['loan_status'].replace(to_replace='Does not meet the credit policy. Status:Charged Off', value='9', regex=True, inplace=True)
-        dfTrain['loan_status'] = pd.to_numeric(dfTrain['loan_status'], errors='coerce')
+        # dfTrain['loan_status'].replace('n/a', '0', inplace=True)
+        # dfTrain['loan_status'].replace(to_replace='Fully Paid', value='0', regex=True, inplace=True)
+        # dfTrain['loan_status'].replace(to_replace='Current', value='1', regex=True, inplace=True)
+        # dfTrain['loan_status'].replace(to_replace='Charged Off', value='2', regex=True, inplace=True)
+        # dfTrain['loan_status'].replace(to_replace='In Grace Period', value='3', regex=True, inplace=True)
+        # dfTrain['loan_status'].replace(to_replace='Late (31-120 days)', value='4', regex=True, inplace=True)
+        # dfTrain['loan_status'].replace(to_replace='Late (16-30 days)', value='5', regex=True, inplace=True)
+        # dfTrain['loan_status'].replace(to_replace='Issued', value='6', regex=True, inplace=True)
+        # dfTrain['loan_status'].replace(to_replace='Default', value='7', regex=True, inplace=True)
+        # dfTrain['loan_status'].replace(to_replace='Does not meet the credit policy. Status:Fully Paid Off', value='8', regex=True, inplace=True)
+        # dfTrain['loan_status'].replace(to_replace='Does not meet the credit policy. Status:Charged Off', value='9', regex=True, inplace=True)
+        # dfTrain['loan_status'] = pd.to_numeric(dfTrain['loan_status'], errors='coerce')
 
 
         '''

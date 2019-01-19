@@ -6,4 +6,4 @@ from learning.Models import Models
 
 print('test began')
 algorithm = Models()
-algorithm.binary_logistic_regression()
+algorithm.random_forest()
