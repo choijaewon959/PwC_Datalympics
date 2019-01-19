@@ -2,18 +2,14 @@
 following lines of code were run in a
 jupyter notebook
 
-for practice matter
-
 The focus was on binary:logistic training model
 for xgboost sklearn model
 
-
 """
-
 import pandas as pd
-import tensorflow as tf
+#import tensorflow as tf
 import pandas as pd
-import seaborn as sns
+#import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -27,14 +23,11 @@ from sklearn.model_selection import train_test_split
 #print('Reading data...')
 dfTrain = pd.read_csv('./loan.csv', low_memory=False)
 
-#dfTrain.columns
-
 dfTrain= dfTrain[['id', 'member_id', 'loan_amnt', 'funded_amnt', 'funded_amnt_inv',
        'term', 'int_rate', 'installment', 'grade', 'sub_grade', 'emp_title',
        'emp_length', 'home_ownership', 'annual_inc', 'verification_status',
        'issue_d', 'loan_status']]
 
-#orgdata = dfTrain.copy()
 
 '''
 Data transformation/ data selection
@@ -48,7 +41,6 @@ dfTrain['term']= pd.to_numeric(dfTrain['term'], errors='coerce')
 dfTrain= dfTrain[['id', 'member_id', 'loan_amnt', 'funded_amnt', 'funded_amnt_inv',
        'term', 'int_rate', 'installment', 'sub_grade',
        'emp_length', 'home_ownership', 'annual_inc', 'verification_status', 'loan_status']]
-
 
 #print('Transform: sub_grade...')
 dfTrain['sub_grade'].replace(to_replace='A', value='0', regex=True, inplace=True)
@@ -74,22 +66,24 @@ dfTrain['annual_inc']= pd.to_numeric(dfTrain['annual_inc'], errors='coerce')
 # for loan status just gave random 0 / 1 of binary representation of good or bad loan
 dfTrain['loan_status'].replace('n/a', '0', inplace=True)
 dfTrain['loan_status'].replace(to_replace='Fully Paid', value='0', regex=True, inplace=True)
-dfTrain['loan_status'].replace(to_replace='Current', value='0', regex=True, inplace=True)
-dfTrain['loan_status'].replace(to_replace='Charged Off', value='1', regex=True, inplace=True)
+dfTrain['loan_status'].replace(to_replace='Current', value='0.5', regex=True, inplace=True)
+dfTrain['loan_status'].replace(to_replace='Charged Off', value='0', regex=True, inplace=True)
 dfTrain['loan_status'].replace(to_replace='In Grace Period', value='1', regex=True, inplace=True)
 dfTrain['loan_status'].replace(to_replace='Late (31-120 days)', value='1', regex=True, inplace=True)
 dfTrain['loan_status'].replace(to_replace='Late (16-30 days)', value='1', regex=True, inplace=True)
 dfTrain['loan_status'].replace(to_replace='Issued', value='0', regex=True, inplace=True)
-dfTrain['loan_status'].replace(to_replace='Default', value='0', regex=True, inplace=True)
+dfTrain['loan_status'].replace(to_replace='Default', value='2', regex=True, inplace=True)
 dfTrain['loan_status'].replace(to_replace='Does not meet the credit policy. Status:Fully Paid Off', value='0', regex=True, inplace=True)
-dfTrain['loan_status'].replace(to_replace='Does not meet the credit policy. Status:Charged Off', value='1', regex=True, inplace=True)
+dfTrain['loan_status'].replace(to_replace='Does not meet the credit policy. Status:Charged Off', value='0', regex=True, inplace=True)
 dfTrain['loan_status'] = pd.to_numeric(dfTrain['loan_status'], errors='coerce')
 
 #dropped few more column to make it simpler
 dfTrain= dfTrain.drop('verification_status', axis=1)
 dfTrain=dfTrain.drop('home_ownership', axis=1)
 
+'''
 #data imputation
+'''
 cols = ['term', 'loan_amnt', 'funded_amnt', 'int_rate', 'sub_grade', 'annual_inc', 'emp_length', 'installment']
 for col in cols:
     print('Imputation with Median: %s' % (col))
@@ -100,6 +94,7 @@ for col in cols:
     print('Imputation with Zero: %s' % (col))
     dfTrain[col].fillna(0, inplace=True)
 print('Missing value imputation done.')
+
 
 #dropped funded_amnt_inv because I don't know what that term means
 dfTrain = dfTrain.drop('funded_amnt_inv', axis=1)
@@ -122,7 +117,7 @@ train_target = pd.DataFrame(dfTrain['loan_status'])
 #also the numerics has to be normalized???? into same ratio
 
 selected_cols=[
-    'member_id', 'emp_length', 'loan_amnt', 'funded_amnt', 'sub_grade', 'int_rate', 'annual_inc', 'term'
+     'emp_length', 'loan_amnt', 'funded_amnt', 'sub_grade', 'int_rate', 'annual_inc', 'term'
 ]
 
 finalTrain=dfTrain[selected_cols]
