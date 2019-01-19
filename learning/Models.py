@@ -130,7 +130,7 @@ class Models:
             model.add(Dense(Dense(num_hidden_layer2(in_len,out_len), input_dim=in_len, activation='relu'))) 
             model.add(Dense(out_len, activation='sigmoid'))
             model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-            scores = model.evaluate(self.__processor.get_test_attributes(),self.__processor.get_test_labels())        scores = model.evaluate(X, Y)
+            scores = model.evaluate(self.__processor.get_test_attributes(),self.__processor.get_test_labels())
             print('Test Data Accuracy',scores[1])
         elif(n==3):
             X = self.__processor.get_train_attributes() 
@@ -145,4 +145,4 @@ class Models:
             model.fit(X, Y, epochs=150, batch_size=10, verbose=0)
             scores = model.evaluate(self.__processor.get_test_attributes(),self.__processor.get_test_labels())
             print('Test Data Accuracy',scores[1])              
-    
+
