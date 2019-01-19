@@ -6,4 +6,4 @@ from learning.Models import Models
 
 print('test began')
 algorithm = Models()
-algorithm.linear_SVM()
+algorithm.binary_logistic_regression()
