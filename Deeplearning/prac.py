@@ -1,5 +1,5 @@
 """
-following lines of code was run in a
+following lines of code were run in a
 jupyter notebook
 
 for practice matter
