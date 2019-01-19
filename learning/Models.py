@@ -12,10 +12,9 @@ from data.Preprocessor import Preprocessor
 %matplotlib inline
 
 class Models:
-    def __init__(self, dataFrame):
+    def __init__(self):
         self.__algorithms = set() # list containing all the algorithms (str)
-        self.__data = dataFrame
-        self.__processor = Preprocessor(dataFrame) # processor managing data
+        self.__processor = Preprocessor() # processor managing data
 
     def binary_logistic_regression(self):
         # TODO: code by taemin
@@ -33,7 +32,9 @@ class Models:
         testAttributes = self.__processor.get_test_attributes()
         testLabels = self.__processor.get_test_labels()
 
+
         #train svm model
+        print("Learning...")
         svclassifier = SVC(kernel = 'linear')
         svclassifier.fit(trainAttributes, trainLabels)
 
@@ -58,6 +59,7 @@ class Models:
         testLabels = self.__processor.get_test_labels()
 
         #train svm model
+        print("Learning...")
         svclassifier = SVC(kernel = 'rbf')
         svclassifier.fit(trainAttributes, trainLabels)
 

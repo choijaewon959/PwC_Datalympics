@@ -14,7 +14,7 @@ class Preprocessor:
         :param: data file to be converted into Distribution objects
         '''
         self.__distributionTable = {} # Table having distribution objects (key: name of data, value: distribution object).
-        self.__keys = dataFrame.columns.values   # string type keys for the table.
+        self.__keys = None   # string type keys for the table.
         self.__numOfKeys = 0    # number of keys.
         self.__loanData = None # data mainly used.
 
@@ -37,6 +37,7 @@ class Preprocessor:
         '''
         # TODO: file name should be converted to file path
         data = pd.read_csv('../loan_data/data/loan.csv', names= self.__keys)
+        self.__keys = data.columns.values
         self.__loanData = data
 
     def data_to_distribution(self):
@@ -48,7 +49,7 @@ class Preprocessor:
         '''
         # TODO: Deal with string values
         for key in self.__keys:
-            self.__distributionTable[key] = Distribution(self.__dataFrame, key)
+            self.__distributionTable[key] = Distribution(self.__loan_data, key)
 
     def __split_data(self):
         '''
