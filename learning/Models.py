@@ -14,10 +14,15 @@ from sklearn.metrics import auc
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import train_test_split
 
+from keras.models import Sequential
+from keras.layers import Dense
+from num_node import *
+
 class Models:
     def __init__(self):
         self.__algorithms = set() # list containing all the algorithms (str)
         self.__processor = Preprocessor() # processor managing data
+
 
 
     def binary_logistic_regression(self):
