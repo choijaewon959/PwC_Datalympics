@@ -4,5 +4,6 @@ from util.Distribution import Distribution
 from data.Preprocessor import Preprocessor
 from learning.Models import Models
 #
+print("hello")
 algorithm = Models()
-algorithm.linear_SVM()
+algorithm.binary_logistic_regression()
