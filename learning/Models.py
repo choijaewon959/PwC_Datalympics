@@ -2,9 +2,11 @@
 Model object that contains all the possible classification models
 '''
 import pandas as pd
-import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import sklearn.svm import SVC
+import sklearn.metrics import clasification_report, confusion_matrix
+from data.Preprocessor import Preprocessor
 
 import xgboost
 from sklearn.metrics import accuracy_score
@@ -16,6 +18,7 @@ class Models:
     def __init__(self, dataFrame):
         self.__algorithms = set() # list containing all the algorithms (str)
         self.__data = dataFrame
+        self.__processor = Preprocessor(dataFrame) # processor managing data
 
 
     def binary_logistic_regression(self, targetY):
@@ -52,3 +55,52 @@ class Models:
 
         accuracy_per_roc_auc = roc_auc_score(np.array(y_test).flatten(), y_pred)
         print("ROC-AUC: %.10f%%" % (accuracy_per_roc_auc * 100))
+
+        
+    def linear_SVM(self):
+        '''
+        Support Vector Machine algorithm for categorical classification.
+        Kernel: linear
+
+        :param: None
+        :return None
+        '''
+        trainAttributes = self.__processor.get_train_attributes()
+        trainLabels = self.__processor.get_train_labels()
+        testAttributes = self.__processor.get_test_attributes()
+        testLabels = self.__processor.get_test_labels()
+
+        #train svm model
+        svclassifier = SVC(kernel = 'linear')
+        svclassifier.fit(trainAttributes, trainLabels)
+
+        #make prediction
+        label_prediction = svclassifier.predict(testAttributes)
+
+        #evaluation
+        print(confusion_matrix(testLabels, label_prediction))
+        print(clasification_report(testLabels, label_prediction))
+
+    def gaussian_SVM(self):
+        '''
+        Support Vector Machine algorithm for categorical classification.
+        Kernel: gaussian
+
+        :param: None
+        :return: None
+        '''
+        trainAttributes = self.__processor.get_train_attributes()
+        trainLabels = self.__processor.get_train_labels()
+        testAttributes = self.__processor.get_test_attributes()
+        testLabels = self.__processor.get_test_labels()
+
+        #train svm model
+        svclassifier = SVC(kernel = 'rbf')
+        svclassifier.fit(trainAttributes, trainLabels)
+
+        #make prediction
+        label_prediction = svclassifier.predict(testAttributes)
+
+        #evaluation
+        print(confusion_matrix(testLabels, label_prediction))
+        print(clasification_report(testLabels, label_prediction))
