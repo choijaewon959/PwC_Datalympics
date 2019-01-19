@@ -14,6 +14,10 @@ from sklearn.metrics import auc
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import train_test_split
 
+from keras.models import Sequential
+from keras.layers import Dense
+from num_node import * 
+
 class Models:
     def __init__(self):
         self.__algorithms = set() # list containing all the algorithms (str)
@@ -107,3 +111,45 @@ class Models:
         #evaluation
         print(confusion_matrix(testLabels, label_prediction))
         print(clasification_report(testLabels, label_prediction))
+    def ff_network(self, n): 
+        '''
+        fowrad feeding neural network with one hidden layer 
+        Kernel: 
+        '''
+        if(n == 1):
+            X = self.__processor.get_train_attributes() 
+            Y = self.__processor.get_train_labels()
+            in_len = len(self.__processor.get_train_attributes())
+            out_len = len(self.__processor.get_train_labels())
+            model = Sequential()
+            model.add(Dense(num_hidden_layer1(in_len,out_len,len(Y)), input_dim=in_len, activation='relu'))
+            model.add(Dense(out_len, activation='sigmoid'))
+            model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+            model.fit(X, Y, epochs=150, batch_size=10, verbose=0)
+            scores = model.evaluate(self.__processor.get_test_attributes(),self.__processor.get_test_labels())        
+            print('Test Data Accuracy',scores[1])        
+        elif(n==2):
+            X = self.__processor.get_train_attributes() 
+            Y = self.__processor.get_train_labels()
+            in_len = len(self.__processor.get_train_attributes(self))
+            out_len = len(self.__processor.get_train_labels(self))
+            model = Sequential()
+            model.add(Dense(Dense(num_hidden_layer2(in_len,out_len), input_dim=in_len, activation='relu'))) 
+            model.add(Dense(out_len, activation='sigmoid'))
+            model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+            scores = model.evaluate(self.__processor.get_test_attributes(),self.__processor.get_test_labels())        scores = model.evaluate(X, Y)
+            print('Test Data Accuracy',scores[1])
+        elif(n==3):
+            X = self.__processor.get_train_attributes() 
+            Y = self.__processor.get_train_labels()
+            in_len = len(self.__processor.get_train_attributes(self))
+            out_len = len(self.__processor.get_train_labels(self))
+            model = Sequential()
+            model.add(Dense(num_hidden_layer3(in_len,out_len,len(Y))[0], input_dim=in_len, activation='relu')) 
+            model.add(Dense(num_hidden_layer3(in_len,out_len,len(Y))[1], activation='relu'))
+            model.add(Dense(out_len, activation='sigmoid'))
+            model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+            model.fit(X, Y, epochs=150, batch_size=10, verbose=0)
+            scores = model.evaluate(self.__processor.get_test_attributes(),self.__processor.get_test_labels())
+            print('Test Data Accuracy',scores[1])              
+    
