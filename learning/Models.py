@@ -4,8 +4,8 @@ Model object that contains all the possible classification models
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import sklearn.svm import SVC
-import sklearn.metrics import clasification_report, confusion_matrix
+from sklearn.svm import SVC
+from sklearn.metrics import classification_report, confusion_matrix
 from data.Preprocessor import Preprocessor
 
 import xgboost
@@ -19,23 +19,24 @@ from keras.layers import Dense
 from num_node import * 
 
 class Models:
-    def __init__(self, dataFrame):
+    def __init__(self):
         self.__algorithms = set() # list containing all the algorithms (str)
-        self.__data = dataFrame
-        self.__processor = Preprocessor(dataFrame) # processor managing data
+        self.__processor = Preprocessor() # processor managing data
 
 
-    def binary_logistic_regression(self, targetY):
-        #targetY is the column name @param string
+    def binary_logistic_regression(self):
+        """
+
+        """
         # TODO: code by taemin
 
-        dfTrain, dfTest = train_test_split(self.__data ,test_size=0.2)
+        trainAttributes = self.__processor.get_train_attributes()
+        trainLabels = self.__processor.get_train_labels()
+        testAttributes = self.__processor.get_test_attributes()
+        testLabels = self.__processor.get_test_labels()
 
-        #test_member_id = pd.DataFrame(dfTest['member_id'])
-        train_target = pd.DataFrame(dfTrain[targetY])
 
-        X_train, X_test, y_train, y_test = train_test_split(np.array(finalTrain), np.array(train_target), test_size=0.20)
-        eval_set=[(X_test, y_test)]
+        eval_set=[(testAttributes, testLabels)]
 
         clf = xgboost.sklearn.XGBClassifier(
             objective="binary:logistic",
@@ -46,11 +47,6 @@ class Models:
             n_estimators=500)
 
         clf.fit(X_train, y_train, early_stopping_rounds=10, eval_metric="auc", eval_set=eval_set, verbose=True)
-        #stops training if 10 rounds of estimation is same
-        """
-        print(datetime.now()-st)
-        #calculate time of training
-        """
 
         y_pred = clf.predict(X_test)
 
@@ -60,7 +56,7 @@ class Models:
         accuracy_per_roc_auc = roc_auc_score(np.array(y_test).flatten(), y_pred)
         print("ROC-AUC: %.10f%%" % (accuracy_per_roc_auc * 100))
 
-        
+
     def linear_SVM(self):
         '''
         Support Vector Machine algorithm for categorical classification.
