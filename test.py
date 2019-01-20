@@ -5,5 +5,6 @@ from data.Preprocessor import Preprocessor
 from learning.Models import Models
 
 print('test began')
+
 algorithm = Models()
-algorithm.random_forest()
+algorithm.logistic_regression()

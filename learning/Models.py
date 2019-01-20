@@ -5,19 +5,21 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.svm import SVC
+from sklearn.svm import SVR
 from sklearn.metrics import classification_report, confusion_matrix
 from data.Preprocessor import Preprocessor
 
-import xgboost
+#import xgboost
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import auc
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import train_test_split
 
-from keras.models import Sequential
-from keras.layers import Dense
-from num_node import *
+# from keras.models import Sequential
+# from keras.layers import Dense
+# from num_node import *
 
 class Models:
     def __init__(self):
@@ -25,14 +27,13 @@ class Models:
         self.__processor = Preprocessor() # processor managing data
         print("model made")
 
-
     def random_forest(self):
 
         trainAttributes = self.__processor.get_train_attributes()
         trainLabels = self.__processor.get_train_labels()
         testAttributes = self.__processor.get_test_attributes()
         testLabels = self.__processor.get_test_labels()
-
+        print(trainLabels)
         rfc = RandomForestClassifier(n_estimators=30)
         rfc.fit(trainAttributes, trainLabels)
         preds = rfc.predict(testAttributes)
@@ -78,7 +79,6 @@ class Models:
 
         #print("Hello I'm binary logistic regression")
 
-
     def linear_SVM(self):
         '''
         Support Vector Machine algorithm for categorical classification.
@@ -95,7 +95,6 @@ class Models:
         testAttributes = self.__processor.get_test_attributes()
         testLabels = self.__processor.get_test_labels()
 
-
         #train svm model
         print("Learning...")
         svclassifier = SVC(kernel = 'linear')
@@ -105,8 +104,7 @@ class Models:
         label_prediction = svclassifier.predict(testAttributes)
 
         #evaluation
-        print(confusion_matrix(testLabels, label_prediction))
-        print(clasification_report(testLabels, label_prediction))
+        print("Accuracy: ", accuracy_score(testLabels, label_prediction))
 
     def gaussian_SVM(self):
         '''
@@ -130,12 +128,54 @@ class Models:
         label_prediction = svclassifier.predict(testAttributes)
 
         #evaluation
-        print(confusion_matrix(testLabels, label_prediction))
-        print(clasification_report(testLabels, label_prediction))
+        print("Accuracy: ", accuracy_score(testLabels, label_prediction))
+
+    def linear_SVR(self):
+        '''
+        Support Vector Regression algorithm which optimizes the linear support vector machine.
+
+        :param: None
+        :return: None
+        '''
+
+        trainAttributes = self.__processor.get_train_attributes()
+        trainLabels = self.__processor.get_train_labels()
+        testAttributes = self.__processor.get_test_attributes()
+        testLabels = self.__processor.get_test_labels()
+
+        print("Learning...")
+        svr = SVR(kernel = 'linear')
+        svr.fit(trainAttributes, trainLabels)
+
+        svr_pred = svr.predict(testAttributes)
+        print("Accuracy: ", accuracy_score(testLabels, svr_pred))
+
+    def logistic_regression(self):
+        '''
+        Logistic regression model
+
+        :param: None
+        :return: None
+        '''
+
+        trainAttributes = self.__processor.get_train_attributes()
+        trainLabels = self.__processor.get_train_labels()
+        testAttributes = self.__processor.get_test_attributes()
+        testLabels = self.__processor.get_test_labels()
+
+        lg = LogisticRegression(
+            solver = 'newton-cg',
+            multi_class = 'multinomial'
+        )
+        lg.fit(trainAttributes, trainLabels)
+
+        lg_pred = lg.predict(testAttributes)
+        print("Accuracy: ", accuracy_score(testLabels, lg_pred))
+
     def ff_network(self, n):
         '''
-        fowrad feeding neural network with one hidden layer
-        Kernel:
+        Fowrad feeding neural network with one hidden layer.
+
         '''
         if(n == 1):
             X = self.__processor.get_train_attributes()

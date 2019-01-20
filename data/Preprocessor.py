@@ -17,6 +17,8 @@ class Preprocessor:
         self.__numOfKeys = 0    # number of keys.
         self.__loanData = None # data mainly used.
 
+        self.__smallData = None
+
         self.__attributes_train = None
         self.__labels_train = None
 
@@ -38,20 +40,10 @@ class Preprocessor:
         '''
         print("retrieve_data running...")
         # TODO: file name should be converted to file path
-        data = pd.read_csv("Deeplearning/loan.csv")
+        data = pd.read_csv("../loan_data/data/loan.csv") #original data
+        #data = pd.read_csv("Deeplearning/loan.csv") # smaller data
         self.__colnames= data.columns.values
         self.__loanData = data
-
-    def data_to_distribution(self):
-        '''
-        Convert input data into distribution objects and store them into Table
-
-        :param: data from csv file
-        :return: None
-        '''
-        # TODO: Deal with string values
-        for key in self.__keys:
-            self.__distributionTable[key] = Distribution(self.__loan_data, key)
 
     def __split_data(self):
         '''
@@ -175,19 +167,18 @@ class Preprocessor:
 
         #print('Transform: loan_status...')
         # for loan status just gave random 0 / 1 of binary representation of good or bad loan
-        # dfTrain['loan_status'].replace('n/a', '0', inplace=True)
-        # dfTrain['loan_status'].replace(to_replace='Fully Paid', value='0', regex=True, inplace=True)
-        # dfTrain['loan_status'].replace(to_replace='Current', value='1', regex=True, inplace=True)
-        # dfTrain['loan_status'].replace(to_replace='Charged Off', value='2', regex=True, inplace=True)
-        # dfTrain['loan_status'].replace(to_replace='In Grace Period', value='3', regex=True, inplace=True)
-        # dfTrain['loan_status'].replace(to_replace='Late (31-120 days)', value='4', regex=True, inplace=True)
-        # dfTrain['loan_status'].replace(to_replace='Late (16-30 days)', value='5', regex=True, inplace=True)
-        # dfTrain['loan_status'].replace(to_replace='Issued', value='6', regex=True, inplace=True)
-        # dfTrain['loan_status'].replace(to_replace='Default', value='7', regex=True, inplace=True)
-        # dfTrain['loan_status'].replace(to_replace='Does not meet the credit policy. Status:Fully Paid Off', value='8', regex=True, inplace=True)
-        # dfTrain['loan_status'].replace(to_replace='Does not meet the credit policy. Status:Charged Off', value='9', regex=True, inplace=True)
-        # dfTrain['loan_status'] = pd.to_numeric(dfTrain['loan_status'], errors='coerce')
-
+        dfTrain['loan_status'].replace('n/a', '0', inplace=True)
+        dfTrain['loan_status'].replace(to_replace='Fully Paid', value='0', regex=True, inplace=True)
+        dfTrain['loan_status'].replace(to_replace='Current', value='1', regex=True, inplace=True)
+        dfTrain['loan_status'].replace(to_replace='Charged Off', value='2', regex=True, inplace=True)
+        dfTrain['loan_status'].replace(to_replace='In Grace Period', value='3', regex=True, inplace=True)
+        dfTrain['loan_status'].replace(to_replace='Late (31-120 days)', value='4', regex=True, inplace=True)
+        dfTrain['loan_status'].replace(to_replace='Late (16-30 days)', value='5', regex=True, inplace=True)
+        dfTrain['loan_status'].replace(to_replace='Issued', value='6', regex=True, inplace=True)
+        dfTrain['loan_status'].replace(to_replace='Default', value='7', regex=True, inplace=True)
+        dfTrain['loan_status'].replace(to_replace='Does not meet the credit policy. Status:Fully Paid Off', value='8', regex=True, inplace=True)
+        dfTrain['loan_status'].replace(to_replace='Does not meet the credit policy. Status:Charged Off', value='9', regex=True, inplace=True)
+        dfTrain['loan_status'] = pd.to_numeric(dfTrain['loan_status'], errors='coerce')
 
         '''
         #data imputation
