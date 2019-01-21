@@ -17,6 +17,8 @@ class Preprocessor:
         self.__numOfKeys = 0    # number of keys.
         self.__loanData = None # data mainly used.
 
+        self.__smallData = None
+
         self.__attributes_train = None
         self.__labels_train = None
 
@@ -36,21 +38,16 @@ class Preprocessor:
         :param: name of file (str)
         :return: data from file
         '''
+        print("retrieve_data running...")
         # TODO: file name should be converted to file path
+<<<<<<< HEAD
         data = pd.read_csv(r"C:\Users\lasts\Google Drive\Etc\Coding\Data_lympics\Deeplearning\loan.csv")
+=======
+        data = pd.read_csv("../loan_data/data/loan.csv") #original data
+        #data = pd.read_csv("Deeplearning/loan.csv") # smaller data
+>>>>>>> 9fce587fd5801ab4bac9a0c53c1af8b9a4e895d0
         self.__colnames= data.columns.values
         self.__loanData = data
-
-    def data_to_distribution(self):
-        '''
-        Convert input data into distribution objects and store them into Table
-
-        :param: data from csv file
-        :return: None
-        '''
-        # TODO: Deal with string values
-        for key in self.__colnames:
-            self.__distributionTable[key] = Distribution(self.__dataFrame, key)
 
     def __split_data(self):
         '''
@@ -59,6 +56,7 @@ class Preprocessor:
         :param: whole given data frame
         :return: None
         '''
+        print("split_data running...")
         # TODO: loan status may not be the label -> change to label accordingly.
         X = self.__loanData.drop('loan_status', axis = 1)
         y = self.__loanData['loan_status']
@@ -130,7 +128,11 @@ class Preprocessor:
 
     def __temp_data_process(self):
 
+
         dfTrain = self.__loanData
+        #copied data to refrain from warnings
+        dfTrain= dfTrain.copy()
+
         # TODO: when dealing with real data, columns has to be selected otherwise
         #erase unrelated columns
         dfTrain= dfTrain[['member_id', 'loan_amnt', 'funded_amnt',
@@ -140,7 +142,11 @@ class Preprocessor:
         # TODO: Feature transformation can be done beforehand or after
         # when the data is normalized to numerical data, these steps should be omitted.
         dfTrain['term'].replace(to_replace=' months', value='', regex=True, inplace=True)
-        dfTrain['term']= pd.to_numeric(dfTrain['term'], errors='coerce')
+        dfTrain['term'] = dfTrain['term'].astype(int)
+
+        # dfTrain['term']= pd.to_numeric(dfTrain['term'], errors='coerce')
+        #dfTrain['term'] = dfTrain.term.astype(float)
+
 
         #print('Transform: sub_grade...')
         dfTrain['sub_grade'].replace(to_replace='A', value='0', regex=True, inplace=True)
@@ -177,7 +183,6 @@ class Preprocessor:
         dfTrain['loan_status'].replace(to_replace='Does not meet the credit policy. Status:Fully Paid Off', value='8', regex=True, inplace=True)
         dfTrain['loan_status'].replace(to_replace='Does not meet the credit policy. Status:Charged Off', value='9', regex=True, inplace=True)
         dfTrain['loan_status'] = pd.to_numeric(dfTrain['loan_status'], errors='coerce')
-
 
         '''
         #data imputation
