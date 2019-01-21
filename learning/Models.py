@@ -9,7 +9,7 @@ from sklearn.svm import SVR
 from sklearn.metrics import classification_report, confusion_matrix
 from data.Preprocessor import Preprocessor
 
-#import xgboost
+import xgboost
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
@@ -17,9 +17,9 @@ from sklearn.metrics import auc
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import train_test_split
 
-from keras.models import Sequential
-from keras.layers import Dense
-from num_node import *
+# from keras.models import Sequential
+# from keras.layers import Dense
+# from num_node import *
 
 class Models:
     def __init__(self):
@@ -106,7 +106,7 @@ class Models:
         #evaluation
         print("Accuracy: ", accuracy_score(testLabels, label_prediction))
 
-    def gaussian_SVM(self):
+    def gaussian_SVM(self, trainData):
         '''
         Support Vector Machine algorithm for categorical classification.
         Kernel: gaussian
@@ -114,14 +114,29 @@ class Models:
         :param: None
         :return: None
         '''
-        trainAttributes = self.__processor.get_train_attributes()
+        trainAttributes = trainData
         trainLabels = self.__processor.get_train_labels()
         testAttributes = self.__processor.get_test_attributes()
         testLabels = self.__processor.get_test_labels()
 
         #train svm model
         print("Learning...")
-        svclassifier = SVC(kernel = 'rbf')
+        svclassifier = SVC(
+            C=1.0, 
+            cache_size=700, 
+            class_weight=None, 
+            coef0=0.0,
+            decision_function_shape='ovo', 
+            degree=3, 
+            gamma='scale', 
+            kernel='rbf',
+            max_iter=-1, 
+            probability=False, 
+            random_state=None, 
+            shrinking=True,
+            tol=0.001, 
+            verbose=False
+        )
         svclassifier.fit(trainAttributes, trainLabels)
 
         #make prediction
@@ -129,26 +144,6 @@ class Models:
 
         #evaluation
         print("Accuracy: ", accuracy_score(testLabels, label_prediction))
-
-    def linear_SVR(self):
-        '''
-        Support Vector Regression algorithm which optimizes the linear support vector machine.
-
-        :param: None
-        :return: None
-        '''
-
-        trainAttributes = self.__processor.get_train_attributes()
-        trainLabels = self.__processor.get_train_labels()
-        testAttributes = self.__processor.get_test_attributes()
-        testLabels = self.__processor.get_test_labels()
-
-        print("Learning...")
-        svr = SVR(kernel = 'linear')
-        svr.fit(trainAttributes, trainLabels)
-
-        svr_pred = svr.predict(testAttributes)
-        print("Accuracy: ", accuracy_score(testLabels, svr_pred))
 
     def logistic_regression(self):
         '''
@@ -168,19 +163,11 @@ class Models:
             multi_class = 'multinomial'
         )
         lg.fit(trainAttributes, trainLabels)
+        print("Accuracy - score: ", lg.score(testAttributes, testLabels))
 
         lg_pred = lg.predict(testAttributes)
-        print("Accuracy: ", accuracy_score(testLabels, lg_pred))
-    def convert_label(self,Y):
-        l = np.array([[0,0,0,0,0,0,0,0,0,0]])
-        tmp = np.array([0,0,0,0,0,0,0,0,0,0])
-        for i in Y:
-            tmp[int(i)] = 1
-            l = np.append(l,[tmp],axis=0)
-            tmp = np.array([0,0,0,0,0,0,0,0,0,0])
-        l = np.delete(l,0,0)
-        YY = pd.DataFrame(l)
-        return YY
+        print("Accuracy - predict: ", accuracy_score(testLabels, lg_pred))
+    
     def ff_network(self, n):
         '''
         Fowrad feeding neural network with one hidden layer.
@@ -190,7 +177,7 @@ class Models:
         Y = self.__processor.get_train_labels()
         in_len = 9
         out_len = 10
-        YY = self.convert_label(Y)
+        YY = self.__processor.convert_label(Y)
         print("Train label converted into vector label")
         model = Sequential()
         if(n == 1):
@@ -205,7 +192,7 @@ class Models:
         model.fit(X, YY, epochs=150, batch_size=10, verbose=0)
 
         Y = self.__processor.get_test_labels()
-        YY = self.convert_label(Y)
+        YY = self.__processor.convert_label(Y)
         print("Test label converted into vector label")
         scores = model.evaluate(self.__processor.get_test_attributes(),YY)
         print('Test Data Accuracy',scores[1])
