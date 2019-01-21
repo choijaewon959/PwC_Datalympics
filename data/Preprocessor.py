@@ -40,12 +40,7 @@ class Preprocessor:
         '''
         print("retrieve_data running...")
         # TODO: file name should be converted to file path
-<<<<<<< HEAD
         data = pd.read_csv(r"C:\Users\lasts\Google Drive\Etc\Coding\Data_lympics\Deeplearning\loan.csv")
-=======
-        data = pd.read_csv("../loan_data/data/loan.csv") #original data
-        #data = pd.read_csv("Deeplearning/loan.csv") # smaller data
->>>>>>> 9fce587fd5801ab4bac9a0c53c1af8b9a4e895d0
         self.__colnames= data.columns.values
         self.__loanData = data
 

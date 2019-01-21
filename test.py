@@ -7,4 +7,4 @@ from learning.Models import Models
 print('test began')
 
 algorithm = Models()
-algorithm.logistic_regression()
+algorithm.ff_network(1)

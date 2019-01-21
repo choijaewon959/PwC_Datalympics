@@ -17,9 +17,9 @@ from sklearn.metrics import auc
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import train_test_split
 
-# from keras.models import Sequential
-# from keras.layers import Dense
-# from num_node import *
+from keras.models import Sequential
+from keras.layers import Dense
+from num_node import *
 
 class Models:
     def __init__(self):
@@ -171,7 +171,16 @@ class Models:
 
         lg_pred = lg.predict(testAttributes)
         print("Accuracy: ", accuracy_score(testLabels, lg_pred))
-
+    def convert_label(self,Y):
+        l = np.array([[0,0,0,0,0,0,0,0,0,0]])
+        tmp = np.array([0,0,0,0,0,0,0,0,0,0])
+        for i in Y:
+            tmp[int(i)] = 1
+            l = np.append(l,[tmp],axis=0)
+            tmp = np.array([0,0,0,0,0,0,0,0,0,0])
+        l = np.delete(l,0,0)
+        YY = pd.DataFrame(l)
+        return YY
     def ff_network(self, n):
         '''
         Fowrad feeding neural network with one hidden layer.
@@ -179,13 +188,10 @@ class Models:
         '''
         X = self.__processor.get_train_attributes()
         Y = self.__processor.get_train_labels()
-        
-        print(l)
         in_len = 9
         out_len = 10
-        print("XXXXXXXXXXX")
-        print(self.__processor.get_train_attributes())
-        print(self.__processor.get_train_labels())
+        YY = self.convert_label(Y)
+        print("Train label converted into vector label")
         model = Sequential()
         if(n == 1):
             model.add(Dense(int(num_hidden_layer1(in_len,out_len,len(Y))), input_dim=in_len, activation='relu'))
@@ -196,6 +202,10 @@ class Models:
             model.add(Dense(int(num_hidden_layer3(in_len,out_len,len(Y))[1]), activation='relu'))
         model.add(Dense(out_len, activation='sigmoid'))
         model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-        model.fit(X, l, epochs=150, batch_size=10, verbose=0)
-        scores = model.evaluate(self.__processor.get_test_attributes(),self.__processor.get_test_labels())
+        model.fit(X, YY, epochs=150, batch_size=10, verbose=0)
+
+        Y = self.__processor.get_test_labels()
+        YY = self.convert_label(Y)
+        print("Test label converted into vector label")
+        scores = model.evaluate(self.__processor.get_test_attributes(),YY)
         print('Test Data Accuracy',scores[1])
