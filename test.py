@@ -6,4 +6,5 @@ from learning.Models import Models
 #
 print("hello")
 algorithm = Models()
-algorithm.binary_logistic_regression()
+#algorithm.binary_logistic_regression()
+algorithm.ff_network(1)

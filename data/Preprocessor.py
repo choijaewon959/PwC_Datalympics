@@ -37,7 +37,7 @@ class Preprocessor:
         :return: data from file
         '''
         # TODO: file name should be converted to file path
-        data = pd.read_csv(r"C:\Users\user\Desktop\proj\Data_lympics\Deeplearning\loan.csv")
+        data = pd.read_csv(r"C:\Users\lasts\Google Drive\Etc\Coding\Data_lympics\Deeplearning\loan.csv")
         self.__colnames= data.columns.values
         self.__loanData = data
 
