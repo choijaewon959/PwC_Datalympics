@@ -7,6 +7,7 @@ from learning.Models import Models
 
 print('test began')
 
+#objects
 algorithm = Models()
 dataProcessor = Preprocessor()
 filtering = FeatureFilter()
@@ -15,9 +16,11 @@ filtering = FeatureFilter()
 X_train = dataProcessor.get_train_attributes()
 y_train = dataProcessor.get_train_labels()
 
+#data for test
 X_test = dataProcessor.get_test_attributes()
-y_train = dataProcessor.get_test_labels()
+y_test = dataProcessor.get_test_labels()
 
-filtered_data = filtering.PCA(X_train)
+#filtered X_train attributes
+filtered_data = filtering.PCA(X_train, 4)
 
-algorithm.k_neighbor(X_train, y_train, X_test, y_train)
+algorithm.logistic_regression(X_train, y_train, X_test, y_test)

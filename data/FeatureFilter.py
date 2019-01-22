@@ -12,8 +12,18 @@ class FeatureFilter:
         self.__meaingfulFeatures = set() # features to be used after filtering. (str)
         self.__reducedDimension = 0 # number of meaningful feature vectors
 
-    def PCA(self, raw_attributes):
-        pca = PCA(n_components = 4)
+    def PCA(self, raw_attributes, numOfComponents):
+        '''
+        Principal component analysis.
+        Filter algorithm to retrieve meaningful feature attributes.
+        
+        :param: 
+            raw_attributes: unfiltered data
+            numOfComponents: number of components to be used.
+        
+        :return: filtered feature vector (data frame)
+        '''
+        pca = PCA(n_components = numOfComponents)
         keyFeaturesVector = pca.fit_transform(raw_attributes)
         return keyFeaturesVector
 
