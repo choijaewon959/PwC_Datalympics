@@ -9,6 +9,7 @@ from sklearn.svm import SVR
 from sklearn.metrics import classification_report, confusion_matrix
 from data.Preprocessor import Preprocessor
 from sklearn import preprocessing
+from Hyperparameter import Hyperparameter
 
 import xgboost
 from sklearn.ensemble import RandomForestClassifier
@@ -21,7 +22,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 
-
 # from keras.models import Sequential
 # from keras.layers import Dense
 # from num_node import *
@@ -29,8 +29,6 @@ from sklearn.tree import DecisionTreeClassifier
 class Models:
     def __init__(self):
         self.__algorithms = set() # list containing all the algorithms (str)
-        self.__processor = Preprocessor() # processor managing data
-        print("model made")
 
     def k_neighbor(self, X_train, y_train, X_test, y_test):
 
@@ -124,6 +122,13 @@ class Models:
         # svclassifier = SVC(kernel = 'linear')
         # svclassifier.fit(X_train, y_train)
 
+        print("Learning...")
+        svclassifier = SVC(
+            C = 10000,
+            kernel = 'linear'
+        )
+        svclassifier.fit(X_train, y_train)
+
         #make prediction
         #label_prediction = svclassifier.predict(X_test)
 
@@ -174,10 +179,24 @@ class Models:
         :param: None
         :return: None
         '''
+        hyperparam = Hyperparameter()
+        paramDic = hyperparam.get_logistic_regression_hyperparams()
 
         lg = LogisticRegression(
-            solver = 'newton-cg',
-            multi_class = 'multinomial'
+            penalty=paramDic['penalty'],
+            dual=paramDic['dual'],
+            tol=paramDic['tol'],
+            C=paramDic['C'],
+            fit_intercept=paramDic['fit_intercept'],
+            intercept_scaling=paramDic['intercept_scaling'],
+            class_weight=paramDic['class_weight'],
+            random_state=paramDic['random_state'],
+            solver=paramDic['newton-cg'],
+            max_iter=paramDic['max_iter'],
+            multi_class=paramDic['multi_class'],
+            verbose=0,
+            warm_start=False,
+            n_jobs=None
         )
         lg.fit(X_train, y_train)
         lg_pred = lg.predict(X_test)
