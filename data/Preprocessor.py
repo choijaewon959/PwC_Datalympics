@@ -47,9 +47,12 @@ class Preprocessor:
         USE YOUR OWN FILE PATH AND COMMENT OUT WHEN YOU PUSH.
         """
         #data = pd.read_csv(r"C:\Users\lasts\Google Drive\Etc\Coding\Data_lympics\Deeplearning\loan.csv")
-        data = pd.read_csv("../loan_data/data/loan.csv",low_memory=False)
+        data = pd.read_csv("../loan_data/data/loan.csv")
         #low_memory was added to avoid data compression
-        
+
+        #Taemin's debugging tool@!!
+        #data = pd.read_csv("Deeplearning\loan.csv")
+
         self.__colnames= data.columns.values
         self.__loanData = data
 
@@ -221,3 +224,7 @@ class Preprocessor:
 
 
         self.__loanData = dfTrain
+
+    def get_labels(self):
+        print(self.__loanData['loan_status'].unique())
+        return self.__loanData['loan_status'].unique()

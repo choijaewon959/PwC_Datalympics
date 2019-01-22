@@ -16,8 +16,8 @@ X_train = dataProcessor.get_train_attributes()
 y_train = dataProcessor.get_train_labels()
 
 X_test = dataProcessor.get_test_attributes()
-y_train = dataProcessor.get_test_labels()
+y_test = dataProcessor.get_test_labels()
 
 filtered_data = filtering.PCA(X_train)
 
-algorithm.k_neighbor(X_train, y_train, X_test, y_train)
+algorithm.linear_SVM(X_train, y_train, X_test, y_test)

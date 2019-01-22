@@ -8,6 +8,7 @@ from sklearn.svm import SVC
 from sklearn.svm import SVR
 from sklearn.metrics import classification_report, confusion_matrix
 from data.Preprocessor import Preprocessor
+from sklearn import preprocessing
 
 import xgboost
 from sklearn.ensemble import RandomForestClassifier
@@ -15,6 +16,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import auc
 from sklearn.metrics import roc_auc_score
+from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
@@ -38,6 +40,18 @@ class Models:
 
         print("Accuracy:",accuracy_score(y_test, y_pred))
 
+        """
+        classification report is done when target_names is
+        in string type
+        (error when float64 was given to labels)
+        """
+        # feature = self.__processor.get_labels()
+        # print(feature)
+        #
+        # print(classification_report(y_test, y_pred,target_names=feature))
+
+
+
     def decision_tree(self, X_train, y_train, X_test, y_test):
 
         clf = DecisionTreeClassifier()
@@ -55,10 +69,10 @@ class Models:
 
     def XGBClassifier(self, X_train, y_train, X_test, y_test):
 
-        print(X_train.head())
-        print(y_train.head())
-        print(X_test.shape)
-        print(y_test.shape)
+        # print(X_train.head())
+        # print(y_train.head())
+        # print(X_test.shape)
+        # print(y_test.shape)
 
         eval_set=[(X_test, y_test)]
 
@@ -96,16 +110,28 @@ class Models:
         :return None
         '''
 
+        scaling = preprocessing.MinMaxScaler(feature_range=(-1,1)).fit(X_train)
+        X_train = scaling.transform(X_train)
+        X_test = scaling.transform(X_test)
+
+
+
+        svm_model_linear = SVC(kernel = 'linear', C = 1).fit(X_train, y_train)
+        svm_predictions = svm_model_linear.predict(X_test)
+
         #train svm model
-        print("Learning...")
-        svclassifier = SVC(kernel = 'linear')
-        svclassifier.fit(X_train, y_train)
+        # print("Learning...")
+        # svclassifier = SVC(kernel = 'linear')
+        # svclassifier.fit(X_train, y_train)
 
         #make prediction
-        label_prediction = svclassifier.predict(X_test)
+        #label_prediction = svclassifier.predict(X_test)
 
         #evaluation
-        print("Accuracy: ", accuracy_score(y_test, label_prediction))
+        print("Accuracy: ", accuracy_score(y_test, svm_predictions))
+
+        cm = confusion_matrix(y_test, svm_predictions)
+        print(cm)
 
     def gaussian_SVM(self, X_train, y_train, X_test, y_test):
         '''
