@@ -16,6 +16,8 @@ from sklearn.metrics import accuracy_score
 from sklearn.metrics import auc
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+
 
 # from keras.models import Sequential
 # from keras.layers import Dense
@@ -26,6 +28,22 @@ class Models:
         self.__algorithms = set() # list containing all the algorithms (str)
         self.__processor = Preprocessor() # processor managing data
         print("model made")
+
+    def k_neighbor(self):
+        trainAttributes = self.__processor.get_train_attributes()
+        trainLabels = self.__processor.get_train_labels()
+        testAttributes = self.__processor.get_test_attributes()
+        testLabels = self.__processor.get_test_labels()
+
+        knn = KNeighborsClassifier(n_neighbors=10)
+
+        knn.fit(trainAttributes,trainLabels)
+
+        y_pred = knn.predict(testAttributes)
+
+        print("Accuracy:",accuracy_score(testLabels, y_pred))
+
+
 
     def random_forest(self):
 
@@ -122,19 +140,19 @@ class Models:
         #train svm model
         print("Learning...")
         svclassifier = SVC(
-            C=1.0, 
-            cache_size=700, 
-            class_weight=None, 
+            C=1.0,
+            cache_size=700,
+            class_weight=None,
             coef0=0.0,
-            decision_function_shape='ovo', 
-            degree=3, 
-            gamma='scale', 
+            decision_function_shape='ovo',
+            degree=3,
+            gamma='scale',
             kernel='rbf',
-            max_iter=-1, 
-            probability=False, 
-            random_state=None, 
+            max_iter=-1,
+            probability=False,
+            random_state=None,
             shrinking=True,
-            tol=0.001, 
+            tol=0.001,
             verbose=False
         )
         svclassifier.fit(trainAttributes, trainLabels)
@@ -167,7 +185,7 @@ class Models:
 
         lg_pred = lg.predict(testAttributes)
         print("Accuracy - predict: ", accuracy_score(testLabels, lg_pred))
-    
+
     def ff_network(self, n):
         '''
         Fowrad feeding neural network with one hidden layer.
