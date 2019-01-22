@@ -17,6 +17,7 @@ from sklearn.metrics import auc
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
 
 
 # from keras.models import Sequential
@@ -43,6 +44,18 @@ class Models:
 
         print("Accuracy:",accuracy_score(testLabels, y_pred))
 
+    def decision_tree(self):
+        trainAttributes = self.__processor.get_train_attributes()
+        trainLabels = self.__processor.get_train_labels()
+        testAttributes = self.__processor.get_test_attributes()
+        testLabels = self.__processor.get_test_labels()
+
+        clf = DecisionTreeClassifier()
+
+        clf.fit(trainAttributes,trainLabels)
+
+        y_pred = clf.predict(testAttributes)
+        print("Accuracy:",accuracy_score(testLabels, y_pred))
 
 
     def random_forest(self):
@@ -58,7 +71,7 @@ class Models:
         acc_rfc = (preds == testLabels).sum().astype(float) / len(preds)*100
         print("Scikit-Learn's Random Forest Classifier's prediction accuracy is: %3.2f" % (acc_rfc))
 
-    def binary_logistic_regression(self):
+    def XGBClassifier(self):
 
         trainAttributes = self.__processor.get_train_attributes()
         trainLabels = self.__processor.get_train_labels()

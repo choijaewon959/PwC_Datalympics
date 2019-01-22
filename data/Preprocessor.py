@@ -47,7 +47,9 @@ class Preprocessor:
         USE YOUR OWN FILE PATH AND COMMENT OUT WHEN YOU PUSH.
         """
         #data = pd.read_csv(r"C:\Users\lasts\Google Drive\Etc\Coding\Data_lympics\Deeplearning\loan.csv")
-        data = pd.read_csv("../loan_data/data/loan.csv")
+        data = pd.read_csv("../loan_data/data/loan.csv",low_memory=False)
+        #low_memory was added to avoid data compression
+        
         self.__colnames= data.columns.values
         self.__loanData = data
 
@@ -143,7 +145,7 @@ class Preprocessor:
             tmp = np.array([0,0,0,0,0,0,0,0,0,0])
         l = np.delete(l,0,0)
         YY = pd.DataFrame(l)
-        return YY    
+        return YY
 
     def __temp_data_process(self):
 

@@ -15,5 +15,4 @@ filtering = FeatureFilter()
 raw_data = dataprocess.get_train_attributes()
 filtered_data = filtering.PCA(raw_data)
 
-algorithm.gaussian_SVM(filtered_data)
-
+algorithm.k_neighbor()
