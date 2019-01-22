@@ -8,11 +8,16 @@ from learning.Models import Models
 print('test began')
 
 algorithm = Models()
-dataprocess = Preprocessor()
+dataProcessor = Preprocessor()
 filtering = FeatureFilter()
 
+#data for training
+X_train = dataProcessor.get_train_attributes()
+y_train = dataProcessor.get_train_labels()
 
-raw_data = dataprocess.get_train_attributes()
-filtered_data = filtering.PCA(raw_data)
+X_test = dataProcessor.get_test_attributes()
+y_train = dataProcessor.get_test_labels()
 
-algorithm.k_neighbor()
+filtered_data = filtering.PCA(X_train)
+
+algorithm.k_neighbor(X_train, y_train, X_test, y_train)

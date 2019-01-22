@@ -30,60 +30,37 @@ class Models:
         self.__processor = Preprocessor() # processor managing data
         print("model made")
 
-    def k_neighbor(self):
-        trainAttributes = self.__processor.get_train_attributes()
-        trainLabels = self.__processor.get_train_labels()
-        testAttributes = self.__processor.get_test_attributes()
-        testLabels = self.__processor.get_test_labels()
+    def k_neighbor(self, X_train, y_train, X_test, y_test):
 
         knn = KNeighborsClassifier(n_neighbors=10)
+        knn.fit(X_train, y_train)
+        y_pred = knn.predict(X_test)
 
-        knn.fit(trainAttributes,trainLabels)
+        print("Accuracy:",accuracy_score(y_test, y_pred))
 
-        y_pred = knn.predict(testAttributes)
-
-        print("Accuracy:",accuracy_score(testLabels, y_pred))
-
-    def decision_tree(self):
-        trainAttributes = self.__processor.get_train_attributes()
-        trainLabels = self.__processor.get_train_labels()
-        testAttributes = self.__processor.get_test_attributes()
-        testLabels = self.__processor.get_test_labels()
+    def decision_tree(self, X_train, y_train, X_test, y_test):
 
         clf = DecisionTreeClassifier()
+        clf.fit(X_train, y_train)
+        y_pred = clf.predict(X_test)
+        print("Accuracy:",accuracy_score(y_test, y_pred))
 
-        clf.fit(trainAttributes,trainLabels)
+    def random_forest(self, X_train, y_train, X_test, y_test):
 
-        y_pred = clf.predict(testAttributes)
-        print("Accuracy:",accuracy_score(testLabels, y_pred))
-
-
-    def random_forest(self):
-
-        trainAttributes = self.__processor.get_train_attributes()
-        trainLabels = self.__processor.get_train_labels()
-        testAttributes = self.__processor.get_test_attributes()
-        testLabels = self.__processor.get_test_labels()
-        print(trainLabels)
         rfc = RandomForestClassifier(n_estimators=30)
-        rfc.fit(trainAttributes, trainLabels)
-        preds = rfc.predict(testAttributes)
-        acc_rfc = (preds == testLabels).sum().astype(float) / len(preds)*100
+        rfc.fit(X_train, y_train)
+        preds = rfc.predict(X_test)
+        acc_rfc = (preds == y_test).sum().astype(float) / len(preds)*100
         print("Scikit-Learn's Random Forest Classifier's prediction accuracy is: %3.2f" % (acc_rfc))
 
-    def XGBClassifier(self):
+    def XGBClassifier(self, X_train, y_train, X_test, y_test):
 
-        trainAttributes = self.__processor.get_train_attributes()
-        trainLabels = self.__processor.get_train_labels()
-        testAttributes = self.__processor.get_test_attributes()
-        testLabels = self.__processor.get_test_labels()
+        print(X_train.head())
+        print(y_train.head())
+        print(X_test.shape)
+        print(y_test.shape)
 
-        print(trainAttributes.head())
-        print(trainLabels.head())
-        print(testAttributes.shape)
-        print(testLabels.shape)
-
-        eval_set=[(testAttributes, testLabels)]
+        eval_set=[(X_test, y_test)]
 
         clf = xgboost.sklearn.XGBClassifier(
             #objective="multi:softprob",
@@ -95,14 +72,14 @@ class Models:
             gamma=0,
             n_estimators=200, subsample=0.8, colsample_bytree=0.8)
 
-        clf.fit(trainAttributes, trainLabels, early_stopping_rounds=20,  eval_set=eval_set, verbose=True)
+        clf.fit(X_train, y_train, early_stopping_rounds=20,  eval_set=eval_set, verbose=True)
 
-        y_pred = clf.predict(testAttributes)
+        y_pred = clf.predict(X_test)
 
-        acc_xgb = (y_pred == testLabels).sum().astype(float) / len(y_pred)*100
+        acc_xgb = (y_pred == y_test).sum().astype(float) / len(y_pred)*100
         print("XGBoost's prediction accuracy is: %3.2f" % (acc_xgb))
 
-        accuracy = accuracy_score(np.array(testLabels).flatten(), y_pred)
+        accuracy = accuracy_score(np.array(y_test).flatten(), y_pred)
         print("Accuracy: %.10f%%" % (accuracy * 100.0))
 
         #accuracy_per_roc_auc = roc_auc_score(np.array(testLabels).flatten(), y_pred)
@@ -110,7 +87,7 @@ class Models:
 
         #print("Hello I'm binary logistic regression")
 
-    def linear_SVM(self):
+    def linear_SVM(self, X_train, y_train, X_test, y_test):
         '''
         Support Vector Machine algorithm for categorical classification.
         Kernel: linear
@@ -119,25 +96,18 @@ class Models:
         :return None
         '''
 
-        print("training...")
-
-        trainAttributes = self.__processor.get_train_attributes()
-        trainLabels = self.__processor.get_train_labels()
-        testAttributes = self.__processor.get_test_attributes()
-        testLabels = self.__processor.get_test_labels()
-
         #train svm model
         print("Learning...")
         svclassifier = SVC(kernel = 'linear')
-        svclassifier.fit(trainAttributes, trainLabels)
+        svclassifier.fit(X_train, y_train)
 
         #make prediction
-        label_prediction = svclassifier.predict(testAttributes)
+        label_prediction = svclassifier.predict(X_test)
 
         #evaluation
-        print("Accuracy: ", accuracy_score(testLabels, label_prediction))
+        print("Accuracy: ", accuracy_score(y_test, label_prediction))
 
-    def gaussian_SVM(self, trainData):
+    def gaussian_SVM(self, X_train, y_train, X_test, y_test):
         '''
         Support Vector Machine algorithm for categorical classification.
         Kernel: gaussian
@@ -145,11 +115,6 @@ class Models:
         :param: None
         :return: None
         '''
-        trainAttributes = trainData
-        trainLabels = self.__processor.get_train_labels()
-        testAttributes = self.__processor.get_test_attributes()
-        testLabels = self.__processor.get_test_labels()
-
         #train svm model
         print("Learning...")
         svclassifier = SVC(
@@ -168,15 +133,15 @@ class Models:
             tol=0.001,
             verbose=False
         )
-        svclassifier.fit(trainAttributes, trainLabels)
+        svclassifier.fit(X_train, y_train)
 
         #make prediction
-        label_prediction = svclassifier.predict(testAttributes)
+        label_prediction = svclassifier.predict(X_test)
 
         #evaluation
-        print("Accuracy: ", accuracy_score(testLabels, label_prediction))
+        print("Accuracy: ", accuracy_score(y_test, label_prediction))
 
-    def logistic_regression(self):
+    def logistic_regression(self, X_train, y_train, X_test, y_test):
         '''
         Logistic regression model
 
@@ -184,28 +149,21 @@ class Models:
         :return: None
         '''
 
-        trainAttributes = self.__processor.get_train_attributes()
-        trainLabels = self.__processor.get_train_labels()
-        testAttributes = self.__processor.get_test_attributes()
-        testLabels = self.__processor.get_test_labels()
-
         lg = LogisticRegression(
             solver = 'newton-cg',
             multi_class = 'multinomial'
         )
-        lg.fit(trainAttributes, trainLabels)
-        print("Accuracy - score: ", lg.score(testAttributes, testLabels))
+        lg.fit(X_train, y_train)
+        lg_pred = lg.predict(X_test)
+        print("Accuracy - predict: ", accuracy_score(y_test, lg_pred))
 
-        lg_pred = lg.predict(testAttributes)
-        print("Accuracy - predict: ", accuracy_score(testLabels, lg_pred))
-
-    def ff_network(self, n):
+    def ff_network(self, n, X_train, y_train, X_test, y_test):
         '''
         Fowrad feeding neural network with one hidden layer.
 
         '''
-        X = self.__processor.get_train_attributes()
-        Y = self.__processor.get_train_labels()
+        X = X_train
+        Y = y_train
         in_len = 9
         out_len = 10
         YY = self.__processor.convert_label(Y)
@@ -222,8 +180,8 @@ class Models:
         model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
         model.fit(X, YY, epochs=150, batch_size=10, verbose=0)
 
-        Y = self.__processor.get_test_labels()
+        Y = y_test
         YY = self.__processor.convert_label(Y)
         print("Test label converted into vector label")
-        scores = model.evaluate(self.__processor.get_test_attributes(),YY)
+        scores = model.evaluate(X_test, YY)
         print('Test Data Accuracy',scores[1])
