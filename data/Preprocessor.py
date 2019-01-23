@@ -135,7 +135,7 @@ class Preprocessor:
 
     def convert_label(self,Y):
         '''
-        Converting the label into binary forms for keras neural network output layer.
+        Converting the label into binary vector forms for keras neural network output layer.
 
         :param: label
         :return: converted label (int vector)
