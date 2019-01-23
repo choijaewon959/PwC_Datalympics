@@ -30,7 +30,7 @@ class Preprocessor:
 
         self.__retrieve_data()
         # TODO: function call for preprocessing data
-        #self.__temp_data_process()
+        self.__temp_data_process()
         self.__split_data()
 
     def __retrieve_data(self):
@@ -49,18 +49,18 @@ class Preprocessor:
         USE YOUR OWN FILE PATH AND COMMENT OUT WHEN YOU PUSH.
         """
         #data = pd.read_csv(r"C:\Users\lasts\Google Drive\Etc\Coding\Data_lympics\Deeplearning\loan.csv")
-        #data = pd.read_csv("../loan_data/data/loan.csv")
+        data = pd.read_csv("../loan_data/data/loan.csv")
         #low_memory was added to avoid data compression
 
 
         #Using sklearn datasets
-        iris = datasets.load_wine()
-        
-        data = pd.DataFrame(data= np.c_[iris['data'], iris['target']],
-                     columns= iris['feature_names'] + ['target'])
+        # iris = datasets.load_wine()
+        #
+        # data = pd.DataFrame(data= np.c_[iris['data'], iris['target']],
+        #              columns= iris['feature_names'] + ['target'])
 
         #Taemin's debugging tool@!!
-        data = pd.read_csv("Deeplearning/loan.csv")
+        #data = pd.read_csv("Deeplearning/loan.csv")
 
         self.__colnames= data.columns.values
         self.__loanData = data
@@ -74,9 +74,9 @@ class Preprocessor:
         '''
         print("split_data running...")
         # TODO: loan status may not be the label -> change to label accordingly.
-        
-        X = self.__loanData.drop('target', axis = 1)
-        y = self.__loanData['target']
+
+        X = self.__loanData.drop('loan_status', axis = 1)
+        y = self.__loanData['loan_status']
 
         self.__attributes_train, self.__attributes_test, self.__labels_train, self.__labels_test = train_test_split(X, y, test_size=0.2)
 
@@ -161,14 +161,21 @@ class Preprocessor:
         return YY
 
     def __temp_data_process(self):
+        '''
+        temporary data processor for loan.csv file
+        erase unrelated columns and imputation is done.
+        prints some debugging messages.
 
+        :param: none
+        :return: none
+        '''
         dfTrain = self.__loanData
         #copied data to refrain from warnings
         dfTrain= dfTrain.copy()
 
         # TODO: when dealing with real data, columns has to be selected otherwise
         #erase unrelated columns
-        dfTrain= dfTrain[['member_id', 'loan_amnt', 'funded_amnt',
+        dfTrain= dfTrain[['loan_amnt', 'funded_amnt',
                'term', 'int_rate', 'installment', 'sub_grade',
                'emp_length', 'annual_inc', 'loan_status']]
 
@@ -225,12 +232,13 @@ class Preprocessor:
             print('Imputation with Median: %s' % (col))
             dfTrain[col].fillna(dfTrain[col].median(), inplace=True)
 
-        cols=['member_id', 'loan_status']
+        cols=['loan_status']
         for col in cols:
             print('Imputation with Zero: %s' % (col))
             dfTrain[col].fillna(0, inplace=True)
         print('Missing value imputation done.')
 
+        print(dfTrain['loan_status'].unique())
 
         self.__loanData = dfTrain
 

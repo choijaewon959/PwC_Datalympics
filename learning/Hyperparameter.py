@@ -18,7 +18,7 @@ decision_tree_dict = {
                  'max_depth' : None,
                  'min_samples_split' : 2,
                  'min_samples_leaf' : 1,
-                 'min_weight_fraction_leaf'=0.,
+                 'min_weight_fraction_leaf': 0,
                  'max_features' : None,
                  'random_state' : None,
                  'max_leaf_nodes' : None,
@@ -27,8 +27,53 @@ decision_tree_dict = {
                  'class_weight' : None,
                  'presort' : False
 }
-random_forest_dict = {}
-XGBClassifier_dict = {}
+
+random_forest_dict = {
+                 'n_estimators':'warn',
+                 'criterion':"gini",
+                 'max_depth':None,
+                 'min_samples_split':2,
+                 'min_samples_leaf':1,
+                 'min_weight_fraction_leaf':0.,
+                 'max_features':"auto",
+                 'max_leaf_nodes':None,
+                 'min_impurity_decrease':0.,
+                 'min_impurity_split':None,
+                 'bootstrap':True,
+                 'oob_score':False,
+                 'n_jobs':None,
+                 'random_state':None,
+                 'verbose':0,
+                 'warm_start':False,
+                 'class_weight':None
+
+}
+
+XGBClassifier_dict = {
+     'max_depth':4,
+     'learning_rate':0.05,
+     'n_estimators':200,
+     'silent':True,
+     'objective':'multi:softprob',
+     'booster':'gbtree',
+     'n_jobs':3,
+     'nthread':None,
+     'gamma':0,
+     'min_child_weight':1,
+     'max_delta_step':0,
+     'subsample':0.8,
+     'colsample_bytree':0.8,
+     'colsample_bylevel':1,
+     'reg_alpha':0.005,
+     'reg_lambda':1,
+     'scale_pos_weight':1,
+     'base_score':0.5,
+     'random_state':0,
+     'seed':None,
+     'missing':None,
+     'importance_type':'gain'
+}
+
 linear_SVM_dict = {}
 
 SVM_dict = {
