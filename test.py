@@ -24,9 +24,8 @@ X_test = dataProcessor.get_test_attributes()
 y_test = dataProcessor.get_test_labels()
 
 #filtered X_train attributes
-filtered_data = filtering.PCA(X_train, 4)
+# filtered_data = filtering.PCA(X_train, 4)
 
-accuracy = algorithm.logistic_regression(logistic_regression_dict, X_train, y_train, X_test, y_test)
-result.log_result('logistic_regression', accuracy, logistic_regression_dict)
-print(result.get_best())
 
+accuracy = algorithm.k_neighbor(k_neighor_dict, X_train, y_train, X_test, y_test)
+result.log_result('XGBClassifier', accuracy, k_neighor_dict)

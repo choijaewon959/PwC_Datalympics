@@ -23,20 +23,15 @@ from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 
-
-# from keras.models import Sequential
-# from keras.layers import Dense
-
-# from keras.models import Sequential
-# from keras.layers import Dense
-
-# import sys
-# sys.path.append('./learning')
-# from num_node import *
+from keras.models import Sequential
+from keras.layers import Dense
+import sys
+sys.path.append('./learning')
+from num_node import *
 
 import time
 import itertools
-
+from evaluation.Visualization import *
 
 # from keras.models import Sequential
 # from keras.layers import Dense
@@ -46,12 +41,9 @@ class Models:
     def __init__(self):
         self.__algorithms = set() # list containing all the algorithms (str)
 
-    def k_neighbor(self, X_train, y_train, X_test, y_test):
+
+    def k_neighbor(self, paramDic, X_train, y_train, X_test, y_test):
         #Accuracy: 0.7485575514435755 using 800k dataset
-
-        # labels=self.__dataprocessor.get_labels()
-        # data= self.__dataprocessor.get_data()
-
 
         """if scaling is necessary for running this algorithm"""
         # scaling = preprocessing.MinMaxScaler(feature_range=(-1,1)).fit(X_train)
@@ -59,18 +51,32 @@ class Models:
         # X_test = scaling.transform(X_test)
 
         start_time = time.time()
-        knn = KNeighborsClassifier(n_neighbors=10)
+        knn = KNeighborsClassifier(
+            n_neighbors=paramDic['n_neighbors'],
+            weights=paramDic['weights'], algorithm=paramDic['algorithm'], leaf_size=paramDic['leaf_size'],
+            p=paramDic['p'],metric=paramDic['metric'], metric_params=paramDic['metric_params'], n_jobs=paramDic['n_jobs']
+        )
+
         knn.fit(X_train, y_train)
         y_pred = knn.predict(X_test)
         print("--- %s seconds ---" % (time.time() - start_time))
-
-        print("Accuracy:",accuracy_score(y_test, y_pred))
+        accuracy = accuracy_score(y_test, y_pred)
+        print("k_neighbor Accuracy: " , accuracy)
 
         # scores = cross_val_score(knn, data.drop['loan_status'], data['loan_status'], cv=5)
         # print("cross_val_score is : ", scores)
 
         cm = confusion_matrix(y_test, y_pred)
         print(cm)
+
+        visual = Visualization(y_pred)
+        visual.plot_confusion_matrix(X_train, y_train, X_test, y_test)
+        visual.classification_report(X_train, y_train, X_test, y_test)
+
+        return accuracy
+        # labels=self.__dataprocessor.get_labels()
+        # data= self.__dataprocessor.get_data()
+
         # features = y_train.unique()
         #
         # def plot_confusion_matrix(cm, classes,
@@ -149,7 +155,7 @@ class Models:
         acc_rfc = (preds == y_test).sum().astype(float) / len(preds)*100
         print("Scikit-Learn's Random Forest Classifier's prediction accuracy is: %3.2f" % (acc_rfc))
 
-    def XGBClassifier(self, X_train, y_train, X_test, y_test):
+    def XGBClassifier(self, paramDic, X_train, y_train, X_test, y_test):
 
         # print(X_train.head())
         # print(y_train.head())
@@ -159,15 +165,14 @@ class Models:
         eval_set=[(X_test, y_test)]
 
         clf = xgboost.sklearn.XGBClassifier(
-            #objective="multi:softprob",
-            learning_rate=0.05,
-            seed=0, #seed that is not random
-            max_depth=4,
-            min_child_weight=1,
-            reg_alpha=0.005,
-            gamma=0,
-            n_estimators=200, subsample=0.8, colsample_bytree=0.8
-        )
+            max_depth=paramDic['max_depth'], learning_rate=paramDic['learning_rate'], n_estimators=paramDic['n_estimators'],
+            silent=paramDic['silent'], objective=paramDic['objective'],
+            booster=paramDic['booster'], n_jobs=paramDic['n_jobs'], nthread=paramDic['nthread'], gamma=paramDic['gamma'],
+             min_child_weight=paramDic['min_child_weight'], max_delta_step=paramDic['max_delta_step'],
+            subsample=paramDic['subsample'], colsample_bytree=paramDic['colsample_bytree'], colsample_bylevel=paramDic['colsample_bylevel'],
+             reg_alpha=paramDic['reg_alpha'], reg_lambda=paramDic['reg_lambda'], scale_pos_weight=paramDic['scale_pos_weight'],
+             base_score=paramDic['base_score'],
+             random_state=paramDic['random_state'], seed=paramDic['seed'], missing=paramDic['missing'], importance_type=paramDic['importance_type'])
 
         clf.fit(X_train, y_train, early_stopping_rounds=20,  eval_set=eval_set, verbose=True)
 
@@ -178,11 +183,10 @@ class Models:
 
         accuracy = accuracy_score(np.array(y_test).flatten(), y_pred)
         print("Accuracy: %.10f%%" % (accuracy * 100.0))
-
+        
         #accuracy_per_roc_auc = roc_auc_score(np.array(testLabels).flatten(), y_pred)
         #print("ROC-AUC: %.10f%%" % (accuracy_per_roc_auc * 100))
 
-        #print("Hello I'm binary logistic regression")
 
     def linear_SVM(self, X_train, y_train, X_test, y_test):
         '''
@@ -298,16 +302,16 @@ class Models:
         print("cross validation accuracy ", cross_valid_accuracy)
         return accuracy
 
-    def ff_network(self, n, X_train, y_train, X_test, y_test):
+    def ff_network(self, n, X_train, y_train, X_test, y_test, p):
         '''
         Forward feeding neural network with one/two hidden layer.
 
         '''
         X = X_train
         Y = y_train
-        in_len = 9 # number of input feature
+        in_len = 8 # number of input feature
         out_len = 10 # number of output label
-        YY = self.__processor.convert_label(Y)
+        YY = p.convert_label(Y)
         print("Train label converted into vector label")
         model = Sequential()
         if(n==1):
@@ -322,7 +326,7 @@ class Models:
         model.fit(X, YY, epochs=150, batch_size=10, verbose=0)
 
         Y = y_test
-        YY = self.__processor.convert_label(Y)
+        YY = p.convert_label(Y)
         print("Test label converted into vector label")
         scores = model.evaluate(X_test, YY)
         print('Test Data Accuracy',scores[1])

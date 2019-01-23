@@ -75,7 +75,6 @@ class Preprocessor:
         '''
         print("split_data running...")
         # TODO: loan status may not be the label -> change to label accordingly.
-        
         X = self.__loanData.drop('loan_status', axis = 1)
         y = self.__loanData['loan_status']
 
@@ -162,16 +161,26 @@ class Preprocessor:
         return YY
 
     def __temp_data_process(self):
+        '''
+        temporary data processor for loan.csv file
+        erase unrelated columns and imputation is done.
+        prints some debugging messages.
 
+        :param: none
+        :return: none
+        '''
         dfTrain = self.__loanData
         #copied data to refrain from warnings
         dfTrain= dfTrain.copy()
 
         # TODO: when dealing with real data, columns has to be selected otherwise
         #erase unrelated columns
+<<<<<<< HEAD
         # dfTrain= dfTrain[['loan_amnt', 'funded_amnt',
         #        'term', 'int_rate', 'installment', 'sub_grade',
         #        'emp_length', 'annual_inc', 'loan_status']]
+=======
+>>>>>>> 8dcb5f20b4da0c58e6713c3f57f267821148e0f5
         dfTrain= dfTrain[['loan_amnt', 'funded_amnt',
                'term', 'int_rate', 'installment', 'sub_grade',
                'emp_length', 'annual_inc', 'loan_status', 'dti', 'delinq_2yrs', 'inq_last_6mths'
@@ -247,6 +256,7 @@ class Preprocessor:
             dfTrain[col].fillna(0, inplace=True)
         print('Missing value imputation done.')
 
+        print(dfTrain['loan_status'].unique())
 
         self.__loanData = dfTrain
 
