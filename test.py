@@ -3,8 +3,9 @@ from util.Stat import *
 from util.Distribution import Distribution
 from data.Preprocessor import Preprocessor
 from data.FeatureFilter import FeatureFilter
+from learning.Hyperparameter import *
 from learning.Models import Models
-from learning.Hyperparameter import Hyperparameter
+from evaluation.ResultLog import ResultLog
 
 print('test began')
 
@@ -12,6 +13,7 @@ print('test began')
 dataProcessor = Preprocessor()
 filtering = FeatureFilter()
 algorithm = Models()
+result = ResultLog()
 
 #data for training
 X_train = dataProcessor.get_train_attributes()
@@ -24,4 +26,7 @@ y_test = dataProcessor.get_test_labels()
 #filtered X_train attributes
 filtered_data = filtering.PCA(X_train, 4)
 
-algorithm.logistic_regression(X_train, y_train, X_test, y_test)
+
+accuracy = algorithm.logistic_regression(logistic_regression_dict, X_train, y_train, X_test, y_test)
+result.log_result('logistic_regression', accuracy, logistic_regression_dict)
+
