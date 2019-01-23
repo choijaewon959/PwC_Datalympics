@@ -5,6 +5,8 @@ import pandas as pd
 import numpy as np
 from util.Distribution import Distribution
 from sklearn.model_selection import train_test_split
+from sklearn import datasets
+
 
 class Preprocessor:
     def __init__(self):
@@ -50,6 +52,13 @@ class Preprocessor:
         data = pd.read_csv("../loan_data/data/loan.csv")
         #low_memory was added to avoid data compression
 
+
+        # Using sklearn datasets
+        # iris = datasets.load_wine()
+        #
+        # data = pd.DataFrame(data= np.c_[iris['data'], iris['target']],
+        #              columns= iris['feature_names'] + ['target'])
+
         #Taemin's debugging tool@!!
         #data = pd.read_csv("Deeplearning\loan.csv")
 
@@ -65,6 +74,7 @@ class Preprocessor:
         '''
         print("split_data running...")
         # TODO: loan status may not be the label -> change to label accordingly.
+        
         X = self.__loanData.drop('loan_status', axis = 1)
         y = self.__loanData['loan_status']
 
@@ -227,3 +237,7 @@ class Preprocessor:
     def get_labels(self):
         print(self.__loanData['loan_status'].unique())
         return self.__loanData['loan_status'].unique()
+
+
+    def get_data(self):
+        return self.__loanData
