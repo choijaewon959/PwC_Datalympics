@@ -4,14 +4,15 @@ Model object that contains all the possible classification models
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.svm import SVC
-from sklearn.svm import SVR
-from sklearn.metrics import classification_report, confusion_matrix
 from data.Preprocessor import Preprocessor
-from sklearn import preprocessing
 from learning.Hyperparameter import *
 
 import xgboost
+
+from sklearn.svm import SVC
+from sklearn.svm import SVR
+from sklearn import preprocessing
+from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
@@ -44,7 +45,6 @@ import itertools
 class Models:
     def __init__(self):
         self.__algorithms = set() # list containing all the algorithms (str)
-
 
     def k_neighbor(self, X_train, y_train, X_test, y_test):
         #Accuracy: 0.7485575514435755 using 800k dataset
@@ -166,7 +166,8 @@ class Models:
             min_child_weight=1,
             reg_alpha=0.005,
             gamma=0,
-            n_estimators=200, subsample=0.8, colsample_bytree=0.8)
+            n_estimators=200, subsample=0.8, colsample_bytree=0.8
+        )
 
         clf.fit(X_train, y_train, early_stopping_rounds=20,  eval_set=eval_set, verbose=True)
 
@@ -288,8 +289,13 @@ class Models:
         )
         lg.fit(X_train, y_train)
         lg_pred = lg.predict(X_test)
+        num_of_folds = 10
+
         accuracy = accuracy_score(y_test, lg_pred)
-        print("Accuracy - predict: ", accuracy)
+
+        cross_valid_accuracy = cross_val_score(lg, X_train, y_train, scoring='accuracy', cv = num_of_folds).mean()/num_of_folds
+        print("Accuracy: ", accuracy)
+        print("cross validation accuracy ", cross_valid_accuracy)
         return accuracy
 
     def ff_network(self, n, X_train, y_train, X_test, y_test):

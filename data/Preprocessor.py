@@ -30,7 +30,7 @@ class Preprocessor:
 
         self.__retrieve_data()
         # TODO: function call for preprocessing data
-        #self.__temp_data_process()
+        self.__temp_data_process()
         self.__split_data()
 
     def __retrieve_data(self):
@@ -50,17 +50,18 @@ class Preprocessor:
         """
         #data = pd.read_csv(r"C:\Users\lasts\Google Drive\Etc\Coding\Data_lympics\Deeplearning\loan.csv")
         #data = pd.read_csv("../loan_data/data/loan.csv")
+        data = pd.read_csv("../loan_data/data/loanfull.csv")
         #low_memory was added to avoid data compression
 
 
-        #Using sklearn datasets
-        iris = datasets.load_wine()
+        # #Using sklearn datasets
+        # iris = datasets.load_wine()
         
-        data = pd.DataFrame(data= np.c_[iris['data'], iris['target']],
-                     columns= iris['feature_names'] + ['target'])
+        # data = pd.DataFrame(data= np.c_[iris['data'], iris['target']],
+        #              columns= iris['feature_names'] + ['target'])
 
         #Taemin's debugging tool@!!
-        data = pd.read_csv("Deeplearning/loan.csv")
+        # data = pd.read_csv("Deeplearning/loan.csv")
 
         self.__colnames= data.columns.values
         self.__loanData = data
@@ -75,10 +76,10 @@ class Preprocessor:
         print("split_data running...")
         # TODO: loan status may not be the label -> change to label accordingly.
         
-        X = self.__loanData.drop('target', axis = 1)
-        y = self.__loanData['target']
+        X = self.__loanData.drop('loan_status', axis = 1)
+        y = self.__loanData['loan_status']
 
-        self.__attributes_train, self.__attributes_test, self.__labels_train, self.__labels_test = train_test_split(X, y, test_size=0.2)
+        self.__attributes_train, self.__attributes_test, self.__labels_train, self.__labels_test = train_test_split(X, y, test_size=0.2, random_state = 1)
 
     def get_train_attributes(self):
         '''
@@ -168,9 +169,17 @@ class Preprocessor:
 
         # TODO: when dealing with real data, columns has to be selected otherwise
         #erase unrelated columns
-        dfTrain= dfTrain[['member_id', 'loan_amnt', 'funded_amnt',
+        # dfTrain= dfTrain[['loan_amnt', 'funded_amnt',
+        #        'term', 'int_rate', 'installment', 'sub_grade',
+        #        'emp_length', 'annual_inc', 'loan_status']]
+        dfTrain= dfTrain[['loan_amnt', 'funded_amnt',
                'term', 'int_rate', 'installment', 'sub_grade',
-               'emp_length', 'annual_inc', 'loan_status']]
+               'emp_length', 'annual_inc', 'loan_status', 'dti', 'delinq_2yrs', 'inq_last_6mths'
+               ,'mths_since_last_delinq', 'mths_since_last_record', 'open_acc', 'pub_rec'
+               ,'revol_bal', 'revol_util', 'total_acc', 'out_prncp', 'out_prncp_inv', 'total_pymnt'
+               ,'total_pymnt_inv', 'total_rec_prncp', 'total_rec_int', 'total_rec_late_fee'
+               ,'recoveries', 'collection_recovery_fee', 'last_pymnt_amnt'
+            ]]
 
         # TODO: Feature transformation can be done beforehand or after
         # when the data is normalized to numerical data, these steps should be omitted.
@@ -220,12 +229,19 @@ class Preprocessor:
         '''
         #data imputation
         '''
-        cols = ['term', 'loan_amnt', 'funded_amnt', 'int_rate', 'sub_grade', 'annual_inc', 'emp_length', 'installment']
+        cols = ['loan_amnt', 'funded_amnt',
+               'term', 'int_rate', 'installment', 'sub_grade',
+               'emp_length', 'annual_inc', 'loan_status', 'dti', 'delinq_2yrs', 'inq_last_6mths'
+               ,'mths_since_last_delinq', 'mths_since_last_record', 'open_acc', 'pub_rec'
+               ,'revol_bal', 'revol_util', 'total_acc', 'out_prncp', 'out_prncp_inv', 'total_pymnt'
+               ,'total_pymnt_inv', 'total_rec_prncp', 'total_rec_int', 'total_rec_late_fee'
+               ,'recoveries', 'collection_recovery_fee', 'last_pymnt_amnt'
+            ]
         for col in cols:
             print('Imputation with Median: %s' % (col))
             dfTrain[col].fillna(dfTrain[col].median(), inplace=True)
 
-        cols=['member_id', 'loan_status']
+        cols=['loan_status']
         for col in cols:
             print('Imputation with Zero: %s' % (col))
             dfTrain[col].fillna(0, inplace=True)
