@@ -1,8 +1,32 @@
 '''
 Configuration containing all the hyperparameters used in each model.
 '''
-k_neighor_dict = {}
-decision_tree_dict = {}
+k_neighor_dict = {
+'n_neighbors' : 5 ,
+ 'weights' : 'uniform' ,
+  'algorithm' : 'auto',
+  'leaf_size' : 30,
+  'p': 2 ,
+  'metric' : 'minkowski',
+  'metric_params' : None,
+  'n_jobs' : None
+}
+
+decision_tree_dict = {
+                'criterion' : "gini",
+                 'splitter' : "best",
+                 'max_depth' : None,
+                 'min_samples_split' : 2,
+                 'min_samples_leaf' : 1,
+                 'min_weight_fraction_leaf'=0.,
+                 'max_features' : None,
+                 'random_state' : None,
+                 'max_leaf_nodes' : None,
+                 'min_impurity_decrease' : 0.,
+                 'min_impurity_split' : None,
+                 'class_weight' : None,
+                 'presort' : False
+}
 random_forest_dict = {}
 XGBClassifier_dict = {}
 linear_SVM_dict = {}
@@ -42,5 +66,5 @@ logistic_regression_dict = {
 }
 
 ff_network_dict = {
- 
+
 }

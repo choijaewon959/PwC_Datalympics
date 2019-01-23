@@ -22,17 +22,11 @@ from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 45cefc032b4e5089d9ce7fd1cc0db0f3be3e1ba5
 from keras.models import Sequential
 from keras.layers import Dense
 import sys
 sys.path.append('./learning')
 from num_node import *
-<<<<<<< HEAD
-=======
 
 import time
 import itertools
@@ -41,7 +35,6 @@ import itertools
 # from keras.models import Sequential
 # from keras.layers import Dense
 # from num_node import *
->>>>>>> 45cefc032b4e5089d9ce7fd1cc0db0f3be3e1ba5
 
 class Models:
     def __init__(self):
@@ -294,7 +287,7 @@ class Models:
         print("Accuracy - predict: ", accuracy)
         return accuracy
 
-    def ff_network(self, n, X_train, y_train, X_test, y_test):
+    def ff_network(self, n, X_train, y_train, X_test, y_test, p):
         '''
         Forward feeding neural network with one/two hidden layer.
 
@@ -303,7 +296,7 @@ class Models:
         Y = y_train
         in_len = 9 # number of input feature
         out_len = 10 # number of output label
-        YY = self.__processor.convert_label(Y)
+        YY = p.convert_label(Y)
         print("Train label converted into vector label")
         model = Sequential()
         if(n==1):
@@ -318,7 +311,7 @@ class Models:
         model.fit(X, YY, epochs=150, batch_size=10, verbose=0)
 
         Y = y_test
-        YY = self.__processor.convert_label(Y)
+        YY = p.convert_label(Y)
         print("Test label converted into vector label")
         scores = model.evaluate(X_test, YY)
         print('Test Data Accuracy',scores[1])
