@@ -42,5 +42,11 @@ logistic_regression_dict = {
 }
 
 ff_network_dict = {
- 
+    'activation': 'relu',
+    'loss' : 'categorical_crossentropy',
+    'optimizer' : 'adam',
+    'metrics' : '["accuracy"]',
+    'epochs' : 150,
+    'batch_size' : 10,
+    'verbose' : 0,
 }

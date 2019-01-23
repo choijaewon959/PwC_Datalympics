@@ -29,5 +29,6 @@ filtered_data = filtering.PCA(X_train, 4)
 
 #accuracy = algorithm.logistic_regression(logistic_regression_dict, X_train, y_train, X_test, y_test)
 #result.log_result('logistic_regression', accuracy, logistic_regression_dict)
+print(X_train[1:])
 ff_accuracy = algorithm.ff_network(1, X_train, y_train, X_test, y_test,dataProcessor)
 
