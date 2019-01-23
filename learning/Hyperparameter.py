@@ -37,9 +37,10 @@ logistic_regression_dict = {
     'max_iter' : 100,
     'multi_class' : 'ovr',
     'verbose' : 0,
-    'warm_start' : False,  
+    'warm_start' : False,
     'n_jobs' : None
 }
 
-ff_network_dict : {}
-
+ff_network_dict = {
+ 
+}

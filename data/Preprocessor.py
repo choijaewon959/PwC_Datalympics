@@ -49,7 +49,7 @@ class Preprocessor:
         USE YOUR OWN FILE PATH AND COMMENT OUT WHEN YOU PUSH.
         """
         #data = pd.read_csv(r"C:\Users\lasts\Google Drive\Etc\Coding\Data_lympics\Deeplearning\loan.csv")
-        data = pd.read_csv("../loan_data/data/loan.csv")
+        #data = pd.read_csv("../loan_data/data/loan.csv")
         #low_memory was added to avoid data compression
 
 
@@ -60,7 +60,7 @@ class Preprocessor:
         #              columns= iris['feature_names'] + ['target'])
 
         #Taemin's debugging tool@!!
-        #data = pd.read_csv("Deeplearning\loan.csv")
+        data = pd.read_csv("Deeplearning/loan.csv")
 
         self.__colnames= data.columns.values
         self.__loanData = data

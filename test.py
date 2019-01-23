@@ -5,7 +5,7 @@ from data.Preprocessor import Preprocessor
 from data.FeatureFilter import FeatureFilter
 from learning.Hyperparameter import *
 from learning.Models import Models
-from evaluation.ResultLog import ResultLog
+from Evaluation.ResultLog import ResultLog
 
 print('test began')
 
@@ -27,6 +27,7 @@ y_test = dataProcessor.get_test_labels()
 filtered_data = filtering.PCA(X_train, 4)
 
 
-accuracy = algorithm.logistic_regression(logistic_regression_dict, X_train, y_train, X_test, y_test)
-result.log_result('logistic_regression', accuracy, logistic_regression_dict)
+#accuracy = algorithm.logistic_regression(logistic_regression_dict, X_train, y_train, X_test, y_test)
+#result.log_result('logistic_regression', accuracy, logistic_regression_dict)
+ff_accuracy = algorithm.ff_network(1, X_train, y_train, X_test, y_test,dataProcessor)
 
