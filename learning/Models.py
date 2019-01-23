@@ -8,53 +8,79 @@ from sklearn.svm import SVC
 from sklearn.svm import SVR
 from sklearn.metrics import classification_report, confusion_matrix
 from data.Preprocessor import Preprocessor
+from sklearn import preprocessing
+from Hyperparameter import Hyperparameter
 
-#import xgboost
+import xgboost
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import auc
 from sklearn.metrics import roc_auc_score
+from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
 
+<<<<<<< HEAD
 from keras.models import Sequential
 from keras.layers import Dense
 import sys
 sys.path.append('./learning')
 from num_node import * 
+=======
+# from keras.models import Sequential
+# from keras.layers import Dense
+# from num_node import *
+>>>>>>> fe4dbce26c0b41e0ba3c04959947b950b3c8a1bb
 
 class Models:
     def __init__(self):
         self.__algorithms = set() # list containing all the algorithms (str)
-        self.__processor = Preprocessor() # processor managing data
-        print("model made")
 
-    def random_forest(self):
+    def k_neighbor(self, X_train, y_train, X_test, y_test):
 
-        trainAttributes = self.__processor.get_train_attributes()
-        trainLabels = self.__processor.get_train_labels()
-        testAttributes = self.__processor.get_test_attributes()
-        testLabels = self.__processor.get_test_labels()
-        print(trainLabels)
+        knn = KNeighborsClassifier(n_neighbors=10)
+        knn.fit(X_train, y_train)
+        y_pred = knn.predict(X_test)
+
+        print("Accuracy:",accuracy_score(y_test, y_pred))
+
+        """
+        classification report is done when target_names is
+        in string type
+        (error when float64 was given to labels)
+        """
+        # feature = self.__processor.get_labels()
+        # print(feature)
+        #
+        # print(classification_report(y_test, y_pred,target_names=feature))
+
+
+
+    def decision_tree(self, X_train, y_train, X_test, y_test):
+
+        clf = DecisionTreeClassifier()
+        clf.fit(X_train, y_train)
+        y_pred = clf.predict(X_test)
+        print("Accuracy:",accuracy_score(y_test, y_pred))
+
+    def random_forest(self, X_train, y_train, X_test, y_test):
+
         rfc = RandomForestClassifier(n_estimators=30)
-        rfc.fit(trainAttributes, trainLabels)
-        preds = rfc.predict(testAttributes)
-        acc_rfc = (preds == testLabels).sum().astype(float) / len(preds)*100
+        rfc.fit(X_train, y_train)
+        preds = rfc.predict(X_test)
+        acc_rfc = (preds == y_test).sum().astype(float) / len(preds)*100
         print("Scikit-Learn's Random Forest Classifier's prediction accuracy is: %3.2f" % (acc_rfc))
 
-    def binary_logistic_regression(self):
+    def XGBClassifier(self, X_train, y_train, X_test, y_test):
 
-        trainAttributes = self.__processor.get_train_attributes()
-        trainLabels = self.__processor.get_train_labels()
-        testAttributes = self.__processor.get_test_attributes()
-        testLabels = self.__processor.get_test_labels()
+        # print(X_train.head())
+        # print(y_train.head())
+        # print(X_test.shape)
+        # print(y_test.shape)
 
-        print(trainAttributes.head())
-        print(trainLabels.head())
-        print(testAttributes.shape)
-        print(testLabels.shape)
-
-        eval_set=[(testAttributes, testLabels)]
+        eval_set=[(X_test, y_test)]
 
         clf = xgboost.sklearn.XGBClassifier(
             #objective="multi:softprob",
@@ -66,14 +92,14 @@ class Models:
             gamma=0,
             n_estimators=200, subsample=0.8, colsample_bytree=0.8)
 
-        clf.fit(trainAttributes, trainLabels, early_stopping_rounds=20,  eval_set=eval_set, verbose=True)
+        clf.fit(X_train, y_train, early_stopping_rounds=20,  eval_set=eval_set, verbose=True)
 
-        y_pred = clf.predict(testAttributes)
+        y_pred = clf.predict(X_test)
 
-        acc_xgb = (y_pred == testLabels).sum().astype(float) / len(y_pred)*100
+        acc_xgb = (y_pred == y_test).sum().astype(float) / len(y_pred)*100
         print("XGBoost's prediction accuracy is: %3.2f" % (acc_xgb))
 
-        accuracy = accuracy_score(np.array(testLabels).flatten(), y_pred)
+        accuracy = accuracy_score(np.array(y_test).flatten(), y_pred)
         print("Accuracy: %.10f%%" % (accuracy * 100.0))
 
         #accuracy_per_roc_auc = roc_auc_score(np.array(testLabels).flatten(), y_pred)
@@ -81,7 +107,7 @@ class Models:
 
         #print("Hello I'm binary logistic regression")
 
-    def linear_SVM(self):
+    def linear_SVM(self, X_train, y_train, X_test, y_test):
         '''
         Support Vector Machine algorithm for categorical classification.
         Kernel: linear
@@ -90,25 +116,37 @@ class Models:
         :return None
         '''
 
-        print("training...")
+        scaling = preprocessing.MinMaxScaler(feature_range=(-1,1)).fit(X_train)
+        X_train = scaling.transform(X_train)
+        X_test = scaling.transform(X_test)
 
-        trainAttributes = self.__processor.get_train_attributes()
-        trainLabels = self.__processor.get_train_labels()
-        testAttributes = self.__processor.get_test_attributes()
-        testLabels = self.__processor.get_test_labels()
+
+
+        svm_model_linear = SVC(kernel = 'linear', C = 1).fit(X_train, y_train)
+        svm_predictions = svm_model_linear.predict(X_test)
 
         #train svm model
+        # print("Learning...")
+        # svclassifier = SVC(kernel = 'linear')
+        # svclassifier.fit(X_train, y_train)
+
         print("Learning...")
-        svclassifier = SVC(kernel = 'linear')
-        svclassifier.fit(trainAttributes, trainLabels)
+        svclassifier = SVC(
+            C = 10000,
+            kernel = 'linear'
+        )
+        svclassifier.fit(X_train, y_train)
 
         #make prediction
-        label_prediction = svclassifier.predict(testAttributes)
+        #label_prediction = svclassifier.predict(X_test)
 
         #evaluation
-        print("Accuracy: ", accuracy_score(testLabels, label_prediction))
+        print("Accuracy: ", accuracy_score(y_test, svm_predictions))
 
-    def gaussian_SVM(self):
+        cm = confusion_matrix(y_test, svm_predictions)
+        print(cm)
+
+    def gaussian_SVM(self, X_train, y_train, X_test, y_test):
         '''
         Support Vector Machine algorithm for categorical classification.
         Kernel: gaussian
@@ -116,83 +154,72 @@ class Models:
         :param: None
         :return: None
         '''
-        trainAttributes = self.__processor.get_train_attributes()
-        trainLabels = self.__processor.get_train_labels()
-        testAttributes = self.__processor.get_test_attributes()
-        testLabels = self.__processor.get_test_labels()
-
         #train svm model
         print("Learning...")
-        svclassifier = SVC(kernel = 'rbf')
-        svclassifier.fit(trainAttributes, trainLabels)
+        svclassifier = SVC(
+            C=1.0,
+            cache_size=700,
+            class_weight=None,
+            coef0=0.0,
+            decision_function_shape='ovo',
+            degree=3,
+            gamma='scale',
+            kernel='rbf',
+            max_iter=-1,
+            probability=False,
+            random_state=None,
+            shrinking=True,
+            tol=0.001,
+            verbose=False
+        )
+        svclassifier.fit(X_train, y_train)
 
         #make prediction
-        label_prediction = svclassifier.predict(testAttributes)
+        label_prediction = svclassifier.predict(X_test)
 
         #evaluation
-        print("Accuracy: ", accuracy_score(testLabels, label_prediction))
+        print("Accuracy: ", accuracy_score(y_test, label_prediction))
 
-    def linear_SVR(self):
-        '''
-        Support Vector Regression algorithm which optimizes the linear support vector machine.
-
-        :param: None
-        :return: None
-        '''
-
-        trainAttributes = self.__processor.get_train_attributes()
-        trainLabels = self.__processor.get_train_labels()
-        testAttributes = self.__processor.get_test_attributes()
-        testLabels = self.__processor.get_test_labels()
-
-        print("Learning...")
-        svr = SVR(kernel = 'linear')
-        svr.fit(trainAttributes, trainLabels)
-
-        svr_pred = svr.predict(testAttributes)
-        print("Accuracy: ", accuracy_score(testLabels, svr_pred))
-
-    def logistic_regression(self):
+    def logistic_regression(self, X_train, y_train, X_test, y_test):
         '''
         Logistic regression model
 
         :param: None
         :return: None
         '''
-
-        trainAttributes = self.__processor.get_train_attributes()
-        trainLabels = self.__processor.get_train_labels()
-        testAttributes = self.__processor.get_test_attributes()
-        testLabels = self.__processor.get_test_labels()
+        hyperparam = Hyperparameter()
+        paramDic = hyperparam.get_logistic_regression_hyperparams()
 
         lg = LogisticRegression(
-            solver = 'newton-cg',
-            multi_class = 'multinomial'
+            penalty=paramDic['penalty'],
+            dual=paramDic['dual'],
+            tol=paramDic['tol'],
+            C=paramDic['C'],
+            fit_intercept=paramDic['fit_intercept'],
+            intercept_scaling=paramDic['intercept_scaling'],
+            class_weight=paramDic['class_weight'],
+            random_state=paramDic['random_state'],
+            solver=paramDic['newton-cg'],
+            max_iter=paramDic['max_iter'],
+            multi_class=paramDic['multi_class'],
+            verbose=0,
+            warm_start=False,
+            n_jobs=None
         )
-        lg.fit(trainAttributes, trainLabels)
+        lg.fit(X_train, y_train)
+        lg_pred = lg.predict(X_test)
+        print("Accuracy - predict: ", accuracy_score(y_test, lg_pred))
 
-        lg_pred = lg.predict(testAttributes)
-        print("Accuracy: ", accuracy_score(testLabels, lg_pred))
-    def convert_label(self,Y):
-        l = np.array([[0,0,0,0,0,0,0,0,0,0]])
-        tmp = np.array([0,0,0,0,0,0,0,0,0,0])
-        for i in Y:
-            tmp[int(i)] = 1
-            l = np.append(l,[tmp],axis=0)
-            tmp = np.array([0,0,0,0,0,0,0,0,0,0])
-        l = np.delete(l,0,0)
-        YY = pd.DataFrame(l)
-        return YY
-    def ff_network(self, n):
+    def ff_network(self, n, X_train, y_train, X_test, y_test):
         '''
         Fowrad feeding neural network with one hidden layer.
 
         '''
-        X = self.__processor.get_train_attributes()
-        Y = self.__processor.get_train_labels()
+        X = X_train
+        Y = y_train
         in_len = 9
         out_len = 10
-        YY = self.convert_label(Y)
+        YY = self.__processor.convert_label(Y)
         print("Train label converted into vector label")
         model = Sequential()
         if(n == 1):
@@ -206,8 +233,8 @@ class Models:
         model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
         model.fit(X, YY, epochs=150, batch_size=10, verbose=0)
 
-        Y = self.__processor.get_test_labels()
-        YY = self.convert_label(Y)
+        Y = y_test
+        YY = self.__processor.convert_label(Y)
         print("Test label converted into vector label")
-        scores = model.evaluate(self.__processor.get_test_attributes(),YY)
+        scores = model.evaluate(X_test, YY)
         print('Test Data Accuracy',scores[1])

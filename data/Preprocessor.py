@@ -2,6 +2,7 @@
 Data Preprocessor
 """
 import pandas as pd
+import numpy as np
 from util.Distribution import Distribution
 from sklearn.model_selection import train_test_split
 
@@ -40,7 +41,18 @@ class Preprocessor:
         '''
         print("retrieve_data running...")
         # TODO: file name should be converted to file path
-        data = pd.read_csv(r"C:\Users\lasts\Google Drive\Etc\Coding\Data_lympics\Deeplearning\loan.csv")
+
+        """
+        DONT ERASE THE COMMENTED FILE PATH.
+        USE YOUR OWN FILE PATH AND COMMENT OUT WHEN YOU PUSH.
+        """
+        #data = pd.read_csv(r"C:\Users\lasts\Google Drive\Etc\Coding\Data_lympics\Deeplearning\loan.csv")
+        data = pd.read_csv("../loan_data/data/loan.csv")
+        #low_memory was added to avoid data compression
+
+        #Taemin's debugging tool@!!
+        #data = pd.read_csv("Deeplearning\loan.csv")
+
         self.__colnames= data.columns.values
         self.__loanData = data
 
@@ -121,6 +133,23 @@ class Preprocessor:
         '''
         return self.__numOfKeys
 
+    def convert_label(self,Y):
+        '''
+        Converting the label into binary forms for keras neural network output layer.
+
+        :param: label
+        :return: converted label (int vector)
+        '''
+        l = np.array([[0,0,0,0,0,0,0,0,0,0]])
+        tmp = np.array([0,0,0,0,0,0,0,0,0,0])
+        for i in Y:
+            tmp[int(i)] = 1
+            l = np.append(l,[tmp],axis=0)
+            tmp = np.array([0,0,0,0,0,0,0,0,0,0])
+        l = np.delete(l,0,0)
+        YY = pd.DataFrame(l)
+        return YY
+
     def __temp_data_process(self):
 
 
@@ -195,3 +224,7 @@ class Preprocessor:
 
 
         self.__loanData = dfTrain
+
+    def get_labels(self):
+        print(self.__loanData['loan_status'].unique())
+        return self.__loanData['loan_status'].unique()
