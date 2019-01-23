@@ -22,11 +22,16 @@ from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 
+
 # from keras.models import Sequential
 # from keras.layers import Dense
-import sys
-sys.path.append('./learning')
-from num_node import *
+
+# from keras.models import Sequential
+# from keras.layers import Dense
+
+# import sys
+# sys.path.append('./learning')
+# from num_node import *
 
 import time
 import itertools
@@ -289,17 +294,17 @@ class Models:
 
     def ff_network(self, n, X_train, y_train, X_test, y_test):
         '''
-        Fowrad feeding neural network with one hidden layer.
+        Forward feeding neural network with one/two hidden layer.
 
         '''
         X = X_train
         Y = y_train
-        in_len = 9
-        out_len = 10
+        in_len = 9 # number of input feature
+        out_len = 10 # number of output label
         YY = self.__processor.convert_label(Y)
         print("Train label converted into vector label")
         model = Sequential()
-        if(n == 1):
+        if(n==1):
             model.add(Dense(int(num_hidden_layer1(in_len,out_len,len(Y))), input_dim=in_len, activation='relu'))
         elif(n==2):
             model.add(Dense(int(num_hidden_layer2(in_len,out_len)), input_dim=in_len, activation='relu'))

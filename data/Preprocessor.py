@@ -60,7 +60,7 @@ class Preprocessor:
                      columns= iris['feature_names'] + ['target'])
 
         #Taemin's debugging tool@!!
-        #data = pd.read_csv("Deeplearning\loan.csv")
+        data = pd.read_csv("Deeplearning/loan.csv")
 
         self.__colnames= data.columns.values
         self.__loanData = data
@@ -145,7 +145,7 @@ class Preprocessor:
 
     def convert_label(self,Y):
         '''
-        Converting the label into binary forms for keras neural network output layer.
+        Converting the label into binary vector forms for keras neural network output layer.
 
         :param: label
         :return: converted label (int vector)
