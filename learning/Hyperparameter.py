@@ -35,7 +35,7 @@ SVM_dict = {
     'C' : 1.0,
     'cache_size' : 700,
     'class_weight' : None,
-    'cdef' : 0.0,
+    'coef0' : 0.0,
     'decision_function_shape' : 'ovo',
     'degree' : 3,
     'gamma' : 'scale',

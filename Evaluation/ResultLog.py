@@ -34,14 +34,15 @@ class ResultLog:
 
         if not os.path.isfile('evaluation/result.csv'): # file does not exist
             with open('evaluation/result.csv', mode = 'w', newline = '') as csv_file:
+                print("test")
                 writer = csv.DictWriter(csv_file, fieldnames=row)
                 writer.writeheader()
                 writer.writerow({"Model": modelName, "Accuracy": accuracy, "Hyperparameter": paramString, "Time": currentTime})
         
         else:   #file exist
-            with open('evaluation/result.csv', mode = 'a') as csv_file:
-                writer = csv.writer(csv_file)
-                writer.writerow([modelName, accuracy, paramString, currentTime])
+            with open('evaluation/result.csv', mode = 'a', newline = '') as csv_file:
+                writer = csv.DictWriter(csv_file, fieldnames=row)
+                writer.writerow({"Model": modelName, "Accuracy": accuracy, "Hyperparameter": paramString, "Time": currentTime})
 
     def get_best_model(self):
         '''

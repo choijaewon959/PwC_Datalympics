@@ -30,7 +30,7 @@ class Preprocessor:
 
         self.__retrieve_data()
         # TODO: function call for preprocessing data
-        self.__temp_data_process()
+        #self.__temp_data_process()
         self.__split_data()
 
     def __retrieve_data(self):
@@ -53,11 +53,11 @@ class Preprocessor:
         #low_memory was added to avoid data compression
 
 
-        # Using sklearn datasets
-        # iris = datasets.load_wine()
-        #
-        # data = pd.DataFrame(data= np.c_[iris['data'], iris['target']],
-        #              columns= iris['feature_names'] + ['target'])
+        #Using sklearn datasets
+        iris = datasets.load_wine()
+        
+        data = pd.DataFrame(data= np.c_[iris['data'], iris['target']],
+                     columns= iris['feature_names'] + ['target'])
 
         #Taemin's debugging tool@!!
         data = pd.read_csv("Deeplearning/loan.csv")
@@ -75,8 +75,8 @@ class Preprocessor:
         print("split_data running...")
         # TODO: loan status may not be the label -> change to label accordingly.
         
-        X = self.__loanData.drop('loan_status', axis = 1)
-        y = self.__loanData['loan_status']
+        X = self.__loanData.drop('target', axis = 1)
+        y = self.__loanData['target']
 
         self.__attributes_train, self.__attributes_test, self.__labels_train, self.__labels_test = train_test_split(X, y, test_size=0.2)
 
