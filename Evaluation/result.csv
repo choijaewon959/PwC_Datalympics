@@ -1,3 +1,18 @@
 Model,Accuracy,Hyperparameter,Time
-logistic_regression,0.7587955554553855,"penalty:l2,dual:False,tol:0.0001,C:1.0,fit_intercept:True,intercept_scaling:1,class_weight:None,random_state:None,solver:sag,max_iter:100,multi_class:ovr,verbose:0,warm_start:False,n_jobs:None",2019-01-23 20:12:54.459107
-logistic_regression,0.7590153034776533,"penalty:l2,dual:False,tol:0.0001,C:5.0,fit_intercept:True,intercept_scaling:1,class_weight:None,random_state:None,solver:liblinear,max_iter:100,multi_class:ovr,verbose:0,warm_start:False,n_jobs:None",2019-01-23 20:26:11.164866
+Logistic Regression,1,"penalty:l2,dual:False,tol:0.0001,C:5.0,fit_intercept:True,intercept_scaling:1,class_weight:None,random_state:None,solver:liblinear,max_iter:100,multi_class:ovr,verbose:0,warm_start:False,n_jobs:None",24:31.6
+Logistic Regression,0.944444444,"penalty:l2,dual:False,tol:0.0001,C:5.0,fit_intercept:True,intercept_scaling:1,class_weight:None,random_state:None,solver:liblinear,max_iter:100,multi_class:ovr,verbose:0,warm_start:False,n_jobs:None",24:34.5
+Logistic Regression,0.916666667,"penalty:l2,dual:False,tol:0.0001,C:5.0,fit_intercept:True,intercept_scaling:1,class_weight:None,random_state:None,solver:liblinear,max_iter:100,multi_class:ovr,verbose:0,warm_start:False,n_jobs:None",24:37.1
+SVM,0.555555556,"C:1.0,cache_size:700,class_weight:None,coef0:0.0,decision_function_shape:ovo,degree:3,gamma:scale,kernel:rbf,max_iter:-1,probability:False,random_state:None,shrinking:True,tol:0.001,verbose:False",25:06.6
+SVM,0.777777778,"C:1.0,cache_size:700,class_weight:None,coef0:0.0,decision_function_shape:ovo,degree:3,gamma:scale,kernel:rbf,max_iter:-1,probability:False,random_state:None,shrinking:True,tol:0.001,verbose:False",25:51.5
+ff_network,,,2019-01-23 22:26:24.398839
+ff_network,,,2019-01-23 22:41:07.838096
+k_neighbor,0.55515,"n_neighbors:5,weights:uniform,algorithm:auto,leaf_size:30,p:2,metric:minkowski,metric_params:None,n_jobs:None",2019-01-23 22:47:00.193127
+k_neighbor,0.54605,"n_neighbors:5,weights:uniform,algorithm:auto,leaf_size:30,p:2,metric:minkowski,metric_params:None,n_jobs:None",2019-01-23 22:50:14.244360
+k_neighbor,0.54935,"n_neighbors:5,weights:uniform,algorithm:auto,leaf_size:30,p:2,metric:minkowski,metric_params:None,n_jobs:None",2019-01-23 22:52:20.167723
+k_neighbor,0.55435,"n_neighbors:5,weights:uniform,algorithm:auto,leaf_size:30,p:2,metric:minkowski,metric_params:None,n_jobs:None",2019-01-23 22:54:07.016081
+k_neighbor,0.6447181590750298,"n_neighbors:5,weights:uniform,algorithm:auto,leaf_size:30,p:2,metric:minkowski,metric_params:None,n_jobs:None",2019-01-23 22:58:43.691433
+k_neighbor,0.6454844598706304,"n_neighbors:5,weights:uniform,algorithm:auto,leaf_size:30,p:2,metric:minkowski,metric_params:None,n_jobs:None",2019-01-23 23:01:51.551214
+k_neighbor,0.6449266379679506,"n_neighbors:5,weights:uniform,algorithm:auto,leaf_size:30,p:2,metric:minkowski,metric_params:None,n_jobs:None",2019-01-23 23:03:13.472211
+k_neighbor,0.651006333250693,"n_neighbors:5,weights:uniform,algorithm:auto,leaf_size:30,p:2,metric:minkowski,metric_params:None,n_jobs:None",2019-01-23 23:12:54.255573
+k_neighbor,0.6442730284658207,"n_neighbors:5,weights:uniform,algorithm:auto,leaf_size:30,p:2,metric:minkowski,metric_params:None,n_jobs:None",2019-01-23 23:33:55.545178
+XGBClassifier,,"max_depth:3,learning_rate:0.1,n_estimators:100,silent:True,objective:reg:linear,booster:gbtree,n_jobs:1,nthread:None,gamma:0,min_child_weight:1,max_delta_step:0,subsample:1,colsample_bytree:1,colsample_bylevel:1,reg_alpha:0,reg_lambda:1,scale_pos_weight:1,base_score:0.5,random_state:0,seed:None,missing:None,importance_type:gain",2019-01-23 23:38:40.264025
