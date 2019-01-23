@@ -9,7 +9,7 @@ from sklearn.svm import SVR
 from sklearn.metrics import classification_report, confusion_matrix
 from data.Preprocessor import Preprocessor
 from sklearn import preprocessing
-from Hyperparameter import Hyperparameter
+from learning.Hyperparameter import Hyperparameter
 
 import xgboost
 from sklearn.ensemble import RandomForestClassifier
@@ -22,17 +22,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 
-<<<<<<< HEAD
-from keras.models import Sequential
-from keras.layers import Dense
-import sys
-sys.path.append('./learning')
-from num_node import * 
-=======
+
 # from keras.models import Sequential
 # from keras.layers import Dense
 # from num_node import *
->>>>>>> fe4dbce26c0b41e0ba3c04959947b950b3c8a1bb
 
 class Models:
     def __init__(self):
@@ -55,8 +48,6 @@ class Models:
         # print(feature)
         #
         # print(classification_report(y_test, y_pred,target_names=feature))
-
-
 
     def decision_tree(self, X_train, y_train, X_test, y_test):
 
@@ -120,8 +111,6 @@ class Models:
         X_train = scaling.transform(X_train)
         X_test = scaling.transform(X_test)
 
-
-
         svm_model_linear = SVC(kernel = 'linear', C = 1).fit(X_train, y_train)
         svm_predictions = svm_model_linear.predict(X_test)
 
@@ -180,7 +169,7 @@ class Models:
         #evaluation
         print("Accuracy: ", accuracy_score(y_test, label_prediction))
 
-    def logistic_regression(self, X_train, y_train, X_test, y_test):
+    def logistic_regression(self, hyperparam_obj, X_train, y_train, X_test, y_test):
         '''
         Logistic regression model
 

@@ -4,13 +4,14 @@ from util.Distribution import Distribution
 from data.Preprocessor import Preprocessor
 from data.FeatureFilter import FeatureFilter
 from learning.Models import Models
+from learning.Hyperparameter import Hyperparameter
 
 print('test began')
 
 #objects
-algorithm = Models()
 dataProcessor = Preprocessor()
 filtering = FeatureFilter()
+algorithm = Models()
 
 #data for training
 X_train = dataProcessor.get_train_attributes()
