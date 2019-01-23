@@ -23,4 +23,4 @@ y_test = dataProcessor.get_test_labels()
 #filtered X_train attributes
 filtered_data = filtering.PCA(X_train, 4)
 
-algorithm.logistic_regression(X_train, y_train, X_test, y_test)
+algorithm.k_neighbor(X_train, y_train, X_test, y_test)

@@ -9,7 +9,7 @@ from sklearn.svm import SVR
 from sklearn.metrics import classification_report, confusion_matrix
 from data.Preprocessor import Preprocessor
 from sklearn import preprocessing
-from Hyperparameter import Hyperparameter
+from learning.Hyperparameter import Hyperparameter
 
 import xgboost
 from sklearn.ensemble import RandomForestClassifier
@@ -22,39 +22,102 @@ from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 
-<<<<<<< HEAD
 from keras.models import Sequential
 from keras.layers import Dense
 import sys
 sys.path.append('./learning')
-from num_node import * 
-=======
+from num_node import *
+
+import time
+
 # from keras.models import Sequential
 # from keras.layers import Dense
 # from num_node import *
->>>>>>> fe4dbce26c0b41e0ba3c04959947b950b3c8a1bb
 
 class Models:
     def __init__(self):
         self.__algorithms = set() # list containing all the algorithms (str)
 
     def k_neighbor(self, X_train, y_train, X_test, y_test):
+        #Accuracy: 0.7485575514435755 using 800k dataset
 
+        """if scaling is necessary for running this algorithm"""
+        # scaling = preprocessing.MinMaxScaler(feature_range=(-1,1)).fit(X_train)
+        # X_train = scaling.transform(X_train)
+        # X_test = scaling.transform(X_test)
+
+        start_time = time.time()
         knn = KNeighborsClassifier(n_neighbors=10)
         knn.fit(X_train, y_train)
         y_pred = knn.predict(X_test)
+        print("--- %s seconds ---" % (time.time() - start_time))
 
         print("Accuracy:",accuracy_score(y_test, y_pred))
+
+        cm = confusion_matrix(y_test, y_pred)
+        print(cm)
+        features = y_train.unique() 
+
+        def plot_confusion_matrix(cm, classes,
+                          normalize=False,
+                          title='Confusion matrix',
+                          cmap=plt.cm.Blues):
+            """
+            This function prints and plots the confusion matrix.
+            Normalization can be applied by setting `normalize=True`.
+            """
+            if normalize:
+                cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+                print("Normalized confusion matrix")
+            else:
+                print('Confusion matrix, without normalization')
+
+            print(cm)
+
+            plt.imshow(cm, interpolation='nearest', cmap=cmap)
+            plt.title(title)
+            plt.colorbar()
+            tick_marks = np.arange(len(classes))
+            plt.xticks(tick_marks, classes, rotation=45)
+            plt.yticks(tick_marks, classes)
+
+            fmt = '.2f' if normalize else 'd'
+            thresh = cm.max() / 2.
+            for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+                plt.text(j, i, format(cm[i, j], fmt),
+                         horizontalalignment="center",
+                         color="white" if cm[i, j] > thresh else "black")
+
+            plt.ylabel('True label')
+            plt.xlabel('Predicted label')
+            plt.tight_layout()
+
+
+        # Compute confusion matrix
+        cnf_matrix = confusion_matrix(y_test, y_pred)
+        np.set_printoptions(precision=2)
+
+        # Plot non-normalized confusion matrix
+        plt.figure()
+        plot_confusion_matrix(cnf_matrix, classes=features,
+                              title='Confusion matrix, without normalization')
+
+        # Plot normalized confusion matrix
+        plt.figure()
+        plot_confusion_matrix(cnf_matrix, classes=features, normalize=True,
+                              title='Normalized confusion matrix')
+
+        plt.show()
 
         """
         classification report is done when target_names is
         in string type
         (error when float64 was given to labels)
         """
-        # feature = self.__processor.get_labels()
-        # print(feature)
-        #
-        # print(classification_report(y_test, y_pred,target_names=feature))
+
+        # print(features)
+
+        print(classification_report(y_test, y_pred,target_names=features))
 
 
 
@@ -120,10 +183,8 @@ class Models:
         X_train = scaling.transform(X_train)
         X_test = scaling.transform(X_test)
 
-
-
         svm_model_linear = SVC(kernel = 'linear', C = 1).fit(X_train, y_train)
-        svm_predictions = svm_model_linear.predict(X_test)
+        y_pred = svm_model_linear.predict(X_test)
 
         #train svm model
         # print("Learning...")
@@ -141,10 +202,17 @@ class Models:
         #label_prediction = svclassifier.predict(X_test)
 
         #evaluation
-        print("Accuracy: ", accuracy_score(y_test, svm_predictions))
+        print("Accuracy: ", accuracy_score(y_test, y_pred))
 
-        cm = confusion_matrix(y_test, svm_predictions)
+        cm = confusion_matrix(y_test, y_pred)
         print(cm)
+        """
+        https://en.wikipedia.org/wiki/F1_score
+        https://en.wikipedia.org/wiki/Precision_and_recall
+
+        The F1 score is the harmonic average of the precision and recall,
+        where an F1 score reaches its best value at 1 (perfect precision and recall) and worst at 0.
+        """
 
     def gaussian_SVM(self, X_train, y_train, X_test, y_test):
         '''
