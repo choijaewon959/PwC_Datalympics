@@ -30,7 +30,7 @@ class Preprocessor:
 
         self.__retrieve_data()
         # TODO: function call for preprocessing data
-        self.__temp_data_process()
+        #self.__temp_data_process()
         self.__split_data()
 
     def __retrieve_data(self):

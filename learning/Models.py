@@ -23,8 +23,9 @@ from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 
-# from keras.models import Sequential
-# from keras.layers import Dense
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.utils import to_categorical
 import sys
 sys.path.append('./learning')
 from num_node import *
@@ -309,24 +310,29 @@ class Models:
         '''
         X = X_train
         Y = y_train
-        in_len = 8 # number of input feature
-        out_len = 10 # number of output label
-        YY = p.convert_label(Y)
+        in_len = 4 # number of input feature
+        out_len = 3 # number of output label
+        print(y_train)
+        YY = to_categorical(Y)
         print("Train label converted into vector label")
         model = Sequential()
-        if(n==1):
-            model.add(Dense(int(num_hidden_layer1(in_len,out_len,len(Y))), input_dim=in_len, activation='relu'))
-        elif(n==2):
-            model.add(Dense(int(num_hidden_layer2(in_len,out_len)), input_dim=in_len, activation='relu'))
-        elif(n==3):
-            model.add(Dense(int(num_hidden_layer3(in_len,out_len,len(Y))[0]), input_dim=in_len, activation='relu'))
-            model.add(Dense(int(num_hidden_layer3(in_len,out_len,len(Y))[1]), activation='relu'))
-        model.add(Dense(out_len, activation='sigmoid'))
-        model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-        model.fit(X, YY, epochs=150, batch_size=10, verbose=0)
-
-        Y = y_test
-        YY = p.convert_label(Y)
-        print("Test label converted into vector label")
-        scores = model.evaluate(X_test, YY)
-        print('Test Data Accuracy',scores[1])
+        hidden_act = ['sigmoid','tanh', 'relu']
+        epoch = [5,20, 50]
+        Y_test = to_categorical(y_test)
+        out = ""
+        for act in hidden_act:
+            for ep in epoch:
+                if(n==1):
+                    model.add(Dense(int(num_hidden_layer1(in_len,out_len,len(Y))), input_dim=in_len, activation=act))
+                elif(n==2):
+                    model.add(Dense(int(num_hidden_layer2(in_len,out_len)), input_dim=in_len, activation=act))
+                elif(n==3):
+                    model.add(Dense(int(num_hidden_layer3(in_len,out_len,len(Y))[0]), input_dim=in_len, activation=act))
+                    model.add(Dense(int(num_hidden_layer3(in_len,out_len,len(Y))[1]), activation=act))
+                model.add(Dense(out_len, activation='softmax'))
+                model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+                model.fit(X, YY, epochs=ep, batch_size=20, verbose=0)
+                scores = model.evaluate(X_test, Y_test)
+                out = out +"Accuracy : "+ str(scores[1]) + ", Hidden layer activation : " + act +" Epoch:"+str(ep) +" |"
+                print(out)
+        print(out)
