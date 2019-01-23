@@ -19,7 +19,9 @@ from sklearn.model_selection import train_test_split
 
 from keras.models import Sequential
 from keras.layers import Dense
-from num_node import *
+import sys
+sys.path.append('./learning')
+from num_node import * 
 
 class Models:
     def __init__(self):
