@@ -22,6 +22,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 
+<<<<<<< HEAD
 from keras.models import Sequential
 from keras.layers import Dense
 import sys
@@ -29,6 +30,8 @@ sys.path.append('./learning')
 from num_node import *
 
 import time
+=======
+>>>>>>> afb37ca4dddd2b83a09be07587bea9d6df106017
 
 # from keras.models import Sequential
 # from keras.layers import Dense
@@ -118,8 +121,6 @@ class Models:
         # print(features)
 
         print(classification_report(y_test, y_pred,target_names=features))
-
-
 
     def decision_tree(self, X_train, y_train, X_test, y_test):
 
@@ -248,7 +249,7 @@ class Models:
         #evaluation
         print("Accuracy: ", accuracy_score(y_test, label_prediction))
 
-    def logistic_regression(self, X_train, y_train, X_test, y_test):
+    def logistic_regression(self, hyperparam_obj, X_train, y_train, X_test, y_test):
         '''
         Logistic regression model
 
