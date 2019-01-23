@@ -46,7 +46,7 @@ ff_network_dict = {
     'loss' : 'categorical_crossentropy',
     'optimizer' : 'adam',
     'metrics' : '["accuracy"]',
-    'epochs' : 150,
+    'epochs' : 5,
     'batch_size' : 10,
     'verbose' : 0,
 }
