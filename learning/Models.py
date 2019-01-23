@@ -22,8 +22,8 @@ from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 
-from keras.models import Sequential
-from keras.layers import Dense
+# from keras.models import Sequential
+# from keras.layers import Dense
 import sys
 sys.path.append('./learning')
 from num_node import *
@@ -222,7 +222,7 @@ class Models:
         where an F1 score reaches its best value at 1 (perfect precision and recall) and worst at 0.
         """
 
-    def SVM(self, X_train, y_train, X_test, y_test):
+    def SVM(self, paramDic, X_train, y_train, X_test, y_test):
         '''
         Support Vector Machine algorithm for categorical classification.
         Kernel: gaussian
@@ -233,20 +233,20 @@ class Models:
         #train svm model
         print("Learning...")
         svclassifier = SVC(
-            C=1.0,
-            cache_size=700,
-            class_weight=None,
-            coef0=0.0,
-            decision_function_shape='ovo',
-            degree=3,
-            gamma='scale',
-            kernel='rbf',
-            max_iter=-1,
-            probability=False,
-            random_state=None,
-            shrinking=True,
-            tol=0.001,
-            verbose=False
+            C=paramDic['C'],
+            cache_size=paramDic['cache_size'],
+            class_weight=paramDic['class_weight'],
+            coef0=paramDic['coef0'],
+            decision_function_shape=paramDic['decision_function_shape'],
+            degree=paramDic['degree'],
+            gamma=paramDic['gamma'],
+            kernel=paramDic['kernel'],
+            max_iter=paramDic['max_iter'],
+            probability=paramDic['probability'],
+            random_state=paramDic['random_state'],
+            shrinking=paramDic['shrinking'],
+            tol=paramDic['tol'],
+            verbose=paramDic['verbose']
         )
         svclassifier.fit(X_train, y_train)
 
