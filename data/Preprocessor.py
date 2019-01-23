@@ -162,7 +162,6 @@ class Preprocessor:
 
     def __temp_data_process(self):
 
-
         dfTrain = self.__loanData
         #copied data to refrain from warnings
         dfTrain= dfTrain.copy()

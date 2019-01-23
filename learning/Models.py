@@ -9,7 +9,7 @@ from sklearn.svm import SVR
 from sklearn.metrics import classification_report, confusion_matrix
 from data.Preprocessor import Preprocessor
 from sklearn import preprocessing
-from learning.Hyperparameter import Hyperparameter
+from learning.Hyperparameter import *
 
 import xgboost
 from sklearn.ensemble import RandomForestClassifier
@@ -44,9 +44,8 @@ import itertools
 >>>>>>> 45cefc032b4e5089d9ce7fd1cc0db0f3be3e1ba5
 
 class Models:
-    def __init__(self,dataprocessor):
+    def __init__(self):
         self.__algorithms = set() # list containing all the algorithms (str)
-        self.__dataprocessor=dataprocessor
 
 
     def k_neighbor(self, X_train, y_train, X_test, y_test):
@@ -230,7 +229,7 @@ class Models:
         where an F1 score reaches its best value at 1 (perfect precision and recall) and worst at 0.
         """
 
-    def gaussian_SVM(self, X_train, y_train, X_test, y_test):
+    def SVM(self, X_train, y_train, X_test, y_test):
         '''
         Support Vector Machine algorithm for categorical classification.
         Kernel: gaussian
@@ -262,18 +261,17 @@ class Models:
         label_prediction = svclassifier.predict(X_test)
 
         #evaluation
-        print("Accuracy: ", accuracy_score(y_test, label_prediction))
+        accuracy = accuracy_score(y_test, label_prediction)
+        print("Accuracy: ", accuracy)
+        return accuracy
 
-    def logistic_regression(self, hyperparam_obj, X_train, y_train, X_test, y_test):
+    def logistic_regression(self, paramDic, X_train, y_train, X_test, y_test):
         '''
         Logistic regression model
 
         :param: None
         :return: None
         '''
-        hyperparam = Hyperparameter()
-        paramDic = hyperparam.get_logistic_regression_hyperparams()
-
         lg = LogisticRegression(
             penalty=paramDic['penalty'],
             dual=paramDic['dual'],
@@ -283,16 +281,18 @@ class Models:
             intercept_scaling=paramDic['intercept_scaling'],
             class_weight=paramDic['class_weight'],
             random_state=paramDic['random_state'],
-            solver=paramDic['newton-cg'],
+            solver=paramDic['solver'],
             max_iter=paramDic['max_iter'],
             multi_class=paramDic['multi_class'],
-            verbose=0,
-            warm_start=False,
-            n_jobs=None
+            verbose=paramDic['verbose'],
+            warm_start=paramDic['warm_start'],
+            n_jobs=paramDic['n_jobs']
         )
         lg.fit(X_train, y_train)
         lg_pred = lg.predict(X_test)
-        print("Accuracy - predict: ", accuracy_score(y_test, lg_pred))
+        accuracy = accuracy_score(y_test, lg_pred)
+        print("Accuracy - predict: ", accuracy)
+        return accuracy
 
     def ff_network(self, n, X_train, y_train, X_test, y_test):
         '''
