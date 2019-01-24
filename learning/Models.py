@@ -73,86 +73,61 @@ class Models:
         visual.classification_report(X_train, y_train, X_test, y_test)
 
         return accuracy
-        # labels=self.__dataprocessor.get_labels()
-        # data= self.__dataprocessor.get_data()
 
-        # features = y_train.unique()
-        #
-        # def plot_confusion_matrix(cm, classes,
-        #                   normalize=False,
-        #                   title='Confusion matrix',
-        #                   cmap=plt.cm.Blues):
-        #     """
-        #     This function prints and plots the confusion matrix.
-        #     Normalization can be applied by setting `normalize=True`.
-        #     """
-        #     if normalize:
-        #         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-        #         print("Normalized confusion matrix")
-        #     else:
-        #         print('Confusion matrix, without normalization')
-        #
-        #     print(cm)
-        #
-        #     plt.imshow(cm, interpolation='nearest', cmap=cmap)
-        #     plt.title(title)
-        #     plt.colorbar()
-        #     tick_marks = np.arange(len(classes))
-        #     plt.xticks(tick_marks, classes, rotation=45)
-        #     plt.yticks(tick_marks, classes)
-        #
-        #     fmt = '.2f' if normalize else 'd'
-        #     thresh = cm.max() / 2.
-        #     for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
-        #         plt.text(j, i, format(cm[i, j], fmt),
-        #                  horizontalalignment="center",
-        #                  color="white" if cm[i, j] > thresh else "black")
-        #
-        #     plt.ylabel('True label')
-        #     plt.xlabel('Predicted label')
-        #     plt.tight_layout()
-        #
-        #
-        # # Compute confusion matrix
-        # cnf_matrix = confusion_matrix(y_test, y_pred)
-        # np.set_printoptions(precision=2)
-        #
-        # # Plot non-normalized confusion matrix
-        # plt.figure()
-        # plot_confusion_matrix(cnf_matrix, classes=features,
-        #                       title='Confusion matrix, without normalization')
-        #
-        # # Plot normalized confusion matrix
-        # plt.figure()
-        # plot_confusion_matrix(cnf_matrix, classes=features, normalize=True,
-        #                       title='Normalized confusion matrix')
-        #
-        # plt.show()
-        #
-        # """
-        # classification report is done when target_names is
-        # in string type
-        # (error when float64 was given to labels)
-        # """
-        #
-        # # print(features)
-        #
-        # print(classification_report(y_test, y_pred,target_names=features))
+    def decision_tree(self, paramDic, X_train, y_train, X_test, y_test):
 
-    def decision_tree(self, X_train, y_train, X_test, y_test):
+        clf = DecisionTreeClassifier(
+                 criterion=paramDic['criterion'],
+                 splitter=paramDic['splitter'],
+                 max_depth=paramDic['max_depth'],
+                 min_samples_split=paramDic['min_samples_split'],
+                 min_samples_leaf=paramDic['min_samples_leaf'],
+                 min_weight_fraction_leaf=paramDic['min_weight_fraction_leaf'],
+                 max_features=paramDic['max_features'],
+                 random_state=paramDic['random_state'],
+                 max_leaf_nodes=paramDic['max_leaf_nodes'],
+                 min_impurity_decrease=paramDic['min_impurity_decrease'],
+                 min_impurity_split=paramDic['min_impurity_split'],
+                 presort=paramDic['presort'])
 
-        clf = DecisionTreeClassifier()
         clf.fit(X_train, y_train)
         y_pred = clf.predict(X_test)
-        print("Accuracy:",accuracy_score(y_test, y_pred))
+
+        accuracy = accuracy_score(y_test, y_pred)
+        print("decision_tree Accuracy: " , accuracy)
+
+        return accuracy
 
     def random_forest(self, X_train, y_train, X_test, y_test):
 
-        rfc = RandomForestClassifier(n_estimators=30)
+        rfc = RandomForestClassifier(
+                 n_estimators=paramDic['n_estimators'],
+                 criterion=paramDic['criterion'],
+                 max_depth=paramDic['max_depth'],
+                 min_samples_split=paramDic['min_samples_split'],
+                 min_samples_leaf=paramDic['min_samples_leaf'],
+                 min_weight_fraction_leaf=paramDic['min_weight_fraction_leaf'],
+                 max_features=paramDic['max_features'],
+                 max_leaf_nodes=paramDic['max_leaf_nodes'],
+                 min_impurity_decrease=paramDic['min_impurity_decrease'],
+                 min_impurity_split=paramDic['min_impurity_split'],
+                 bootstrap=paramDic['bootstrap'],
+                 oob_score=paramDic['oob_score'],
+                 n_jobs=paramDic['n_jobs'],
+                 random_state=paramDic['random_state'],
+                 verbose=paramDic['verbose'],
+                 warm_start=paramDic['warm_start'],
+                 class_weight=paramDic['class_weight'])
+
         rfc.fit(X_train, y_train)
         preds = rfc.predict(X_test)
         acc_rfc = (preds == y_test).sum().astype(float) / len(preds)*100
         print("Scikit-Learn's Random Forest Classifier's prediction accuracy is: %3.2f" % (acc_rfc))
+
+        accuracy = accuracy_score(y_test, y_pred)
+        print("decision_tree Accuracy: " , accuracy)
+
+        return accuracy
 
     def XGBClassifier(self, paramDic, X_train, y_train, X_test, y_test):
 
@@ -183,6 +158,7 @@ class Models:
         accuracy = accuracy_score(np.array(y_test).flatten(), y_pred)
         print("Accuracy: %.10f%%" % (accuracy * 100.0))
 
+        return accuracy
         #accuracy_per_roc_auc = roc_auc_score(np.array(testLabels).flatten(), y_pred)
         #print("ROC-AUC: %.10f%%" % (accuracy_per_roc_auc * 100))
 
@@ -221,15 +197,6 @@ class Models:
         #evaluation
         print("Accuracy: ", accuracy_score(y_test, y_pred))
 
-        cm = confusion_matrix(y_test, y_pred)
-        print(cm)
-        """
-        https://en.wikipedia.org/wiki/F1_score
-        https://en.wikipedia.org/wiki/Precision_and_recall
-
-        The F1 score is the harmonic average of the precision and recall,
-        where an F1 score reaches its best value at 1 (perfect precision and recall) and worst at 0.
-        """
 
     def SVM(self, paramDic, X_train, y_train, X_test, y_test):
         '''

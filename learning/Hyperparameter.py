@@ -13,7 +13,7 @@ k_neighor_dict = {
 }
 
 decision_tree_dict = {
-                'criterion' : "gini",
+                 'criterion' : "gini",
                  'splitter' : "best",
                  'max_depth' : None,
                  'min_samples_split' : 2,

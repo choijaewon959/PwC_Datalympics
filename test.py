@@ -33,5 +33,5 @@ y_test = dataProcessor.get_test_labels()
 # # accuracy = algorithm.SVM(SVM_dict, X_train, y_train, X_test, y_test)
 # result.log_result('ff_network', ff_accuracy, ff_network_dict)
 
-accuracy = algorithm.XGBClassifier(XGBClassifier_dict, X_train, y_train, X_test, y_test)
-result.log_result('XGBClassifier', accuracy, XGBClassifier_dict)
+accuracy = algorithm.decision_tree(decision_tree_dict, X_train, y_train, X_test, y_test)
+result.log_result('decision_tree', accuracy, decision_tree_dict)
