@@ -4,14 +4,15 @@ Model object that contains all the possible classification models
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.svm import SVC
-from sklearn.svm import SVR
-from sklearn.metrics import classification_report, confusion_matrix
 from data.Preprocessor import Preprocessor
-from sklearn import preprocessing
 from learning.Hyperparameter import *
 
 import xgboost
+
+from sklearn.svm import SVC
+from sklearn.svm import SVR
+from sklearn import preprocessing
+from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
@@ -24,6 +25,7 @@ from sklearn.tree import DecisionTreeClassifier
 
 from keras.models import Sequential
 from keras.layers import Dense
+from keras.utils import to_categorical
 import sys
 sys.path.append('./learning')
 from num_node import *
@@ -259,8 +261,13 @@ class Models:
         )
         lg.fit(X_train, y_train)
         lg_pred = lg.predict(X_test)
+        num_of_folds = 10
+
         accuracy = accuracy_score(y_test, lg_pred)
-        print("Accuracy - predict: ", accuracy)
+
+        cross_valid_accuracy = cross_val_score(lg, X_train, y_train, scoring='accuracy', cv = num_of_folds).mean()/num_of_folds
+        print("Accuracy: ", accuracy)
+        print("cross validation accuracy ", cross_valid_accuracy)
         return accuracy
 
     def ff_network(self, n, X_train, y_train, X_test, y_test, p):
@@ -270,24 +277,29 @@ class Models:
         '''
         X = X_train
         Y = y_train
-        in_len = 8 # number of input feature
-        out_len = 10 # number of output label
-        YY = p.convert_label(Y)
+        in_len = 4 # number of input feature
+        out_len = 3 # number of output label
+        print(y_train)
+        YY = to_categorical(Y)
         print("Train label converted into vector label")
         model = Sequential()
-        if(n==1):
-            model.add(Dense(int(num_hidden_layer1(in_len,out_len,len(Y))), input_dim=in_len, activation='relu'))
-        elif(n==2):
-            model.add(Dense(int(num_hidden_layer2(in_len,out_len)), input_dim=in_len, activation='relu'))
-        elif(n==3):
-            model.add(Dense(int(num_hidden_layer3(in_len,out_len,len(Y))[0]), input_dim=in_len, activation='relu'))
-            model.add(Dense(int(num_hidden_layer3(in_len,out_len,len(Y))[1]), activation='relu'))
-        model.add(Dense(out_len, activation='sigmoid'))
-        model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-        model.fit(X, YY, epochs=150, batch_size=10, verbose=0)
-
-        Y = y_test
-        YY = p.convert_label(Y)
-        print("Test label converted into vector label")
-        scores = model.evaluate(X_test, YY)
-        print('Test Data Accuracy',scores[1])
+        hidden_act = ['sigmoid','tanh', 'relu']
+        epoch = [5,20, 50]
+        Y_test = to_categorical(y_test)
+        out = ""
+        for act in hidden_act:
+            for ep in epoch:
+                if(n==1):
+                    model.add(Dense(int(num_hidden_layer1(in_len,out_len,len(Y))), input_dim=in_len, activation=act))
+                elif(n==2):
+                    model.add(Dense(int(num_hidden_layer2(in_len,out_len)), input_dim=in_len, activation=act))
+                elif(n==3):
+                    model.add(Dense(int(num_hidden_layer3(in_len,out_len,len(Y))[0]), input_dim=in_len, activation=act))
+                    model.add(Dense(int(num_hidden_layer3(in_len,out_len,len(Y))[1]), activation=act))
+                model.add(Dense(out_len, activation='softmax'))
+                model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+                model.fit(X, YY, epochs=ep, batch_size=20, verbose=0)
+                scores = model.evaluate(X_test, Y_test)
+                out = out +"Accuracy : "+ str(scores[1]) + ", Hidden layer activation : " + act +" Epoch:"+str(ep) +" |"
+                print(out)
+        print(out)
