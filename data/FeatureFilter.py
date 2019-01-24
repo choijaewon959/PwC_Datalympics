@@ -4,7 +4,8 @@ Feature filtering object for reducing the dimensionality of the feature vectors
 import pandas as pd
 from util.Distribution import Distribution
 from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA 
+from sklearn.decomposition import PCA
+from sklearn import preprocessing
 
 class FeatureFilter:
     def __init__(self):
@@ -35,3 +36,16 @@ class FeatureFilter:
         :return: dimensionality of feature vector (int)
         '''
         return self.__reducedDimension
+
+    def scale_data(self, X_train, y_train):
+        '''
+        Normalize data.
+
+        :param: data to be normalized. (Data frame)
+        :return: nomalized data. (Data frame)
+        '''
+        scaling = preprocessing.MinMaxScaler(feature_range=(-1,1))
+        X_train_normalized = pd.DataFrame(scaling.fit_transform(X_train))
+        y_train_normalized = pd.Series(scaling.fit_transform(y_train.reshape(-1,1)))
+
+        return X_train_normalized, y_train_normalized

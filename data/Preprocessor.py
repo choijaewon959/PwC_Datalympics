@@ -3,12 +3,13 @@ Data Preprocessor
 """
 import pandas as pd
 import numpy as np
-from util.Distribution import Distribution
-from sklearn.model_selection import train_test_split
-from sklearn import datasets
 import time
-
-from sklearn.model_selection import StratifiedShuffleSplit
+from util.Distribution import Distribution
+from sklearn import datasets
+from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
+from imblearn.over_sampling import SMOTE
+from imblearn.under_sampling import NearMiss, CondensedNearestNeighbour
+from imblearn.combine import SMOTETomek
 
 class Preprocessor:
     def __init__(self):
@@ -40,7 +41,9 @@ class Preprocessor:
         # TODO: function call for preprocessing data
         self.__temp_data_process()
         self.__split_data()
+        self.__reample_data_CNN()
         self.__stratify_data()
+
     def __retrieve_data(self):
         '''
         Retrieve the data from the csv file and process to store data to datastructures.
@@ -57,7 +60,7 @@ class Preprocessor:
         USE YOUR OWN FILE PATH AND COMMENT OUT WHEN YOU PUSH.
         """
         #data = pd.read_csv(r"C:\Users\lasts\Google Drive\Etc\Coding\Data_lympics\Deeplearning\loan.csv")
-        data = pd.read_csv("../loan_data/data/loan.csv")
+        data = pd.read_csv("../loan_data/data/loanfull.csv")
         #data = pd.read_csv("../loan_data/data/loanfull.csv")
         #low_memory was added to avoid data compression
 
@@ -76,7 +79,6 @@ class Preprocessor:
         self.__loanData = data
         print("[retrieve_data finished]")
 
-
     def __split_data(self):
         '''
         Split the dataframe into two datasets: Traning data, test data.
@@ -91,6 +93,92 @@ class Preprocessor:
 
         self.__attributes_train, self.__attributes_test, self.__labels_train, self.__labels_test = train_test_split(X, y, test_size=0.2, random_state = 1)
         print("[split_data finished]")
+
+    def __stratify_data(self):
+        '''
+        splits data in to training and testing with the ratios of label kept similar
+        '''
+        stratifier = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
+        for train_set, test_set in stratifier.split(self.__loanData, self.__loanData['loan_status']):
+            stratified_train = self.__loanData.loc[train_set]
+            stratified_test = self.__loanData.loc[test_set]
+        # print('Train set ratio \n', stratified_train["loan_status"].value_counts()/len(self.__loanData))
+        # print('Test set ratio \n', stratified_test["loan_status"].value_counts()/len(self.__loanData))
+        self.__stratified_test_label = stratified_test['loan_status']
+        self.__stratified_test_att = stratified_test.drop('loan_status', axis=1)
+
+        self.__stratified_train_label = stratified_train['loan_status']
+        self.__stratified_train_att = stratified_train.drop('loan_status', axis=1)
+        # print(self.__stratified_train_att)
+        # print(self.__stratified_train_label)
+        print("[stratify_data finished]")
+
+    def __resample_data_ADASYN(self):
+        '''
+        Resampling imbalanced data with ADASYN algorithm. (Oversampling)
+        Update train attributes, train labels
+
+        :param: None
+        :return: None
+        '''
+        print("resampling data...")
+        ada = SMOTE(random_state=10)
+        X_train_res, y_train_res = ada.fit_resample(self.__attributes_train, self.__labels_train)
+        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res), pd.Series(y_train_res)
+        print("[respamling finished]")
+
+    def __resample_data_SMOTE(self):
+        '''
+        Resampling imbalanced data with smote algorithm. (Oversampling)
+        Update train attributes, train labels
+
+        :param: None
+        :return: None
+        '''
+        print("resampling data...")
+        sm = SMOTE(random_state=6)
+        X_train_res, y_train_res = sm.fit_resample(self.__attributes_train, self.__labels_train)
+        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res), pd.Series(y_train_res)
+        print("[respamling finished]")
+    
+    def __resample_data_NearMiss(self):
+        '''
+        Resampling imbalanced data with near miss algorithm. (Undersampling)
+
+        :param: None
+        :return: None
+        '''
+        print("resampling data...")
+        nm = NearMiss(random_state=6)
+        X_train_res, y_train_res = nm.fit_resample(self.__attributes_train, self.__labels_train)
+        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res), pd.Series(y_train_res)
+        print("[respamling finished]")
+
+    def __reample_data_CNN(self):
+        '''
+        Resampling imbalanced data with near miss algorithm. (Undersampling)
+
+        :param: None
+        :return: None
+        '''
+        print("resampling data...")
+        cnn = CondensedNearestNeighbour(random_state=42)
+        X_train_res, y_train_res = cnn.fit_resample(self.__attributes_train, self.__labels_train)
+        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res), pd.Series(y_train_res)
+        print("[respamling finished]")
+
+    def __resample_data_SMOTETomek(self):
+        '''
+        Resampling imbalanced data with SMOTETomek algorithm. (Oversampling with tomek cleaning)
+
+        :param: None
+        :return: None
+        '''
+        print("resampling data...")
+        smt = SMOTETomek(random_state=6)
+        X_train_res, y_train_res = smt.fit_resample(self.__attributes_train, self.__labels_train)
+        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res), pd.Series(y_train_res)
+        print("[respamling finished]")
 
     def get_train_attributes(self):
         '''
@@ -286,7 +374,7 @@ class Preprocessor:
         '''
         cols = ['loan_amnt', 'funded_amnt',
                'term', 'int_rate', 'installment', 'sub_grade',
-               'emp_length', 'annual_inc', 'loan_status', 'dti', 'delinq_2yrs', 'inq_last_6mths'
+               'emp_length', 'annual_inc', 'dti', 'delinq_2yrs', 'inq_last_6mths'
                ,'mths_since_last_delinq', 'mths_since_last_record', 'open_acc', 'pub_rec'
                ,'revol_bal', 'revol_util', 'total_acc', 'out_prncp', 'out_prncp_inv', 'total_pymnt'
                ,'total_pymnt_inv', 'total_rec_prncp', 'total_rec_int', 'total_rec_late_fee'
@@ -316,20 +404,4 @@ class Preprocessor:
 
     def get_data(self):
         return self.__loanData
-    def __stratify_data(self):
-        '''
-        splits data in to training and testing with the ratios of label kept similar
-        '''
-        stratifier = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
-        for train_set, test_set in stratifier.split(self.__loanData, self.__loanData['loan_status']):
-            stratified_train = self.__loanData.loc[train_set]
-            stratified_test = self.__loanData.loc[test_set]
-        # print('Train set ratio \n', stratified_train["loan_status"].value_counts()/len(self.__loanData))
-        # print('Test set ratio \n', stratified_test["loan_status"].value_counts()/len(self.__loanData))
-        self.__stratified_test_label = stratified_test['loan_status']
-        self.__stratified_test_att = stratified_test.drop('loan_status', axis=1)
-
-        self.__stratified_train_label = stratified_train['loan_status']
-        self.__stratified_train_att = stratified_train.drop('loan_status', axis=1)
-        # print(self.__stratified_train_att)
-        # print(self.__stratified_train_label)
+    

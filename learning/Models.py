@@ -23,9 +23,9 @@ from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.utils import to_categorical
+# from keras.models import Sequential
+# from keras.layers import Dense
+# from keras.utils import to_categorical
 import sys
 sys.path.append('./learning')
 from num_node import *
@@ -41,7 +41,6 @@ from evaluation.Visualization import *
 class Models:
     def __init__(self):
         self.__algorithms = set() # list containing all the algorithms (str)
-
 
     def k_neighbor(self, paramDic, X_train, y_train, X_test, y_test):
         #Accuracy: 0.7485575514435755 using 800k dataset
@@ -183,10 +182,6 @@ class Models:
         :return None
         '''
 
-        # scaling = preprocessing.MinMaxScaler(feature_range=(-1,1)).fit(X_train)
-        # X_train = scaling.transform(X_train)
-        # X_test = scaling.transform(X_test)
-
         svm_model_linear = SVC(kernel = 'linear', C = 1).fit(X_train, y_train)
         y_pred = svm_model_linear.predict(X_test)
 
@@ -252,6 +247,7 @@ class Models:
         :param: None
         :return: None
         '''
+        print("Training logistic regression...")
         lg = LogisticRegression(
             penalty=paramDic['penalty'],
             dual=paramDic['dual'],
