@@ -40,7 +40,7 @@ class Preprocessor:
         # TODO: function call for preprocessing data
         self.__temp_data_process()
         self.__split_data()
-        self.__stratify_data()
+        #self.__stratify_data()
     def __retrieve_data(self):
         '''
         Retrieve the data from the csv file and process to store data to datastructures.
@@ -57,7 +57,7 @@ class Preprocessor:
         USE YOUR OWN FILE PATH AND COMMENT OUT WHEN YOU PUSH.
         """
         #data = pd.read_csv(r"C:\Users\lasts\Google Drive\Etc\Coding\Data_lympics\Deeplearning\loan.csv")
-        data = pd.read_csv("../loan_data/data/loan.csv")
+        data = pd.read_csv("../loan_data/data/loan.csv", low_memory=False)
         #data = pd.read_csv("../loan_data/data/loanfull.csv")
         #low_memory was added to avoid data compression
 
@@ -268,30 +268,40 @@ class Preprocessor:
 
         #print('Transform: loan_status...')
         # for loan status just gave random 0 / 1 of binary representation of good or bad loan
-        dfTrain['loan_status'].replace('n/a', '0', inplace=True)
-        dfTrain['loan_status'].replace(to_replace='Fully Paid', value='0', regex=True, inplace=True)
-        dfTrain['loan_status'].replace(to_replace='Current', value='1', regex=True, inplace=True)
-        dfTrain['loan_status'].replace(to_replace='Charged Off', value='2', regex=True, inplace=True)
-        dfTrain['loan_status'].replace(to_replace='In Grace Period', value='3', regex=True, inplace=True)
-        dfTrain['loan_status'].replace(to_replace='Late (31-120 days)', value='4', regex=True, inplace=True)
-        dfTrain['loan_status'].replace(to_replace='Late (16-30 days)', value='5', regex=True, inplace=True)
-        dfTrain['loan_status'].replace(to_replace='Issued', value='6', regex=True, inplace=True)
-        dfTrain['loan_status'].replace(to_replace='Default', value='7', regex=True, inplace=True)
-        dfTrain['loan_status'].replace(to_replace='Does not meet the credit policy. Status:Fully Paid Off', value='8', regex=True, inplace=True)
-        dfTrain['loan_status'].replace(to_replace='Does not meet the credit policy. Status:Charged Off', value='9', regex=True, inplace=True)
-        dfTrain['loan_status'] = pd.to_numeric(dfTrain['loan_status'], errors='coerce')
+        mapping = {'loan_status': {'Fully Paid': 0 , 'Current': 1, 'Charged Off': 2,
+                    'In Grace Period': 3, 'Late (31-120 days)': 4, 'Late (16-30 days)': 5,
+                    'Issued': 6, 'Default': 7, 'Does not meet the credit policy. Status:Fully Paid': 8,
+                    'Does not meet the credit policy. Status:Charged Off': 9}
+        }
+        dfTrain= dfTrain.replace(mapping)
+
+        # dfTrain['loan_status'].replace('n/a', '0', inplace=True)
+        # dfTrain['loan_status'].replace(to_replace='Fully Paid', value='0', regex=True, inplace=True)
+        # dfTrain['loan_status'].replace(to_replace='Current', value='1', regex=True, inplace=True)
+        # dfTrain['loan_status'].replace(to_replace='Charged Off', value='2', regex=True, inplace=True)
+        # dfTrain['loan_status'].replace(to_replace='In Grace Period', value='3', regex=True, inplace=True)
+        # dfTrain['loan_status'].replace(to_replace='Late (31-120 days)', value='4', regex=True, inplace=True)
+        # dfTrain['loan_status'].replace(to_replace='Late (16-30 days)', value='5', regex=True, inplace=True)
+        # dfTrain['loan_status'].replace(to_replace='Issued', value='6', regex=True, inplace=True)
+        # dfTrain['loan_status'].replace(to_replace='Default', value='7', regex=True, inplace=True)
+        # dfTrain['loan_status'].replace(to_replace='Does not meet the credit policy. Status:Fully Paid Off', value='8', regex=True, inplace=True)
+        # dfTrain['loan_status'].replace(to_replace='Does not meet the credit policy. Status:Charged Off', value='9', regex=True, inplace=True)
+        # dfTrain['loan_status'] = pd.to_numeric(dfTrain['loan_status'], errors='coerce')
+
+        # print(dfTrain['loan_status'].unique())
 
         '''
         #data imputation
         '''
         cols = ['loan_amnt', 'funded_amnt',
                'term', 'int_rate', 'installment', 'sub_grade',
-               'emp_length', 'annual_inc', 'loan_status', 'dti', 'delinq_2yrs', 'inq_last_6mths'
+               'emp_length', 'annual_inc', 'dti', 'delinq_2yrs', 'inq_last_6mths'
                ,'mths_since_last_delinq', 'mths_since_last_record', 'open_acc', 'pub_rec'
                ,'revol_bal', 'revol_util', 'total_acc', 'out_prncp', 'out_prncp_inv', 'total_pymnt'
                ,'total_pymnt_inv', 'total_rec_prncp', 'total_rec_int', 'total_rec_late_fee'
                ,'recoveries', 'collection_recovery_fee', 'last_pymnt_amnt'
             ]
+            
         for col in cols:
             #print('Imputation with Median: %s' % (col))
             dfTrain[col].fillna(dfTrain[col].median(), inplace=True)
@@ -302,7 +312,6 @@ class Preprocessor:
             dfTrain[col].fillna(0, inplace=True)
         #print('Missing value imputation done.')
 
-        #print(dfTrain['loan_status'].unique())
 
         self.__loanData = dfTrain
 

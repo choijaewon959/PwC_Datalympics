@@ -63,6 +63,7 @@ class Models:
         learningtime= time.time() - start_time
         print("---k_neighbor took : %.2f seconds---"  % learningtime)
 
+        print(y_pred)
         accuracy = accuracy_score(y_test, y_pred)
         print("k_neighbor Accuracy: " , accuracy)
 
@@ -123,17 +124,21 @@ class Models:
                  warm_start=paramDic['warm_start'],
                  class_weight=paramDic['class_weight'])
 
-        rfc.fit(X_train, y_train)
+        fit=rfc.fit(X_train, y_train)
+        #fit.summary()
         y_pred = rfc.predict(X_test)
         learningtime= time.time() - start_time
         print("---random_forest took : %.2f seconds---"  % learningtime)
-        #
+
         # acc_rfc = (y_pred == y_test).sum().astype(float) / len(y_pred)*100
         # print("Scikit-Learn's Random Forest Classifier's prediction accuracy is: %3.2f" % (acc_rfc))
 
         accuracy = accuracy_score(y_test, y_pred)
         print("[Random Forest Classifier Accuracy: %.4f %%]" % (accuracy *100) )
 
+        visual = Visualization(y_pred)
+        visual.plot_confusion_matrix(X_train, y_train, X_test, y_test)
+        visual.classification_report(X_train, y_train, X_test, y_test)
         return accuracy
 
     def XGBClassifier(self, paramDic, X_train, y_train, X_test, y_test):
