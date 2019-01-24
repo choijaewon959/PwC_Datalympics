@@ -37,7 +37,7 @@ class FeatureFilter:
         '''
         return self.__reducedDimension
 
-    def scale_data(self, X_train, y_train):
+    def scale_data(self, X_train):
         '''
         Normalize data.
 
@@ -46,6 +46,5 @@ class FeatureFilter:
         '''
         scaling = preprocessing.MinMaxScaler(feature_range=(-1,1))
         X_train_normalized = pd.DataFrame(scaling.fit_transform(X_train))
-        y_train_normalized = pd.Series(scaling.fit_transform(y_train.reshape(-1,1)))
 
-        return X_train_normalized, y_train_normalized
+        return X_train_normalized

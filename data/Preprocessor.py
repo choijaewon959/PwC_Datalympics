@@ -41,7 +41,7 @@ class Preprocessor:
         # TODO: function call for preprocessing data
         self.__temp_data_process()
         self.__split_data()
-        self.__reample_data_CNN()
+        self.__resample_data_SMOTE()
         self.__stratify_data()
 
     def __retrieve_data(self):
