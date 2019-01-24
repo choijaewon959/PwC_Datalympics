@@ -56,7 +56,7 @@ XGBClassifier_dict = {
      'silent':True,
      'objective':'multi:softprob',
      'booster':'gbtree',
-     'n_jobs':3,
+     'n_jobs':1,
      'nthread':None,
      'gamma':0,
      'min_child_weight':1,
