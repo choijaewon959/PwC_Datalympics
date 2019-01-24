@@ -41,13 +41,9 @@ class Preprocessor:
         # TODO: function call for preprocessing data
         self.__temp_data_process()
         self.__split_data()
-<<<<<<< HEAD
         self.__reample_data_CNN()
         self.__stratify_data()
 
-=======
-        #self.__stratify_data()
->>>>>>> ad20bb923e4727e2efb4b01d5a004467791aeca0
     def __retrieve_data(self):
         '''
         Retrieve the data from the csv file and process to store data to datastructures.
@@ -64,11 +60,7 @@ class Preprocessor:
         USE YOUR OWN FILE PATH AND COMMENT OUT WHEN YOU PUSH.
         """
         #data = pd.read_csv(r"C:\Users\lasts\Google Drive\Etc\Coding\Data_lympics\Deeplearning\loan.csv")
-<<<<<<< HEAD
-        data = pd.read_csv("../loan_data/data/loanfull.csv")
-=======
-        data = pd.read_csv("../loan_data/data/loan.csv", low_memory=False)
->>>>>>> ad20bb923e4727e2efb4b01d5a004467791aeca0
+        data = pd.read_csv("../loan_data/data/loanfull.csv" ,low_memory=False)
         #data = pd.read_csv("../loan_data/data/loanfull.csv")
         #low_memory was added to avoid data compression
 
