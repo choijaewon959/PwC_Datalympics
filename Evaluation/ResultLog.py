@@ -4,12 +4,11 @@ class to keep the history of the log of the models with different parameters
 import os
 import datetime
 import csv
+import pandas as pd
 
 class ResultLog:
     def __init__(self):
-        self.__best_model = None
-        self.__best_param = None
-        self.__best_result = None # return the best algorithm with hyperparam
+        pass
 
     def log_result(self, modelName, accuracy, hyperparameter):
         '''
@@ -44,20 +43,14 @@ class ResultLog:
                 writer = csv.DictWriter(csv_file, fieldnames=row)
                 writer.writerow({"Model": modelName, "Accuracy": accuracy, "Hyperparameter": paramString, "Time": currentTime})
 
-    def get_best_model(self):
+    def get_best(self):
         '''
-        Return the model with the highest score.
+        Return the best algorithm and corresponding parameter.
 
         :param: None
-        :return: name of the model (str)
+        :return: The information of the model data with the best performance.
         '''
-        return self.__best_model
+        df = pd.read_csv("evaluation/result.csv")
+        df.sort_values(by = 'Accuracy', ascending = 0)
 
-    def get_best_result(self):
-        '''
-        Return the the algorithm and best corresponding hyperparameter.
-
-        :param: None
-        :return: None
-        '''
-        return self.__best_result
+        return df.iloc[0] 

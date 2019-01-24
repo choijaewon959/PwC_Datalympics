@@ -4,6 +4,15 @@ import pandas as pd
 from sklearn.metrics import classification_report, confusion_matrix
 import matplotlib.pyplot as plt
 
+"""
+https://en.wikipedia.org/wiki/F1_score
+https://en.wikipedia.org/wiki/Precision_and_recall
+
+The F1 score is the harmonic average of the precision and recall,
+where an F1 score reaches its best value at 1 (perfect precision and recall) and worst at 0.
+"""
+
+
 class Visualization:
     def __init__(self, learningResult):
         self.__learningResult=learningResult

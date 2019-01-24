@@ -13,7 +13,7 @@ k_neighor_dict = {
 }
 
 decision_tree_dict = {
-                'criterion' : "gini",
+                 'criterion' : "gini",
                  'splitter' : "best",
                  'max_depth' : None,
                  'min_samples_split' : 2,
@@ -87,7 +87,7 @@ SVM_dict = {
     'kernel' : 'rbf',
     'max_iter' : -1,
     'probability' : False,
-    'random_state' : None,
+    'random_state' : 1,
     'shrinking' : True,
     'tol' : 0.001,
     'verbose' : False
@@ -101,10 +101,10 @@ logistic_regression_dict = {
     'fit_intercept' : True,
     'intercept_scaling' : 1,
     'class_weight' : None,
-    'random_state' : None,
-    'solver' : 'liblinear',
-    'max_iter' : 100,
-    'multi_class' : 'ovr',
+    'random_state' : 1,
+    'solver' : 'newton-cg',
+    'max_iter' : 300,
+    'multi_class' : 'multinomial',
     'verbose' : 0,
     'warm_start' : False,
     'n_jobs' : None

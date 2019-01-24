@@ -30,7 +30,7 @@ class Preprocessor:
 
         self.__stratified_test_att = None
         self.__stratified_test_label = None
-    
+
         self.__stratified_train_att = None
         self.__stratified_train_label = None
 
@@ -56,12 +56,13 @@ class Preprocessor:
         """
         #data = pd.read_csv(r"C:\Users\lasts\Google Drive\Etc\Coding\Data_lympics\Deeplearning\loan.csv")
         #data = pd.read_csv("../loan_data/data/loan.csv")
+        #data = pd.read_csv("../loan_data/data/loanfull.csv")
         #low_memory was added to avoid data compression
 
 
-        #Using sklearn datasets
+        # #Using sklearn datasets
         # iris = datasets.load_wine()
-        #
+
         # data = pd.DataFrame(data= np.c_[iris['data'], iris['target']],
         #              columns= iris['feature_names'] + ['target'])
 
@@ -80,11 +81,10 @@ class Preprocessor:
         '''
         print("split_data running...")
         # TODO: loan status may not be the label -> change to label accordingly.
-
         X = self.__loanData.drop('loan_status', axis = 1)
         y = self.__loanData['loan_status']
 
-        self.__attributes_train, self.__attributes_test, self.__labels_train, self.__labels_test = train_test_split(X, y, test_size=0.2)
+        self.__attributes_train, self.__attributes_test, self.__labels_train, self.__labels_test = train_test_split(X, y, test_size=0.2, random_state = 1)
 
     def get_train_attributes(self):
         '''
@@ -121,7 +121,7 @@ class Preprocessor:
         :return: categorical labels
         '''
         return self.__labels_test
-    
+
     def get_stratified_train_labels(self):
         '''
         Return the stratified labels of the data for train.
@@ -130,7 +130,7 @@ class Preprocessor:
         :return: stratified train labels
         '''
         return self.__stratified_train_label
-    
+
     def get_stratified_train_attributes(self):
         '''
         Return the stratified attributes of the data for train.
@@ -139,7 +139,7 @@ class Preprocessor:
         :return: stratified train attribute
         '''
         return self.__stratified_train_att
-    
+
     def get_stratified_test_attributes(self):
         '''
         Return the stratified attributes of the data for test.
@@ -148,7 +148,7 @@ class Preprocessor:
         :return: stratified test attribute
         '''
         return self.__stratified_test_att
-    
+
     def get_stratified_test_labels(self):
         '''
         Return the stratified label of the data for test.
@@ -157,7 +157,7 @@ class Preprocessor:
         :return: stratified test label
         '''
         return self.__stratified_test_label
-    
+
     def get_distribution(self):
         '''
         Return the distribution table that contains all the distribution objects
@@ -219,7 +219,12 @@ class Preprocessor:
         #erase unrelated columns
         dfTrain= dfTrain[['loan_amnt', 'funded_amnt',
                'term', 'int_rate', 'installment', 'sub_grade',
-               'emp_length', 'annual_inc', 'loan_status']]
+               'emp_length', 'annual_inc', 'loan_status', 'dti', 'delinq_2yrs', 'inq_last_6mths'
+               ,'mths_since_last_delinq', 'mths_since_last_record', 'open_acc', 'pub_rec'
+               ,'revol_bal', 'revol_util', 'total_acc', 'out_prncp', 'out_prncp_inv', 'total_pymnt'
+               ,'total_pymnt_inv', 'total_rec_prncp', 'total_rec_int', 'total_rec_late_fee'
+               ,'recoveries', 'collection_recovery_fee', 'last_pymnt_amnt'
+            ]]
 
         # TODO: Feature transformation can be done beforehand or after
         # when the data is normalized to numerical data, these steps should be omitted.
@@ -269,7 +274,14 @@ class Preprocessor:
         '''
         #data imputation
         '''
-        cols = ['term', 'loan_amnt', 'funded_amnt', 'int_rate', 'sub_grade', 'annual_inc', 'emp_length', 'installment']
+        cols = ['loan_amnt', 'funded_amnt',
+               'term', 'int_rate', 'installment', 'sub_grade',
+               'emp_length', 'annual_inc', 'loan_status', 'dti', 'delinq_2yrs', 'inq_last_6mths'
+               ,'mths_since_last_delinq', 'mths_since_last_record', 'open_acc', 'pub_rec'
+               ,'revol_bal', 'revol_util', 'total_acc', 'out_prncp', 'out_prncp_inv', 'total_pymnt'
+               ,'total_pymnt_inv', 'total_rec_prncp', 'total_rec_int', 'total_rec_late_fee'
+               ,'recoveries', 'collection_recovery_fee', 'last_pymnt_amnt'
+            ]
         for col in cols:
             print('Imputation with Median: %s' % (col))
             dfTrain[col].fillna(dfTrain[col].median(), inplace=True)
