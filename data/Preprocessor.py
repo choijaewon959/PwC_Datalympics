@@ -6,7 +6,7 @@ import numpy as np
 from util.Distribution import Distribution
 from sklearn.model_selection import train_test_split
 from sklearn import datasets
-
+from sklearn.model_selection import StratifiedShuffleSplit
 
 class Preprocessor:
     def __init__(self):
@@ -28,11 +28,17 @@ class Preprocessor:
         self.__attributes_test = None
         self.__labels_test = None
 
+        self.__stratified_test_att = None
+        self.__stratified_test_label = None
+    
+        self.__stratified_train_att = None
+        self.__stratified_train_label = None
+
         self.__retrieve_data()
         # TODO: function call for preprocessing data
         #self.__temp_data_process()
         self.__split_data()
-
+        self.stratify_data()
     def __retrieve_data(self):
         '''
         Retrieve the data from the csv file and process to store data to datastructures.
@@ -49,7 +55,7 @@ class Preprocessor:
         USE YOUR OWN FILE PATH AND COMMENT OUT WHEN YOU PUSH.
         """
         #data = pd.read_csv(r"C:\Users\lasts\Google Drive\Etc\Coding\Data_lympics\Deeplearning\loan.csv")
-        data = pd.read_csv("../loan_data/data/loan.csv")
+        #data = pd.read_csv("../loan_data/data/loan.csv")
         #low_memory was added to avoid data compression
 
 
@@ -60,7 +66,7 @@ class Preprocessor:
         #              columns= iris['feature_names'] + ['target'])
 
         #Taemin's debugging tool@!!
-        #data = pd.read_csv("Deeplearning/loan.csv")
+        data = pd.read_csv("Deeplearning/loan.csv")
 
         self.__colnames= data.columns.values
         self.__loanData = data
@@ -249,3 +255,20 @@ class Preprocessor:
 
     def get_data(self):
         return self.__loanData
+    def stratify_data(self):
+        '''
+        splits data in to training and testing with the ratios of label kept similar
+        '''
+        stratifier = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
+        for train_set, test_set in stratifier.split(self.__loanData, self.__loanData['loan_status']):
+            stratified_train = self.__loanData.loc[train_set]
+            stratified_test = self.__loanData.loc[test_set]
+        # print('Train set ratio \n', stratified_train["loan_status"].value_counts()/len(self.__loanData))
+        # print('Test set ratio \n', stratified_test["loan_status"].value_counts()/len(self.__loanData))
+        self.__stratified_test_label = stratified_test['loan_status']
+        self.__stratified_test_att = stratified_test.drop('loan_status', axis=1)
+
+        self.__stratified_train_label = stratified_train['loan_status']
+        self.__stratified_train_att = stratified_train.drop('loan_status', axis=1)
+        # print(self.__stratified_train_att)
+        # print(self.__stratified_train_label)
