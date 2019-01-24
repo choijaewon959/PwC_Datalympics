@@ -23,6 +23,14 @@ y_train = dataProcessor.get_train_labels()
 X_test = dataProcessor.get_test_attributes()
 y_test = dataProcessor.get_test_labels()
 
+#Statified data for training
+st_X_train = dataProcessor.get_stratified_train_attributes()
+st_y_train = dataProcessor.get_stratified_train_labels()
+
+#Statified data for testing
+st_X_test = dataProcessor.get_stratified_test_attributes()
+st_y_test = dataProcessor.get_stratified_test_labels()
+
 #filtered X_train attributes
 # filtered_data = filtering.PCA(X_train, 4)
 
@@ -33,5 +41,5 @@ y_test = dataProcessor.get_test_labels()
 # # accuracy = algorithm.SVM(SVM_dict, X_train, y_train, X_test, y_test)
 # result.log_result('ff_network', ff_accuracy, ff_network_dict)
 
-accuracy = algorithm.XGBClassifier(XGBClassifier_dict, X_train, y_train, X_test, y_test)
-result.log_result('XGBClassifier', accuracy, XGBClassifier_dict)
+accuracy = algorithm.ff_network(2, st_X_train, st_y_train, st_X_test, st_y_test)
+result.log_result('ff_network', accuracy, ff_network_dict)

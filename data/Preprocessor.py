@@ -36,9 +36,9 @@ class Preprocessor:
 
         self.__retrieve_data()
         # TODO: function call for preprocessing data
-        #self.__temp_data_process()
+        self.__temp_data_process()
         self.__split_data()
-        self.stratify_data()
+        self.__stratify_data()
     def __retrieve_data(self):
         '''
         Retrieve the data from the csv file and process to store data to datastructures.
@@ -66,7 +66,7 @@ class Preprocessor:
         #              columns= iris['feature_names'] + ['target'])
 
         #Taemin's debugging tool@!!
-        data = pd.read_csv("Deeplearning/loan.csv")
+        data = pd.read_csv("../loanfull.csv")
 
         self.__colnames= data.columns.values
         self.__loanData = data
@@ -121,7 +121,43 @@ class Preprocessor:
         :return: categorical labels
         '''
         return self.__labels_test
+    
+    def get_stratified_train_labels(self):
+        '''
+        Return the stratified labels of the data for train.
 
+        :param: None
+        :return: stratified train labels
+        '''
+        return self.__stratified_train_label
+    
+    def get_stratified_train_attributes(self):
+        '''
+        Return the stratified attributes of the data for train.
+
+        :param: None
+        :return: stratified train attribute
+        '''
+        return self.__stratified_train_att
+    
+    def get_stratified_test_attributes(self):
+        '''
+        Return the stratified attributes of the data for test.
+
+        :param: None
+        :return: stratified test attribute
+        '''
+        return self.__stratified_test_att
+    
+    def get_stratified_test_labels(self):
+        '''
+        Return the stratified label of the data for test.
+
+        :param: None
+        :return: stratified test label
+        '''
+        return self.__stratified_test_label
+    
     def get_distribution(self):
         '''
         Return the distribution table that contains all the distribution objects
@@ -255,7 +291,7 @@ class Preprocessor:
 
     def get_data(self):
         return self.__loanData
-    def stratify_data(self):
+    def __stratify_data(self):
         '''
         splits data in to training and testing with the ratios of label kept similar
         '''

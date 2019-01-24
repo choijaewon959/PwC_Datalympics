@@ -297,15 +297,15 @@ class Models:
         print("Accuracy - predict: ", accuracy)
         return accuracy
 
-    def ff_network(self, n, X_train, y_train, X_test, y_test, p):
+    def ff_network(self, n, X_train, y_train, X_test, y_test):
         '''
         Forward feeding neural network with one/two hidden layer.
 
         '''
         X = X_train
         Y = y_train
-        in_len = 4 # number of input feature
-        out_len = 3 # number of output label
+        in_len = 8 # number of input feature
+        out_len = 8 # number of output label
         print(y_train)
         YY = to_categorical(Y)
         print("Train label converted into vector label")
