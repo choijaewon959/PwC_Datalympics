@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import classification_report, confusion_matrix
 import matplotlib.pyplot as plt
+from pycm import *
 
 """
 https://en.wikipedia.org/wiki/F1_score
@@ -18,6 +19,9 @@ class Visualization:
         self.__learningResult=learningResult
 
 
+    def confusion_matrix_stats(self):
+        return None
+
     def plot_confusion_matrix(self,X_train, y_train, X_test, y_test):
         '''
         This function prints and plots the confusion matrix.
@@ -25,6 +29,10 @@ class Visualization:
         :param: X_train, y_train, X_test, y_test (Pandas DataFrame (segments))
         :return: None
         '''
+        dft=y_test.values
+
+        cm = ConfusionMatrix(actual_vector=dft, predict_vector=self.__learningResult)
+        print (cm)
 
         #features concatenate  ; bc/ dataProcessor is not directly accessible
         features = y_train.unique()
