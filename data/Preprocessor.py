@@ -10,6 +10,7 @@ from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
 from imblearn.over_sampling import SMOTE
 from imblearn.under_sampling import NearMiss, CondensedNearestNeighbour
 from imblearn.combine import SMOTETomek
+from evaluation.Visualization import *
 
 class Preprocessor:
     def __init__(self):
@@ -41,8 +42,10 @@ class Preprocessor:
         # TODO: function call for preprocessing data
         self.__temp_data_process()
         self.__split_data()
-        self.__reample_data_CNN()
+        # #self.__reample_data_CNN()
         self.__stratify_data()
+        #self.__graph()
+
 
     def __retrieve_data(self):
         '''
@@ -60,8 +63,8 @@ class Preprocessor:
         USE YOUR OWN FILE PATH AND COMMENT OUT WHEN YOU PUSH.
         """
         #data = pd.read_csv(r"C:\Users\lasts\Google Drive\Etc\Coding\Data_lympics\Deeplearning\loan.csv")
-        data = pd.read_csv("../loan_data/data/loanfull.csv" ,low_memory=False)
-        #data = pd.read_csv("../loan_data/data/loanfull.csv")
+        #data = pd.read_csv("../loan_data/data/loanfull.csv" ,low_memory=False)
+        data = pd.read_csv("../loan_data/data/loanfull.csv")
         #low_memory was added to avoid data compression
 
 
@@ -140,7 +143,7 @@ class Preprocessor:
         X_train_res, y_train_res = sm.fit_resample(self.__attributes_train, self.__labels_train)
         self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res), pd.Series(y_train_res)
         print("[respamling finished]")
-    
+
     def __resample_data_NearMiss(self):
         '''
         Resampling imbalanced data with near miss algorithm. (Undersampling)
@@ -389,7 +392,7 @@ class Preprocessor:
                ,'total_pymnt_inv', 'total_rec_prncp', 'total_rec_int', 'total_rec_late_fee'
                ,'recoveries', 'collection_recovery_fee', 'last_pymnt_amnt'
             ]
-            
+
         for col in cols:
             #print('Imputation with Median: %s' % (col))
             dfTrain[col].fillna(dfTrain[col].median(), inplace=True)
@@ -413,4 +416,7 @@ class Preprocessor:
 
     def get_data(self):
         return self.__loanData
-    
+
+    def __graph(self):
+        visual = Visualization(self.__loanData)
+        visual.plot_heatmap()

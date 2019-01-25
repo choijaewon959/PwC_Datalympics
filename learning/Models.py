@@ -70,8 +70,8 @@ class Models:
         # print("cross_val_score is : ", scores)
 
         visual = Visualization(y_pred)
-        visual.plot_confusion_matrix(X_train, y_train, X_test, y_test)
-        visual.classification_report(X_train, y_train, X_test, y_test)
+        visual.plot_confusion_matrix(y_train, y_test)
+        visual.classification_report(y_train, y_test)
 
         return accuracy
 
@@ -99,6 +99,10 @@ class Models:
 
         accuracy = accuracy_score(y_test, y_pred)
         print("[decision_tree Accuracy: %.4f ]" % (accuracy*100) )
+
+        visual = Visualization(y_pred)
+        visual.plot_confusion_matrix(y_train, y_test)
+        visual.classification_report(y_train, y_test)
 
         return accuracy
 
@@ -136,8 +140,8 @@ class Models:
         print("[Random Forest Classifier Accuracy: %.4f %%]" % (accuracy *100) )
 
         visual = Visualization(y_pred)
-        visual.plot_confusion_matrix(X_train, y_train, X_test, y_test)
-        visual.classification_report(X_train, y_train, X_test, y_test)
+        visual.plot_confusion_matrix(y_train, y_test)
+        visual.classification_report(y_train, y_test)
         return accuracy
 
     def XGBClassifier(self, paramDic, X_train, y_train, X_test, y_test):
@@ -170,8 +174,8 @@ class Models:
         print("Accuracy: %.10f%%" % (accuracy * 100.0))
 
         visual = Visualization(y_pred)
-        visual.plot_confusion_matrix(X_train, y_train, X_test, y_test)
-        visual.classification_report(X_train, y_train, X_test, y_test)
+        visual.plot_confusion_matrix(y_train, y_test)
+        visual.classification_report(y_train, y_test)
 
         return accuracy
         #accuracy_per_roc_auc = roc_auc_score(np.array(testLabels).flatten(), y_pred)

@@ -7,6 +7,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from sklearn import preprocessing
 
+
 class FeatureFilter:
     def __init__(self):
         self.__dataFrame = None # data frame with features and values
@@ -17,11 +18,11 @@ class FeatureFilter:
         '''
         Principal component analysis.
         Filter algorithm to retrieve meaningful feature attributes.
-        
-        :param: 
+
+        :param:
             raw_attributes: unfiltered data
             numOfComponents: number of components to be used.
-        
+
         :return: filtered feature vector (data frame)
         '''
         pca = PCA(n_components = numOfComponents)
