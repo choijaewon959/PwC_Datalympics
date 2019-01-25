@@ -3,10 +3,14 @@ Data Preprocessor
 """
 import pandas as pd
 import numpy as np
+import time
 from util.Distribution import Distribution
-from sklearn.model_selection import train_test_split
 from sklearn import datasets
-from sklearn.model_selection import StratifiedShuffleSplit
+from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
+from imblearn.over_sampling import SMOTE
+from imblearn.under_sampling import NearMiss, CondensedNearestNeighbour
+from imblearn.combine import SMOTETomek
+from evaluation.Visualization import *
 
 class Preprocessor:
     def __init__(self):
@@ -39,7 +43,11 @@ class Preprocessor:
         self.__temp_data_process()
         self.add_nodes()
         self.__split_data()
+        self.__resample_data_SMOTE()
         self.__stratify_data()
+        #self.__graph()
+
+
     def __retrieve_data(self):
         '''
         Retrieve the data from the csv file and process to store data to datastructures.
@@ -68,10 +76,12 @@ class Preprocessor:
         #              columns= iris['feature_names'] + ['target'])
 
         #Taemin's debugging tool@!!
-        data = pd.read_csv("../loanfull.csv")
+        #data = pd.read_csv("Deeplearning/loan.csv")
+        #data = pd.read_csv("../loanfull.csv")
 
         self.__colnames= data.columns.values
         self.__loanData = data
+        print("[retrieve_data finished]")
 
     def __split_data(self):
         '''
@@ -86,6 +96,93 @@ class Preprocessor:
         y = self.__loanData['loan_status']
 
         self.__attributes_train, self.__attributes_test, self.__labels_train, self.__labels_test = train_test_split(X, y, test_size=0.2, random_state = 1)
+        print("[split_data finished]")
+
+    def __stratify_data(self):
+        '''
+        splits data in to training and testing with the ratios of label kept similar
+        '''
+        stratifier = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
+        for train_set, test_set in stratifier.split(self.__loanData, self.__loanData['loan_status']):
+            stratified_train = self.__loanData.loc[train_set]
+            stratified_test = self.__loanData.loc[test_set]
+        # print('Train set ratio \n', stratified_train["loan_status"].value_counts()/len(self.__loanData))
+        # print('Test set ratio \n', stratified_test["loan_status"].value_counts()/len(self.__loanData))
+        self.__stratified_test_label = stratified_test['loan_status']
+        self.__stratified_test_att = stratified_test.drop('loan_status', axis=1)
+
+        self.__stratified_train_label = stratified_train['loan_status']
+        self.__stratified_train_att = stratified_train.drop('loan_status', axis=1)
+        # print(self.__stratified_train_att)
+        # print(self.__stratified_train_label)
+        print("[stratify_data finished]")
+
+    def __resample_data_ADASYN(self):
+        '''
+        Resampling imbalanced data with ADASYN algorithm. (Oversampling)
+        Update train attributes, train labels
+
+        :param: None
+        :return: None
+        '''
+        print("resampling data...")
+        ada = SMOTE(random_state=10)
+        X_train_res, y_train_res = ada.fit_resample(self.__attributes_train, self.__labels_train)
+        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res), pd.Series(y_train_res)
+        print("[respamling finished]")
+
+    def __resample_data_SMOTE(self):
+        '''
+        Resampling imbalanced data with smote algorithm. (Oversampling)
+        Update train attributes, train labels
+
+        :param: None
+        :return: None
+        '''
+        print("resampling data...")
+        sm = SMOTE(random_state=6)
+        X_train_res, y_train_res = sm.fit_resample(self.__attributes_train, self.__labels_train)
+        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res), pd.Series(y_train_res)
+        print("[respamling finished]")
+
+    def __resample_data_NearMiss(self):
+        '''
+        Resampling imbalanced data with near miss algorithm. (Undersampling)
+
+        :param: None
+        :return: None
+        '''
+        print("resampling data...")
+        nm = NearMiss(random_state=6)
+        X_train_res, y_train_res = nm.fit_resample(self.__attributes_train, self.__labels_train)
+        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res), pd.Series(y_train_res)
+        print("[respamling finished]")
+
+    def __reample_data_CNN(self):
+        '''
+        Resampling imbalanced data with near miss algorithm. (Undersampling)
+
+        :param: None
+        :return: None
+        '''
+        print("resampling data...")
+        cnn = CondensedNearestNeighbour(random_state=42)
+        X_train_res, y_train_res = cnn.fit_resample(self.__attributes_train, self.__labels_train)
+        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res), pd.Series(y_train_res)
+        print("[respamling finished]")
+
+    def __resample_data_SMOTETomek(self):
+        '''
+        Resampling imbalanced data with SMOTETomek algorithm. (Oversampling with tomek cleaning)
+
+        :param: None
+        :return: None
+        '''
+        print("resampling data...")
+        smt = SMOTETomek(random_state=6)
+        X_train_res, y_train_res = smt.fit_resample(self.__attributes_train, self.__labels_train)
+        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res), pd.Series(y_train_res)
+        print("[respamling finished]")
 
     def get_train_attributes(self):
         '''
@@ -212,6 +309,10 @@ class Preprocessor:
         :param: none
         :return: none
         '''
+        print("__temp_data_process running...")
+        #--------other debugging messages are omitted/ commented for simplifying purposes -------
+        start_time = time.time()
+
         dfTrain = self.__loanData
         #copied data to refrain from warnings
         dfTrain= dfTrain.copy()
@@ -259,43 +360,55 @@ class Preprocessor:
 
         #print('Transform: loan_status...')
         # for loan status just gave random 0 / 1 of binary representation of good or bad loan
-        dfTrain['loan_status'].replace('n/a', '0', inplace=True)
-        dfTrain['loan_status'].replace(to_replace='Fully Paid', value='0', regex=True, inplace=True)
-        dfTrain['loan_status'].replace(to_replace='Current', value='1', regex=True, inplace=True)
-        dfTrain['loan_status'].replace(to_replace='Charged Off', value='2', regex=True, inplace=True)
-        dfTrain['loan_status'].replace(to_replace='In Grace Period', value='3', regex=True, inplace=True)
-        dfTrain['loan_status'].replace(to_replace='Late (31-120 days)', value='4', regex=True, inplace=True)
-        dfTrain['loan_status'].replace(to_replace='Late (16-30 days)', value='5', regex=True, inplace=True)
-        dfTrain['loan_status'].replace(to_replace='Issued', value='6', regex=True, inplace=True)
-        dfTrain['loan_status'].replace(to_replace='Default', value='7', regex=True, inplace=True)
-        dfTrain['loan_status'].replace(to_replace='Does not meet the credit policy. Status:Fully Paid Off', value='8', regex=True, inplace=True)
-        dfTrain['loan_status'].replace(to_replace='Does not meet the credit policy. Status:Charged Off', value='9', regex=True, inplace=True)
-        dfTrain['loan_status'] = pd.to_numeric(dfTrain['loan_status'], errors='coerce')
+        mapping = {'loan_status': {'Fully Paid': 0 , 'Current': 1, 'Charged Off': 2,
+                    'In Grace Period': 3, 'Late (31-120 days)': 4, 'Late (16-30 days)': 5,
+                    'Issued': 6, 'Default': 7, 'Does not meet the credit policy. Status:Fully Paid': 8,
+                    'Does not meet the credit policy. Status:Charged Off': 9}
+        }
+        dfTrain= dfTrain.replace(mapping)
+
+        # dfTrain['loan_status'].replace('n/a', '0', inplace=True)
+        # dfTrain['loan_status'].replace(to_replace='Fully Paid', value='0', regex=True, inplace=True)
+        # dfTrain['loan_status'].replace(to_replace='Current', value='1', regex=True, inplace=True)
+        # dfTrain['loan_status'].replace(to_replace='Charged Off', value='2', regex=True, inplace=True)
+        # dfTrain['loan_status'].replace(to_replace='In Grace Period', value='3', regex=True, inplace=True)
+        # dfTrain['loan_status'].replace(to_replace='Late (31-120 days)', value='4', regex=True, inplace=True)
+        # dfTrain['loan_status'].replace(to_replace='Late (16-30 days)', value='5', regex=True, inplace=True)
+        # dfTrain['loan_status'].replace(to_replace='Issued', value='6', regex=True, inplace=True)
+        # dfTrain['loan_status'].replace(to_replace='Default', value='7', regex=True, inplace=True)
+        # dfTrain['loan_status'].replace(to_replace='Does not meet the credit policy. Status:Fully Paid Off', value='8', regex=True, inplace=True)
+        # dfTrain['loan_status'].replace(to_replace='Does not meet the credit policy. Status:Charged Off', value='9', regex=True, inplace=True)
+        # dfTrain['loan_status'] = pd.to_numeric(dfTrain['loan_status'], errors='coerce')
+
+        # print(dfTrain['loan_status'].unique())
 
         '''
         #data imputation
         '''
         cols = ['loan_amnt', 'funded_amnt',
                'term', 'int_rate', 'installment', 'sub_grade',
-               'emp_length', 'annual_inc', 'loan_status', 'dti', 'delinq_2yrs', 'inq_last_6mths'
+               'emp_length', 'annual_inc', 'dti', 'delinq_2yrs', 'inq_last_6mths'
                ,'mths_since_last_delinq', 'mths_since_last_record', 'open_acc', 'pub_rec'
                ,'revol_bal', 'revol_util', 'total_acc', 'out_prncp', 'out_prncp_inv', 'total_pymnt'
                ,'total_pymnt_inv', 'total_rec_prncp', 'total_rec_int', 'total_rec_late_fee'
                ,'recoveries', 'collection_recovery_fee', 'last_pymnt_amnt'
             ]
+
         for col in cols:
-            print('Imputation with Median: %s' % (col))
+            #print('Imputation with Median: %s' % (col))
             dfTrain[col].fillna(dfTrain[col].median(), inplace=True)
 
         cols=['loan_status']
         for col in cols:
-            print('Imputation with Zero: %s' % (col))
+            #print('Imputation with Zero: %s' % (col))
             dfTrain[col].fillna(0, inplace=True)
-        print('Missing value imputation done.')
+        #print('Missing value imputation done.')
 
-        print(dfTrain['loan_status'].unique())
 
         self.__loanData = dfTrain
+
+        tempProcessTime= time.time() - start_time
+        print("[tempProcessTime finished with %.2f seconds]"  % tempProcessTime)
 
     def get_labels(self):
         print(self.__loanData['loan_status'].unique())
@@ -304,18 +417,6 @@ class Preprocessor:
 
     def get_data(self):
         return self.__loanData
-    def __stratify_data(self):
-        '''
-        splits data in to training and testing with the ratios of label kept similar
-        '''
-        stratifier = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
-        for train_set, test_set in stratifier.split(self.__loanData, self.__loanData['loan_status']):
-            stratified_train = self.__loanData.loc[train_set]
-            stratified_test = self.__loanData.loc[test_set]
-        # print('Train set ratio \n', stratified_train["loan_status"].value_counts()/len(self.__loanData))
-        # print('Test set ratio \n', stratified_test["loan_status"].value_counts()/len(self.__loanData))
-        self.__stratified_test_label = stratified_test['loan_status']
-        self.__stratified_test_att = stratified_test.drop('loan_status', axis=1)
 
         self.__stratified_train_label = stratified_train['loan_status']
         self.__stratified_train_att = stratified_train.drop('loan_status', axis=1)
@@ -334,10 +435,13 @@ class Preprocessor:
         for col in list(self.__loanData.columns.values):
             try:
                 if(stop.index(col) != -1):
-                    continue    
+                    continue
             except:
                 if(len(self.__loanData[col].unique()) < 30):
                     for uniq in self.__loanData[col].unique():
                         self.__loanData[col+' '+str(uniq)] = self.__loanData[col].apply(self.additional_feature,args=(uniq,))
         self.__loanData = self.__loanData.drop(['home_ownership', 'verification_status','pymnt_plan','purpose', 'initial_list_status', 'collections_12_mths_ex_med','application_type'], axis=1)
         print(self.__loanData.columns.values)
+    def __graph(self):
+        visual = Visualization(self.__loanData)
+        visual.plot_heatmap()

@@ -1,8 +1,10 @@
 import itertools
 import numpy as np
 import pandas as pd
+import seaborn as sns
 from sklearn.metrics import classification_report, confusion_matrix
 import matplotlib.pyplot as plt
+from pycm import *
 
 """
 https://en.wikipedia.org/wiki/F1_score
@@ -14,17 +16,40 @@ where an F1 score reaches its best value at 1 (perfect precision and recall) and
 
 
 class Visualization:
-    def __init__(self, learningResult):
-        self.__learningResult=learningResult
+    def __init__(self, dataset):
+        self.__dataset=dataset
 
 
-    def plot_confusion_matrix(self,X_train, y_train, X_test, y_test):
+    def plot_heatmap(self):
+        data = self.__dataset
+        corr = data.corr()
+
+        # plot the heatmap
+        sns.heatmap(corr,
+        xticklabels=corr.columns,
+        yticklabels=corr.columns, vmin=-1 , vmax=1, cmap="RdBu" )
+        plt.show()
+
+
+        return
+
+
+    def print_CM_stats(self):
+
+        dft=y_test.values
+        cm = ConfusionMatrix(actual_vector=dft, predict_vector=self.__dataset)
+        print (cm)
+
+
+    def plot_confusion_matrix(self, y_train, y_test):
         '''
         This function prints and plots the confusion matrix.
 
-        :param: X_train, y_train, X_test, y_test (Pandas DataFrame (segments))
+        :param: y_train, y_test (Pandas DataFrame (segments))
         :return: None
         '''
+        dft=y_test.values
+
 
         #features concatenate  ; bc/ dataProcessor is not directly accessible
         features = y_train.unique()
@@ -40,7 +65,7 @@ class Visualization:
             This inner function plots the confusion matrix.
             Normalization can be applied by setting `normalize=True`.
 
-            :param: X_train, y_train, X_test, y_test ()
+            :param: cm/ConfusionMatrixo object, normalize=true/false, title=(str) , cmap= plt.cm.Blues ( color )
             :return: None
             """
             if normalize:
@@ -71,7 +96,7 @@ class Visualization:
 
 
         # Compute confusion matrix
-        cnf_matrix = confusion_matrix(y_test, self.__learningResult)
+        cnf_matrix = confusion_matrix(y_test, self.__dataset)
         np.set_printoptions(precision=2)
 
         # Plot non-normalized confusion matrix
@@ -87,12 +112,11 @@ class Visualization:
         plt.show()
 
 
-
-    def classification_report(self, X_train, y_train, X_test, y_test):
+    def classification_report(self, y_train, y_test):
         """
         This function prints a classification_report.
 
-        :param: X_train, y_train, X_test, y_test (Pandas DataFrame (segments))
+        :param: y_train, y_test (Pandas DataFrame (segments))
         :return: None
         """
         features = y_train.unique()
@@ -106,4 +130,4 @@ class Visualization:
             list.append(st)
         #result = np.array2string(result, precision=2)
 
-        print(classification_report(y_test, self.__learningResult, target_names=list))
+        print(classification_report(y_test, self.__dataset, target_names=list))

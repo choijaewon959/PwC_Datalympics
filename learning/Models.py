@@ -24,9 +24,9 @@ from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.utils import to_categorical
+# from keras.models import Sequential
+# from keras.layers import Dense
+# from keras.utils import to_categorical
 import sys
 sys.path.append('./learning')
 from num_node import *
@@ -43,16 +43,15 @@ class Models:
     def __init__(self):
         self.__algorithms = set() # list containing all the algorithms (str)
 
-
     def k_neighbor(self, paramDic, X_train, y_train, X_test, y_test):
         #Accuracy: 0.7485575514435755 using 800k dataset
+        start_time = time.time()
 
         """if scaling is necessary for running this algorithm"""
         # scaling = preprocessing.MinMaxScaler(feature_range=(-1,1)).fit(X_train)
         # X_train = scaling.transform(X_train)
         # X_test = scaling.transform(X_test)
 
-        start_time = time.time()
         knn = KNeighborsClassifier(
             n_neighbors=paramDic['n_neighbors'],
             weights=paramDic['weights'], algorithm=paramDic['algorithm'], leaf_size=paramDic['leaf_size'],
@@ -61,23 +60,24 @@ class Models:
 
         knn.fit(X_train, y_train)
         y_pred = knn.predict(X_test)
-        print("--- %s seconds ---" % (time.time() - start_time))
+        learningtime= time.time() - start_time
+        print("---k_neighbor took : %.2f seconds---"  % learningtime)
+
+        print(y_pred)
         accuracy = accuracy_score(y_test, y_pred)
         print("k_neighbor Accuracy: " , accuracy)
 
         # scores = cross_val_score(knn, data.drop['loan_status'], data['loan_status'], cv=5)
         # print("cross_val_score is : ", scores)
 
-        cm = confusion_matrix(y_test, y_pred)
-        print(cm)
-
         visual = Visualization(y_pred)
-        visual.plot_confusion_matrix(X_train, y_train, X_test, y_test)
-        visual.classification_report(X_train, y_train, X_test, y_test)
+        visual.plot_confusion_matrix(y_train, y_test)
+        visual.classification_report(y_train, y_test)
 
         return accuracy
 
     def decision_tree(self, paramDic, X_train, y_train, X_test, y_test):
+        start_time = time.time()
 
         clf = DecisionTreeClassifier(
                  criterion=paramDic['criterion'],
@@ -95,14 +95,20 @@ class Models:
 
         clf.fit(X_train, y_train)
         y_pred = clf.predict(X_test)
+        learningtime= time.time() - start_time
+        print("---decision_tree took : %.2f seconds---"  % learningtime)
 
         accuracy = accuracy_score(y_test, y_pred)
-        print("decision_tree Accuracy: " , accuracy)
+        print("[decision_tree Accuracy: %.4f ]" % (accuracy*100) )
+
+        visual = Visualization(y_pred)
+        visual.plot_confusion_matrix(y_train, y_test)
+        visual.classification_report(y_train, y_test)
 
         return accuracy
 
-    def random_forest(self, X_train, y_train, X_test, y_test):
-
+    def random_forest(self, paramDic, X_train, y_train, X_test, y_test):
+        start_time = time.time()
         rfc = RandomForestClassifier(
                  n_estimators=paramDic['n_estimators'],
                  criterion=paramDic['criterion'],
@@ -122,14 +128,21 @@ class Models:
                  warm_start=paramDic['warm_start'],
                  class_weight=paramDic['class_weight'])
 
-        rfc.fit(X_train, y_train)
-        preds = rfc.predict(X_test)
-        acc_rfc = (preds == y_test).sum().astype(float) / len(preds)*100
-        print("Scikit-Learn's Random Forest Classifier's prediction accuracy is: %3.2f" % (acc_rfc))
+        fit=rfc.fit(X_train, y_train)
+        #fit.summary()
+        y_pred = rfc.predict(X_test)
+        learningtime= time.time() - start_time
+        print("---random_forest took : %.2f seconds---"  % learningtime)
+
+        # acc_rfc = (y_pred == y_test).sum().astype(float) / len(y_pred)*100
+        # print("Scikit-Learn's Random Forest Classifier's prediction accuracy is: %3.2f" % (acc_rfc))
 
         accuracy = accuracy_score(y_test, y_pred)
-        print("decision_tree Accuracy: " , accuracy)
+        print("[Random Forest Classifier Accuracy: %.4f %%]" % (accuracy *100) )
 
+        visual = Visualization(y_pred)
+        visual.plot_confusion_matrix(y_train, y_test)
+        visual.classification_report(y_train, y_test)
         return accuracy
 
     def XGBClassifier(self, paramDic, X_train, y_train, X_test, y_test):
@@ -161,6 +174,10 @@ class Models:
         accuracy = accuracy_score(np.array(y_test).flatten(), y_pred)
         print("Accuracy: %.10f%%" % (accuracy * 100.0))
 
+        visual = Visualization(y_pred)
+        visual.plot_confusion_matrix(y_train, y_test)
+        visual.classification_report(y_train, y_test)
+
         return accuracy
         #accuracy_per_roc_auc = roc_auc_score(np.array(testLabels).flatten(), y_pred)
         #print("ROC-AUC: %.10f%%" % (accuracy_per_roc_auc * 100))
@@ -174,10 +191,6 @@ class Models:
         :param: None
         :return None
         '''
-
-        # scaling = preprocessing.MinMaxScaler(feature_range=(-1,1)).fit(X_train)
-        # X_train = scaling.transform(X_train)
-        # X_test = scaling.transform(X_test)
 
         svm_model_linear = SVC(kernel = 'linear', C = 1).fit(X_train, y_train)
         y_pred = svm_model_linear.predict(X_test)
@@ -244,6 +257,7 @@ class Models:
         :param: None
         :return: None
         '''
+        print("Training logistic regression...")
         lg = LogisticRegression(
             penalty=paramDic['penalty'],
             dual=paramDic['dual'],

@@ -2,14 +2,14 @@
 Configuration containing all the hyperparameters used in each model.
 '''
 k_neighor_dict = {
-'n_neighbors' : 5 ,
- 'weights' : 'uniform' ,
-  'algorithm' : 'auto',
-  'leaf_size' : 30,
-  'p': 2 ,
-  'metric' : 'minkowski',
-  'metric_params' : None,
-  'n_jobs' : None
+    'n_neighbors' : 5 ,
+    'weights' : 'uniform' ,
+    'algorithm' : 'auto',
+    'leaf_size' : 30,
+    'p': 2 ,
+    'metric' : 'minkowski',
+    'metric_params' : None,
+    'n_jobs' : None
 }
 
 decision_tree_dict = {
