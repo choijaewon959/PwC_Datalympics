@@ -31,14 +31,9 @@ st_y_train = dataProcessor.get_stratified_train_labels()
 st_X_test = dataProcessor.get_stratified_test_attributes()
 st_y_test = dataProcessor.get_stratified_test_labels()
 
-<<<<<<< HEAD
-# #Scale data
-#normalized_X_train, normalized_y_train = filtering.scale_data(st_X_train,st_y_train)
-=======
 #Scale data
 normalized_X_train = filtering.scale_data(st_X_train)
 normalized_X_test = filtering.scale_data(st_X_test)
->>>>>>> 42586eb4c1e509b0dd84d0267d05e272597bf557
 
 #filtered X_train attributes
 # filtered_data = filtering.PCA(X_train, 4)
@@ -53,13 +48,8 @@ normalized_X_test = filtering.scale_data(st_X_test)
 # accuracy = algorithm.k_neighbor(k_neighor_dict, X_train, y_train, X_test, y_test)
 # result.log_result('k_neighbor', accuracy, k_neighor_dict)
 
-<<<<<<< HEAD
-# accuracy = algorithm.XGBClassifier(XGBClassifier_dict, X_train, y_train, X_test, y_test)
-# result.log_result('XGBClassifier', accuracy, XGBClassifier_dict)
-=======
 accuracy = algorithm.XGBClassifier(XGBClassifier_dict, normalized_X_train, st_y_train, normalized_X_test, st_y_test)
 result.log_result('XGBClassifier', accuracy, XGBClassifier_dict)
->>>>>>> 42586eb4c1e509b0dd84d0267d05e272597bf557
 
 # accuracy = algorithm.decision_tree(decision_tree_dict, X_train, y_train, X_test, y_test)
 # result.log_result('decision_tree', accuracy, decision_tree_dict)

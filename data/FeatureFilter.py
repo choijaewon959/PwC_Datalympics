@@ -47,9 +47,6 @@ class FeatureFilter:
         '''
         names = X_train.columns
 
-<<<<<<< HEAD
-        return X_train_normalized, y_train_normalized
-=======
         # #Standard Scaler
         # scaling = preprocessing.StandardScaler()
         # scaled = scaling.fit_transform(X_train)
@@ -58,8 +55,7 @@ class FeatureFilter:
         scaling = preprocessing.MinMaxScaler(feature_range= (-1,1))
         scaled = scaling.fit_transform(X_train)
 
-        
+
         X_train_normalized = pd.DataFrame(scaled, columns = names)
 
         return X_train_normalized
->>>>>>> 42586eb4c1e509b0dd84d0267d05e272597bf557
