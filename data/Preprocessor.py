@@ -42,7 +42,11 @@ class Preprocessor:
         # TODO: function call for preprocessing data
         self.__temp_data_process()
         self.__split_data()
+<<<<<<< HEAD
         # #self.__reample_data_CNN()
+=======
+        self.__resample_data_SMOTE()
+>>>>>>> 42586eb4c1e509b0dd84d0267d05e272597bf557
         self.__stratify_data()
         #self.__graph()
 
