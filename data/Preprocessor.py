@@ -45,6 +45,7 @@ class Preprocessor:
         self.__retrieve_data()
         # TODO: function call for preprocessing data
         self.__temp_data_process()
+        self.add_nodes()
         self.__split_data()
         #self.__resample_data_SMOTE()
         #self.__stratify_data()
@@ -79,8 +80,8 @@ class Preprocessor:
         USE YOUR OWN FILE PATH AND COMMENT OUT WHEN YOU PUSH.
         """
         #data = pd.read_csv(r"C:\Users\lasts\Google Drive\Etc\Coding\Data_lympics\Deeplearning\loan.csv")
-        #data = pd.read_csv("../loan_data/data/loanfull.csv" ,low_memory=False)
-        data = pd.read_csv("../loan_data/data/loanfull.csv")
+        #data = pd.read_csv("Deeplearning/loan.csv")
+        #data = pd.read_csv("../loan_data/data/loanfull.csv")
         #low_memory was added to avoid data compression
 
 
@@ -340,7 +341,7 @@ class Preprocessor:
                ,'mths_since_last_delinq', 'mths_since_last_record', 'open_acc', 'pub_rec'
                ,'revol_bal', 'revol_util', 'total_acc', 'out_prncp', 'out_prncp_inv', 'total_pymnt'
                ,'total_pymnt_inv', 'total_rec_prncp', 'total_rec_int', 'total_rec_late_fee'
-               ,'recoveries', 'collection_recovery_fee', 'last_pymnt_amnt'
+               ,'recoveries', 'collection_recovery_fee', 'last_pymnt_amnt', 'home_ownership', 'verification_status','pymnt_plan','purpose', 'initial_list_status', 'collections_12_mths_ex_med','application_type'
             ]]
 
         # TODO: Feature transformation can be done beforehand or after
@@ -433,6 +434,30 @@ class Preprocessor:
     def get_data(self):
         return self.__loanData
 
+        self.__stratified_train_label = stratified_train['loan_status']
+        self.__stratified_train_att = stratified_train.drop('loan_status', axis=1)
+        # print(self.__stratified_train_att)
+        # print(self.__stratified_train_label)
+    def additional_feature(self,val,unique):
+        if(val == unique):
+            return 1
+        return 0
+
+    def add_nodes(self):
+        '''
+        'dummy' nodes added
+        '''
+        stop = ['sub_grade','emp_length','loan_status','annual_inc','term','grade', 'delinq_2yrs','inq_last_6mths']
+        for col in list(self.__loanData.columns.values):
+            try:
+                if(stop.index(col) != -1):
+                    continue
+            except:
+                if(len(self.__loanData[col].unique()) < 30):
+                    for uniq in self.__loanData[col].unique():
+                        self.__loanData[col+' '+str(uniq)] = self.__loanData[col].apply(self.additional_feature,args=(uniq,))
+        self.__loanData = self.__loanData.drop(['home_ownership', 'verification_status','pymnt_plan','purpose', 'initial_list_status', 'collections_12_mths_ex_med','application_type'], axis=1)
+        print(self.__loanData.columns.values)
     def __graph(self):
         visual = Visualization(self.__loanData)
         visual.plot_heatmap()

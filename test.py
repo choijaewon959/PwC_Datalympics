@@ -11,23 +11,23 @@ print('test began')
 
 #objects
 dataProcessor = Preprocessor()
-filtering = FeatureFilter()
+# filtering = FeatureFilter()
 algorithm = Models()
 result = ResultLog()
 
-#data for training
-X_train = dataProcessor.get_train_attributes()
-y_train = dataProcessor.get_train_labels()
+# #data for training
+# X_train = dataProcessor.get_train_attributes()
+# y_train = dataProcessor.get_train_labels()
 
-#data for test
-X_test = dataProcessor.get_test_attributes()
-y_test = dataProcessor.get_test_labels()
+# #data for test
+# X_test = dataProcessor.get_test_attributes()
+# y_test = dataProcessor.get_test_labels()
 
 # #Statified data for training
 st_X_train = dataProcessor.get_stratified_train_attributes()
 st_y_train = dataProcessor.get_stratified_train_labels()
 
-#Statified data for testing
+# #Statified data for testing
 st_X_test = dataProcessor.get_stratified_test_attributes()
 st_y_test = dataProcessor.get_stratified_test_labels()
 
