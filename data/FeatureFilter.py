@@ -44,7 +44,17 @@ class FeatureFilter:
         :param: data to be normalized. (Data frame)
         :return: nomalized data. (Data frame)
         '''
-        scaling = preprocessing.MinMaxScaler(feature_range=(-1,1))
-        X_train_normalized = pd.DataFrame(scaling.fit_transform(X_train))
+        names = X_train.columns
+
+        # #Standard Scaler
+        # scaling = preprocessing.StandardScaler()
+        # scaled = scaling.fit_transform(X_train)
+
+        #Minimax Scaler
+        scaling = preprocessing.MinMaxScaler(feature_range= (-1,1))
+        scaled = scaling.fit_transform(X_train)
+
+        
+        X_train_normalized = pd.DataFrame(scaled, columns = names)
 
         return X_train_normalized
