@@ -3,6 +3,7 @@ Model object that contains all the possible classification models
 '''
 import pandas as pd
 import numpy as np
+from numpy import argmax
 import matplotlib.pyplot as plt
 from data.Preprocessor import Preprocessor
 from learning.Hyperparameter import *
@@ -277,16 +278,16 @@ class Models:
         '''
         X = X_train
         Y = y_train
-        in_len = 8 # number of input feature
+        in_len = 70 # number of input feature
         out_len = 8 # number of output label
-        print(y_train)
         YY = to_categorical(Y)
         print("Train label converted into vector label")
         model = Sequential()
-        hidden_act = ['sigmoid','tanh', 'relu']
-        epoch = [5,20, 50]
+        hidden_act = ['tanh']
+        epoch = [20]
         Y_test = to_categorical(y_test)
         out = ""
+        #class_weight = { 0:1.0, 1:1.0, 2:3.0,3: 10,4:,5:,6:,7:}
         for act in hidden_act:
             for ep in epoch:
                 if(n==1):
@@ -302,4 +303,8 @@ class Models:
                 scores = model.evaluate(X_test, Y_test)
                 out = out +"Accuracy : "+ str(scores[1]) + ", Hidden layer activation : " + act +" Epoch:"+str(ep) +" |"
                 print(out)
-        print(out)
+        y_pred = np.argmax(model.predict(X_test),axis=1)
+        visual = Visualization(y_pred)
+        visual.plot_confusion_matrix(X_train, y_train, X_test, y_test)
+        visual.classification_report(X_train, y_train, X_test, y_test)
+        return scores[1]
