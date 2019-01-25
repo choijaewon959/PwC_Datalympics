@@ -11,6 +11,7 @@ from imblearn.over_sampling import SMOTE
 from imblearn.under_sampling import NearMiss, CondensedNearestNeighbour
 from imblearn.combine import SMOTETomek
 from evaluation.Visualization import *
+from .FeatureFilter import *
 
 class Preprocessor:
     def __init__(self):
@@ -23,6 +24,7 @@ class Preprocessor:
         self.__colnames = None # string type keys for the table.
         self.__numOfKeys = 0    # number of keys.
         self.__loanData = None # data mainly used.
+        self.__meaningfulfeatures=[]
 
         self.__smallData = None
 
@@ -38,14 +40,28 @@ class Preprocessor:
         self.__stratified_train_att = None
         self.__stratified_train_label = None
 
+        self.__featurefilter = FeatureFilter()
+
         self.__retrieve_data()
         # TODO: function call for preprocessing data
         self.__temp_data_process()
         self.__split_data()
-        self.__resample_data_SMOTE()
-        self.__stratify_data()
+        #self.__resample_data_SMOTE()
+        #self.__stratify_data()
         #self.__graph()
+        #self.__select_k_best()
+        self.__extra_tree_classify()
 
+
+    def __select_k_best(self):
+
+        self.__meaningfulfeatures = self.__featurefilter.feature_score(self.__loanData)
+        print(self.__meaningfulfeatures)
+
+    def __extra_tree_classify(self):
+
+        self.__meaningfulfeatures = self.__featurefilter.feature_importance(self.__loanData)
+        print(self.__meaningfulfeatures)
 
     def __retrieve_data(self):
         '''
