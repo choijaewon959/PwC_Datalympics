@@ -39,7 +39,7 @@ class Preprocessor:
         self.__retrieve_data()
         # TODO: function call for preprocessing data
         self.__temp_data_process()
-        self.add_nodes()
+        #self.add_nodes()
         self.__split_data()
         self.__resample_data_SMOTE()
         self.__stratify_data()
@@ -347,7 +347,7 @@ class Preprocessor:
                ,'mths_since_last_delinq', 'mths_since_last_record', 'open_acc', 'pub_rec'
                ,'revol_bal', 'revol_util', 'total_acc', 'out_prncp', 'out_prncp_inv', 'total_pymnt'
                ,'total_pymnt_inv', 'total_rec_prncp', 'total_rec_int', 'total_rec_late_fee'
-               ,'recoveries', 'collection_recovery_fee', 'last_pymnt_amnt', 'home_ownership', 'verification_status','pymnt_plan','purpose', 'initial_list_status', 'collections_12_mths_ex_med','application_type'
+               ,'recoveries', 'collection_recovery_fee', 'last_pymnt_amnt'
             ]]
 
         # TODO: Feature transformation can be done beforehand or after

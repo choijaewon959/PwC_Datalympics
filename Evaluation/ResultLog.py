@@ -52,5 +52,20 @@ class ResultLog:
         '''
         df = pd.read_csv("evaluation/result.csv")
         df.sort_values(by = 'Accuracy', ascending = 0)
-
+        print(df.iloc[0])
         return df.iloc[0] 
+
+    def get_best_param(self):
+        '''
+        Print the parameters returning best accuracy for specifit model
+
+        :param: None
+        :return: None
+        '''
+        data = self.get_best()
+        print("<Hyperparameters for ", data['Model'], ">")
+        print(data['Hyperparameter']) 
+
+
+            
+

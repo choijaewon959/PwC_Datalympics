@@ -14,7 +14,8 @@ dataProcessor = Preprocessor()
 # filtering = FeatureFilter()
 algorithm = Models()
 result = ResultLog()
-
+# result.get_best()
+# result.get_best_param()
 #data for training
 X_train = dataProcessor.get_train_attributes()
 y_train = dataProcessor.get_train_labels()
