@@ -7,6 +7,10 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from sklearn.feature_selection import SelectKBest, chi2
 from sklearn import preprocessing
+from sklearn.feature_selection import SelectKBest, chi2
+from sklearn.ensemble import ExtraTreesClassifier
+import matplotlib.pyplot as plt
+
 
 class FeatureFilter:
     def __init__(self):
@@ -18,11 +22,11 @@ class FeatureFilter:
         '''
         Principal component analysis.
         Filter algorithm to retrieve meaningful feature attributes.
-        
-        :param: 
+
+        :param:
             raw_attributes: unfiltered data
             numOfComponents: number of components to be used.
-        
+
         :return: filtered feature vector (data frame)
         '''
         pca = PCA(n_components = numOfComponents)
@@ -37,3 +41,47 @@ class FeatureFilter:
         :return: dimensionality of feature vector (int)
         '''
         return self.__reducedDimension
+
+    def feature_score(self, data):
+
+        X = data.drop('loan_status', axis = 1)
+        y = data['loan_status']
+
+        #apply SelectKBest
+        bestfeatures= SelectKBest(score_func=chi2, k=20)
+        fit = bestfeatures.fit(X,y)
+        dfscores = pd.DataFrame(fit.scores_)
+        dfcolumns= pd.DataFrame(X.columns)
+
+        #concatenate two datafrmae for Visualization
+        feature_score = pd.concat([dfcolumns, dfscores], axis=1)
+        feature_score.columns = ['Features', 'Score']
+        feature_score.nlargest(20).plot(kind='barh')
+        plt.show()
+
+        return feature_score.nlargest(20,'Score')['Features'].tolist()
+
+
+    def feature_importance(self, data):
+        X = data.drop('loan_status', axis = 1)
+        y = data['loan_status']
+
+        ETC = ExtraTreesClassifier()
+        ETC.fit(X,y)
+        print (ETC.feature_importances_)
+        # dfscores=ETC.feature_importances_
+        # dfcolumns= pd.DataFrame(X.columns)
+        #
+        # feature_importance = pd.concat([dfcolumns, dfscores], axis=1)
+        # feature_importance.columns = ['Features', 'importance']
+        # feature_importance.nlargest(20).plot(kind='barh')
+        # plt.show()
+        #
+        # return feature_score.nlargest(20,'Score')['Features'].tolist()
+
+        feature_importance= pd.Series(ETC.feature_importances_, index = X.columns )
+        feature_importance.nlargest(20).plot(kind='barh')
+        print(feature_importance.nlargest(20))
+        plt.show()
+        #print(feature_importance.nlargest(20).index.tolist())
+        return feature_importance.nlargest(20).index.tolist()

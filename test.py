@@ -11,7 +11,7 @@ print('test began')
 
 #objects
 dataProcessor = Preprocessor()
-filtering = FeatureFilter()
+# filtering = FeatureFilter()
 algorithm = Models()
 result = ResultLog()
 
@@ -26,8 +26,8 @@ y_test = dataProcessor.get_test_labels()
 #filtered X_train attributes
 # filtered_data = filtering.PCA(X_train, 4)
 
-accuracy = algorithm.logistic_regression(logistic_regression_dict, X_train, y_train, X_test, y_test)
-result.log_result('logistic_regression', accuracy, logistic_regression_dict)
+# accuracy = algorithm.logistic_regression(logistic_regression_dict, X_train, y_train, X_test, y_test)
+# result.log_result('logistic_regression', accuracy, logistic_regression_dict)
 
 # ff_accuracy = algorithm.ff_network(3, X_train, y_train, X_test, y_test, dataProcessor)
 # # accuracy = algorithm.SVM(SVM_dict, X_train, y_train, X_test, y_test)
@@ -36,8 +36,8 @@ result.log_result('logistic_regression', accuracy, logistic_regression_dict)
 # accuracy = algorithm.k_neighbor(k_neighor_dict, X_train, y_train, X_test, y_test)
 # result.log_result('k_neighbor', accuracy, k_neighor_dict)
 
-# accuracy = algorithm.XGBClassifier(XGBClassifier_dict, X_train, y_train, X_test, y_test)
-# result.log_result('XGBClassifier', accuracy, XGBClassifier_dict)
+accuracy = algorithm.XGBClassifier(XGBClassifier_dict, X_train, y_train, X_test, y_test)
+result.log_result('XGBClassifier', accuracy, XGBClassifier_dict)
 
 # accuracy = algorithm.decision_tree(decision_tree_dict, X_train, y_train, X_test, y_test)
 # result.log_result('decision_tree', accuracy, decision_tree_dict)
@@ -47,5 +47,3 @@ result.log_result('logistic_regression', accuracy, logistic_regression_dict)
 
 # accuracy = algorithm.ff_network(2, st_X_train, st_y_train, st_X_test, st_y_test)
 # result.log_result('ff_network', accuracy, ff_network_dict)
-
-

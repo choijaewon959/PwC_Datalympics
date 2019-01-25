@@ -64,7 +64,7 @@ XGBClassifier_dict = {
      'subsample':0.8,
      'colsample_bytree':0.8,
      'colsample_bylevel':1,
-     'reg_alpha':0.005,
+     'reg_alpha':1,
      'reg_lambda':1,
      'scale_pos_weight':1,
      'base_score':0.5,

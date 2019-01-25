@@ -10,6 +10,8 @@ from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
 from imblearn.over_sampling import SMOTE
 from imblearn.under_sampling import NearMiss, CondensedNearestNeighbour
 from imblearn.combine import SMOTETomek
+from evaluation.Visualization import *
+from data.FeatureFilter import FeatureFilter
 
 class Preprocessor:
     def __init__(self):
@@ -22,6 +24,7 @@ class Preprocessor:
         self.__colnames = None # string type keys for the table.
         self.__numOfKeys = 0    # number of keys.
         self.__loanData = None # data mainly used.
+        self.__meaningfulfeatures=[]
 
         self.__smallData = None
 
@@ -31,13 +34,53 @@ class Preprocessor:
         self.__attributes_test = None
         self.__labels_test = None
 
+        self.__featurefilter = FeatureFilter()
+
         self.__retrieve_data()
         # TODO: function call for preprocessing data
-        self.__temp_data_process()  #extract meaningful features.
-        self.__split_data() #split data into train/test sets.
-        self.__resample_data_SMOTE()    #resampling to avoid imbalance in data.
-        self.__stratify_data()  #stratify the data sets to retrieve more accurate result.
-        # self.__scale_data() #scale data from range -1 to 1
+        self.__temp_data_process()
+        self.add_nodes()
+        self.__split_data()
+        self.__resample_data_SMOTE()
+        self.__stratify_data()
+        #self.__scale_data()
+        #self.__graph()
+        #self.__select_k_best()
+        #self.__scale_data(self)
+        #self.__extra_tree_classify()
+    
+    def __scale_data(self):
+        '''
+        Normalize data.
+
+        :param: data to be normalized. (Data frame)
+        :return: nomalized data. (Data frame)
+        '''
+        names_train = self.__attributes_train.columns
+        names_test = self.__attributes_test.columns
+
+        # #Standard Scaler
+        # scaling = preprocessing.StandardScaler()
+        # scaled = scaling.fit_transform(X_train)
+
+        #Minimax Scaler
+        scaling = preprocessing.MinMaxScaler(feature_range= (-1,1))
+
+        scaled_train = scaling.fit_transform(self.__attributes_train)
+        scaled_test = scaling.fit_transform(self.__attributes_test)
+
+        self.__attributes_train = pd.DataFrame(scaled_train, columns = names_train)
+        self.__attributes_test = pd.DataFrame(scaled_test, columns = names_test)
+
+    def __select_k_best(self):
+
+        self.__meaningfulfeatures = self.__featurefilter.feature_score(self.__loanData)
+        print(self.__meaningfulfeatures)
+
+    def __extra_tree_classify(self):
+
+        self.__meaningfulfeatures = self.__featurefilter.feature_importance(self.__loanData)
+        print(self.__meaningfulfeatures)
 
     def __retrieve_data(self):
         '''
@@ -55,8 +98,8 @@ class Preprocessor:
         USE YOUR OWN FILE PATH AND COMMENT OUT WHEN YOU PUSH.
         """
         #data = pd.read_csv(r"C:\Users\lasts\Google Drive\Etc\Coding\Data_lympics\Deeplearning\loan.csv")
-        data = pd.read_csv("../loan_data/data/loanfull.csv" ,low_memory=False)
-        #data = pd.read_csv("../loan_data/data/loanfull.csv")
+        #data = pd.read_csv("Deeplearning/loan.csv")
+        data = pd.read_csv("../loan_data/data/loanfull.csv")
         #low_memory was added to avoid data compression
 
 
@@ -132,7 +175,7 @@ class Preprocessor:
         X_train_res, y_train_res = sm.fit_resample(self.__attributes_train, self.__labels_train)
         self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res), pd.Series(y_train_res)
         print("[respamling finished]")
-    
+
     def __resample_data_NearMiss(self):
         '''
         Resampling imbalanced data with near miss algorithm. (Undersampling)
@@ -304,7 +347,7 @@ class Preprocessor:
                ,'mths_since_last_delinq', 'mths_since_last_record', 'open_acc', 'pub_rec'
                ,'revol_bal', 'revol_util', 'total_acc', 'out_prncp', 'out_prncp_inv', 'total_pymnt'
                ,'total_pymnt_inv', 'total_rec_prncp', 'total_rec_int', 'total_rec_late_fee'
-               ,'recoveries', 'collection_recovery_fee', 'last_pymnt_amnt'
+               ,'recoveries', 'collection_recovery_fee', 'last_pymnt_amnt', 'home_ownership', 'verification_status','pymnt_plan','purpose', 'initial_list_status', 'collections_12_mths_ex_med','application_type'
             ]]
 
         # TODO: Feature transformation can be done beforehand or after
@@ -372,7 +415,7 @@ class Preprocessor:
                ,'total_pymnt_inv', 'total_rec_prncp', 'total_rec_int', 'total_rec_late_fee'
                ,'recoveries', 'collection_recovery_fee', 'last_pymnt_amnt'
             ]
-            
+
         for col in cols:
             #print('Imputation with Median: %s' % (col))
             dfTrain[col].fillna(dfTrain[col].median(), inplace=True)
@@ -396,4 +439,27 @@ class Preprocessor:
 
     def get_data(self):
         return self.__loanData
-    
+
+    def additional_feature(self,val,unique):
+        if(val == unique):
+            return 1
+        return 0
+
+    def add_nodes(self):
+        '''
+        'dummy' nodes added
+        '''
+        stop = ['sub_grade','emp_length','loan_status','annual_inc','term','grade', 'delinq_2yrs','inq_last_6mths']
+        for col in list(self.__loanData.columns.values):
+            try:
+                if(stop.index(col) != -1):
+                    continue
+            except:
+                if(len(self.__loanData[col].unique()) < 30):
+                    for uniq in self.__loanData[col].unique():
+                        self.__loanData[col+' '+str(uniq)] = self.__loanData[col].apply(self.additional_feature,args=(uniq,))
+        self.__loanData = self.__loanData.drop(['home_ownership', 'verification_status','pymnt_plan','purpose', 'initial_list_status', 'collections_12_mths_ex_med','application_type'], axis=1)
+        print(self.__loanData.columns.values)
+    def __graph(self):
+        visual = Visualization(self.__loanData)
+        visual.plot_heatmap()
