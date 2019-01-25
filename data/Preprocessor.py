@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import time
 from util.Distribution import Distribution
-from sklearn import datasets
+from sklearn import datasets, preprocessing
 from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
 from imblearn.over_sampling import SMOTE
 from imblearn.under_sampling import NearMiss, CondensedNearestNeighbour
@@ -31,18 +31,13 @@ class Preprocessor:
         self.__attributes_test = None
         self.__labels_test = None
 
-        self.__stratified_test_att = None
-        self.__stratified_test_label = None
-
-        self.__stratified_train_att = None
-        self.__stratified_train_label = None
-
         self.__retrieve_data()
         # TODO: function call for preprocessing data
-        self.__temp_data_process()
-        self.__split_data()
-        self.__resample_data_SMOTE()
-        self.__stratify_data()
+        self.__temp_data_process()  #extract meaningful features.
+        self.__split_data() #split data into train/test sets.
+        self.__resample_data_SMOTE()    #resampling to avoid imbalance in data.
+        self.__stratify_data()  #stratify the data sets to retrieve more accurate result.
+        # self.__scale_data() #scale data from range -1 to 1
 
     def __retrieve_data(self):
         '''
@@ -102,15 +97,12 @@ class Preprocessor:
         for train_set, test_set in stratifier.split(self.__loanData, self.__loanData['loan_status']):
             stratified_train = self.__loanData.loc[train_set]
             stratified_test = self.__loanData.loc[test_set]
-        # print('Train set ratio \n', stratified_train["loan_status"].value_counts()/len(self.__loanData))
-        # print('Test set ratio \n', stratified_test["loan_status"].value_counts()/len(self.__loanData))
-        self.__stratified_test_label = stratified_test['loan_status']
-        self.__stratified_test_att = stratified_test.drop('loan_status', axis=1)
 
-        self.__stratified_train_label = stratified_train['loan_status']
-        self.__stratified_train_att = stratified_train.drop('loan_status', axis=1)
-        # print(self.__stratified_train_att)
-        # print(self.__stratified_train_label)
+        self.__labels_test = stratified_test['loan_status']
+        self.__attributes_test = stratified_test.drop('loan_status', axis=1)
+
+        self.__labels_train = stratified_train['loan_status']
+        self.__attributes_train = stratified_train.drop('loan_status', axis=1)
         print("[stratify_data finished]")
 
     def __resample_data_ADASYN(self):
@@ -175,10 +167,37 @@ class Preprocessor:
         :return: None
         '''
         print("resampling data...")
-        smt = SMOTETomek(random_state=6)
+        smt = SMOTETomek(random_state=42)
         X_train_res, y_train_res = smt.fit_resample(self.__attributes_train, self.__labels_train)
         self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res), pd.Series(y_train_res)
         print("[respamling finished]")
+
+    def __scale_data(self):
+        '''
+        Normalize data.
+
+        :param: data to be normalized. (Data frame)
+        :return: nomalized data. (Data frame)
+        '''
+        X_train = self.__attributes_train
+        X_test = self.__attributes_test
+
+        names_train = X_train.columns
+        names_test = X_test.columns
+
+        # #Standard Scaler
+        # scaling = preprocessing.StandardScaler()
+        # scaled = scaling.fit_transform(X_train)
+
+        #Minimax Scaler
+        scaling = preprocessing.MinMaxScaler(feature_range= (-1,1))
+
+        X_train_scaled = scaling.fit_transform(X_train)
+        X_test_scaled = scaling.fit_transform(X_test)
+
+        self.__attributes_train = pd.DataFrame(X_train_scaled, columns = names_train)
+        self.__attributes_test = pd.DataFrame(X_test_scaled, columns = names_test)
+
 
     def get_train_attributes(self):
         '''
@@ -215,42 +234,6 @@ class Preprocessor:
         :return: categorical labels
         '''
         return self.__labels_test
-
-    def get_stratified_train_labels(self):
-        '''
-        Return the stratified labels of the data for train.
-
-        :param: None
-        :return: stratified train labels
-        '''
-        return self.__stratified_train_label
-
-    def get_stratified_train_attributes(self):
-        '''
-        Return the stratified attributes of the data for train.
-
-        :param: None
-        :return: stratified train attribute
-        '''
-        return self.__stratified_train_att
-
-    def get_stratified_test_attributes(self):
-        '''
-        Return the stratified attributes of the data for test.
-
-        :param: None
-        :return: stratified test attribute
-        '''
-        return self.__stratified_test_att
-
-    def get_stratified_test_labels(self):
-        '''
-        Return the stratified label of the data for test.
-
-        :param: None
-        :return: stratified test label
-        '''
-        return self.__stratified_test_label
 
     def get_distribution(self):
         '''
