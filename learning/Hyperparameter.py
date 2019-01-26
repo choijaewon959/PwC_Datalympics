@@ -111,5 +111,14 @@ logistic_regression_dict = {
 }
 
 ff_network_dict = {
-
+    'activation': 'tanh',
+    'class_weight': '{ 0:1.0, 1:1.0, 2:3.0,3: 10,4:20,5:20,6:20,7:10}',
+    'n' : 2,
+    'output_activation':'softmax',
+    'loss':'categorical_crossentropy',
+    'optimizer':'adam',
+    'batch_size':20,
+    'epochs':20,
+    'hidden_layer': 80,
+    'weight_mu' : 0.8
 }

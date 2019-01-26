@@ -5,6 +5,7 @@ import os
 import datetime
 import csv
 import pandas as pd
+import time
 
 class ResultLog:
     def __init__(self):
