@@ -27,12 +27,9 @@ class Preprocessor:
         self.__loanData = None # data mainly used.
         self.__meaningfulfeatures=[]
 
-<<<<<<< HEAD
         self.__smallData = None
         self.currentData = None
-=======
         #self.__data_minority = None
->>>>>>> b236e66b7efa901eabddd9875baca7ea05461d47
 
         self.__attributes_train = None
         self.__labels_train = None
@@ -46,21 +43,21 @@ class Preprocessor:
         self.__dominant_feature_filter()
 
         # TODO: function call for preprocessing data
+
         self.__temp_data_process()
-<<<<<<< HEAD
         self.add_nodes()
-        self.__stratify_data()
+
+        #self.__stratify_data()
+        self.__split_data()
+
         self.__resample_data_SMOTE()
-        # self.__split_data()
-=======
+
         #self.add_nodes()
+
 
         #self.__select_k_best()
         #self.__extra_tree_classify()
-        self.__resample_data_SMOTE()
-        self.__split_data()
         #self.__stratify_data()
->>>>>>> b236e66b7efa901eabddd9875baca7ea05461d47
         #self.__scale_data()
         #self.__graph()
 
@@ -143,7 +140,7 @@ class Preprocessor:
         """
         #data = pd.read_csv(r"C:\Users\lasts\Google Drive\Etc\Coding\Data_lympics\Deeplearning\loan.csv")
         #data = pd.read_csv("Deeplearning/loan.csv")
-        #data = pd.read_csv("../loan_data/data/loanfull.csv")
+        data = pd.read_csv("../loan_data/data/loanfull.csv")
         #low_memory was added to avoid data compression
 
 
@@ -432,12 +429,11 @@ class Preprocessor:
 
         #print('Transform: loan_status...')
         # for loan status just gave random 0 / 1 of binary representation of good or bad loan
-<<<<<<< HEAD
-        mapping = {'loan_status': {'Fully Paid': 0 , 'Current': 9, 'Charged Off': 1,
-                    'In Grace Period': 2, 'Late (31-120 days)': 3, 'Late (16-30 days)': 4,
-                    'Issued': 5, 'Default': 6, 'Does not meet the credit policy. Status:Fully Paid': 7,
-                    'Does not meet the credit policy. Status:Charged Off': 8}
-=======
+        # mapping = {'loan_status': {'Fully Paid': 0 , 'Current': 9, 'Charged Off': 1,
+        #             'In Grace Period': 2, 'Late (31-120 days)': 3, 'Late (16-30 days)': 4,
+        #             'Issued': 5, 'Default': 6, 'Does not meet the credit policy. Status:Fully Paid': 7,
+        #             'Does not meet the credit policy. Status:Charged Off': 8}
+
         # loan status with current label
         # mapping = {'loan_status': {'Fully Paid': 0 , 'Current': 1, 'Charged Off': 2,
         #             'In Grace Period': 3, 'Late (31-120 days)': 4, 'Late (16-30 days)': 5,
@@ -448,7 +444,6 @@ class Preprocessor:
                     'In Grace Period': 3, 'Late (31-120 days)': 4, 'Late (16-30 days)': 5,
                     'Issued': 6, 'Default': 7, 'Does not meet the credit policy. Status:Fully Paid': 8,
                     'Does not meet the credit policy. Status:Charged Off': 9}
->>>>>>> b236e66b7efa901eabddd9875baca7ea05461d47
         }
         dfTrain= dfTrain.replace(mapping)
 
@@ -476,7 +471,7 @@ class Preprocessor:
                ,'mths_since_last_delinq', 'mths_since_last_record', 'open_acc', 'pub_rec'
                ,'revol_bal', 'revol_util', 'total_acc', 'out_prncp', 'out_prncp_inv', 'total_pymnt'
                ,'total_pymnt_inv', 'total_rec_prncp', 'total_rec_int', 'total_rec_late_fee'
-               ,'recoveries', 'collection_recovery_fee', 'last_pymnt_amnt' 
+               ,'recoveries', 'collection_recovery_fee', 'last_pymnt_amnt'
             ]
 
         for col in cols:
@@ -491,7 +486,7 @@ class Preprocessor:
         self.__currentData = dfTrain[dfTrain.loan_status < 0]
         dfTrain = dfTrain.drop(dfTrain[dfTrain.loan_status < 0].index)
         self.__loanData = dfTrain
-        print(dfTrain['loan_status'])
+        # print(dfTrain['loan_status'])
         tempProcessTime= time.time() - start_time
         print("[tempProcessTime finished with %.2f seconds]"  % tempProcessTime)
 
@@ -523,12 +518,8 @@ class Preprocessor:
                         self.__loanData[col+' '+str(uniq)] = self.__loanData[col].apply(self.additional_feature,args=(uniq,))
         self.__loanData = self.__loanData.drop(['home_ownership', 'verification_status','pymnt_plan','purpose', 'initial_list_status','application_type'], axis=1)
         print(self.__loanData.columns.values)
-<<<<<<< HEAD
         print(len(self.__loanData.columns.values))
-    
-=======
 
->>>>>>> b236e66b7efa901eabddd9875baca7ea05461d47
     def __graph(self):
         visual = Visualization(self.__loanData)
         visual.plot_heatmap()
