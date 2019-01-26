@@ -52,7 +52,7 @@ random_forest_dict = {
 XGBClassifier_dict = {
      'max_depth':4, #default: 3
      'learning_rate':0.1,
-     'n_estimators':50,
+     'n_estimators':100,
      'silent':True,
      'objective':'multi:softprob',
      'booster':'gbtree',
@@ -97,7 +97,7 @@ logistic_regression_dict = {
     'penalty' : 'l2',
     'dual' : False,
     'tol' : 0.0001,
-    'C' : 1.0,
+    'C' : 0.001,
     'fit_intercept' : True,
     'intercept_scaling' : 1,
     'class_weight' : None,

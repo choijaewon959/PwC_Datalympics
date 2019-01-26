@@ -44,7 +44,7 @@ class Preprocessor:
         self.__split_data()
         self.__resample_data_SMOTE()
         self.__stratify_data()
-        #self.__scale_data()
+        self.__scale_data()
         #self.__graph()
         #self.__select_k_best()
         #self.__scale_data(self)
@@ -112,7 +112,7 @@ class Preprocessor:
 
         #Taemin's debugging tool@!!
         #data = pd.read_csv("Deeplearning/loan.csv")
-        data = pd.read_csv("../loanfull.csv")
+        #data = pd.read_csv("../loanfull.csv")
 
         self.__colnames= data.columns.values
         self.__loanData = data
