@@ -39,16 +39,19 @@ class Preprocessor:
 
         self.__retrieve_data()
         self.__dominant_feature_filter()
-
         # TODO: function call for preprocessing data
         self.__temp_data_process()
+        print(self.__loanData)
+
         #self.add_nodes()
 
         #self.__select_k_best()
         #self.__extra_tree_classify()
-        self.__resample_data_SMOTE()
+        
         self.__split_data()
-        #self.__stratify_data()
+        self.__resample_data_SMOTE()
+        self.__stratify_data()
+        
         #self.__scale_data()
         #self.__graph()
 
@@ -189,7 +192,7 @@ class Preprocessor:
         :return: None
         '''
         print("resampling data...")
-        ada = SMOTE(random_state=10)
+        ada = SMOTE(random_state=1)
         X_train_res, y_train_res = ada.fit_resample(self.__attributes_train, self.__labels_train)
         self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res), pd.Series(y_train_res)
         print("[respamling finished]")
@@ -203,9 +206,11 @@ class Preprocessor:
         :return: None
         '''
         print("resampling data...")
+        
         sm = SMOTE(random_state=6)
         X_train_res, y_train_res = sm.fit_resample(self.__attributes_train, self.__labels_train)
         self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res), pd.Series(y_train_res)
+
         print("[respamling finished]")
 
     def __resample_data_NearMiss(self):
@@ -228,10 +233,18 @@ class Preprocessor:
         :param: None
         :return: None
         '''
+        X_train = self.__attributes_train
+        X_test = self.__attributes_test
+
+        names_train = X_train.columns
+        names_test = X_test.columns
+
         print("resampling data...")
+        print(self.__attributes_train, self.__labels_train)
         cnn = CondensedNearestNeighbour(random_state=42)
         X_train_res, y_train_res = cnn.fit_resample(self.__attributes_train, self.__labels_train)
-        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res), pd.Series(y_train_res)
+        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res, columns=names_train), pd.Series(y_train_res)
+        print(self.__attributes_train, self.__labels_train)
         print("[respamling finished]")
 
     def __resample_data_SMOTETomek(self):
