@@ -5,7 +5,6 @@ import math
 import datetime
 
 
-<<<<<<< HEAD
 def datetime_data(data):
     """
     parse input data(datetime format)
@@ -16,10 +15,6 @@ def datetime_data(data):
     :param: dataset (pandas dataframe)
     :return: dataset (pandas dataframe) column added
     """
-=======
-def retrieve_data(data):
-
->>>>>>> 083eed2b8d1d602e06d13dfa5e53c7f6f85c6c34
     # data = pd.read_csv("../paymentdata.csv")
 
     print("[retrieve_data finished]")
