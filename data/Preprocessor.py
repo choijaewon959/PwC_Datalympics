@@ -27,7 +27,7 @@ class Preprocessor:
         self.__loanData = None # data mainly used.
         self.__meaningfulfeatures=[]
 
-        self.__smallData = None
+        self.__data_minority = None
 
         self.__attributes_train = None
         self.__labels_train = None
@@ -38,20 +38,34 @@ class Preprocessor:
         self.__featurefilter = FeatureFilter()
 
         self.__retrieve_data()
+        self.__dominant_feature_filter()
         # TODO: function call for preprocessing data
         self.__temp_data_process()
         #self.add_nodes()
 
-        self.__select_k_best()
-        #self.__extra_tree_classify()
+        #self.__select_k_best()
+        self.__extra_tree_classify()
 
         #self.__split_data()
         self.__stratify_data()
+<<<<<<< HEAD
 
         self.__resample_data_SMOTE()
+=======
+>>>>>>> df2f7af3e513f92db9caf44e474386970ec8a162
         self.__scale_data()
         #self.__graph()
         #self.__scale_data(self)
+
+    def __dominant_feature_filter(self):
+        '''
+        Filter out the dominant term to avoid overfitting
+
+        :param: None
+        :return: None
+        '''
+        self.__data_minority = self.__featurefilter.dominant_feature_filter(self.__loanData)
+
 
     def __scale_data(self):
         '''
@@ -89,7 +103,6 @@ class Preprocessor:
 
         self.__loanData=dfdataset
         print("Select K Best features replaced original feature list")
-
 
     def __extra_tree_classify(self):
 
@@ -358,7 +371,7 @@ class Preprocessor:
         #--------other debugging messages are omitted/ commented for simplifying purposes -------
         start_time = time.time()
 
-        dfTrain = self.__loanData
+        dfTrain = self.__data_minority
         #copied data to refrain from warnings
         dfTrain= dfTrain.copy()
 

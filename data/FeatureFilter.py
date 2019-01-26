@@ -85,3 +85,14 @@ class FeatureFilter:
         plt.show()
         #print(feature_importance.nlargest(20).index.tolist())
         return feature_importance.nlargest(20).index.tolist()
+
+    def dominant_feature_filter(self, data):
+        '''
+        Filter out the data rows with the dominant label.
+
+        :param: None
+        :return: filtered data (data frame)
+        '''
+
+        df = data.loc[data['loan_status'] != 'current']
+        return df

@@ -152,7 +152,7 @@ class Models:
         # print(X_test.shape)
         # print(y_test.shape)
 
-        eval_set=[(X_train, y_train)]
+        eval_set=[(X_train, y_train), (X_test, y_test)]
 
         xgb = xgboost.sklearn.XGBClassifier(
             max_depth=paramDic['max_depth'], 
@@ -178,7 +178,7 @@ class Models:
             importance_type=paramDic['importance_type']
         )
 
-        xgb.fit(X_train, y_train, eval_metric=["error", "logloss"], early_stopping_rounds=20,  eval_set=eval_set, verbose=True)
+        xgb.fit(X_train, y_train, eval_metric=["merror", "mlogloss"], eval_set=eval_set, verbose=True)
 
         y_pred = xgb.predict(X_test)
 
@@ -191,12 +191,14 @@ class Models:
         #Visualization
         #performance metrix
         results = xgb.evals_result()
-        epochs = len(results['validation_0']['error'])
+        epochs = len(results['validation_0']['merror'])
+
         x_axis = range(epochs)
 
         #Visualize log loss
         fig, ax = plt.subplots()
-        ax.plot(x_axis, results['validation_0']['logloss'], label = 'Train')
+        ax.plot(x_axis, results['validation_0']['mlogloss'], label = 'Train')
+        ax.plot(x_axis, results['validation_1']['mlogloss'], label = 'Test')
         ax.legend()
         plt.ylabel('Log Loss')
         plt.title('XGBoost Log Loss')
@@ -204,11 +206,12 @@ class Models:
 
         #visualize classification error
         fig, ax = plt.subplots()
-        ax.plot(x_axis, results['validation_0']['error'], label='Train')
+        ax.plot(x_axis, results['validation_0']['merror'], label='Train')
+        ax.plot(x_axis, results['validation_1']['merror'], label = 'Test')
         ax.legend()
         plt.ylabel('Classification Error')
-        pyplot.title('XGBoost Classification Error')
-        pyplot.show()
+        plt.title('XGBoost Classification Error')
+        plt.show()
 
         visual = Visualization(y_pred)
         visual.plot_confusion_matrix(y_train, y_test)

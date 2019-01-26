@@ -92,3 +92,13 @@ logistic_regression,0.959177579,"penalty:l2,dual:False,tol:0.0001,C:1.0,fit_inte
 logistic_regression,0.959177579,"penalty:l2,dual:False,tol:0.0001,C:1.0,fit_intercept:True,intercept_scaling:1,class_weight:None,random_state:1,solver:liblinear,max_iter:100,multi_class:ovr,verbose:0,warm_start:False,n_jobs:None",09:33.4
 XGBClassifier,0.964434628,"max_depth:6,learning_rate:0.01,n_estimators:400,silent:True,objective:multi:softprob,booster:gbtree,n_jobs:3,nthread:None,gamma:0,min_child_weight:1,max_delta_step:0,subsample:0.8,colsample_bytree:0.8,colsample_bylevel:1,reg_alpha:1,reg_lambda:1,scale_pos_weight:1,base_score:0.5,random_state:0,seed:None,missing:None,importance_type:gain",53:22.5
 XGBClassifier,0.964423359,"max_depth:6,learning_rate:0.01,n_estimators:200,silent:True,objective:multi:softprob,booster:gbtree,n_jobs:3,nthread:None,gamma:1,min_child_weight:1,max_delta_step:0,subsample:0.8,colsample_bytree:0.8,colsample_bylevel:1,reg_alpha:1,reg_lambda:1,scale_pos_weight:1,base_score:0.5,random_state:0,seed:None,missing:None,importance_type:gain",05:02.5
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+XGBClassifier,0.9680745565597602,"max_depth:4,learning_rate:0.1,n_estimators:100,silent:True,objective:multi:softprob,booster:gbtree,n_jobs:3,nthread:None,gamma:5,min_child_weight:1,max_delta_step:0,subsample:0.8,colsample_bytree:0.8,colsample_bylevel:1,reg_alpha:3,reg_lambda:3,scale_pos_weight:1,base_score:0.5,random_state:0,seed:None,missing:None,importance_type:gain",2019-01-26 15:43:11.322001
+=======
+>>>>>>> 5244942169afb65d2f2114fea665a18eb4471708
+>>>>>>> bd20a42ebd1070d6f758176310a2dc7218a00625
+XGBClassifier,0.9680182109130249,"max_depth:4,learning_rate:0.1,n_estimators:100,silent:True,objective:multi:softprob,booster:gbtree,n_jobs:3,nthread:None,gamma:5,min_child_weight:1,max_delta_step:0,subsample:0.8,colsample_bytree:0.8,colsample_bylevel:1,reg_alpha:3,reg_lambda:3,scale_pos_weight:1,base_score:0.5,random_state:0,seed:None,missing:None,importance_type:gain",2019-01-26 16:06:37.040692
+XGBClassifier,0.9680182109130249,"max_depth:4,learning_rate:0.1,n_estimators:100,silent:True,objective:multi:softprob,booster:gbtree,n_jobs:3,nthread:None,gamma:5,min_child_weight:1,max_delta_step:0,subsample:0.8,colsample_bytree:0.8,colsample_bylevel:1,reg_alpha:3,reg_lambda:3,scale_pos_weight:1,base_score:0.5,random_state:0,seed:None,missing:None,importance_type:gain",2019-01-26 16:19:35.922794
+>>>>>>> df2f7af3e513f92db9caf44e474386970ec8a162
