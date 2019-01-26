@@ -56,9 +56,9 @@ class FeatureFilter:
         #concatenate two datafrmae for Visualization
         feature_score = pd.concat([dfcolumns, dfscores], axis=1)
         feature_score.columns = ['Features', 'Score']
-        feature_score.nlargest(20).plot(kind='barh')
-        plt.show()
-
+        print(feature_score.nlargest(20, 'Score'))
+        #plt.show()
+        #print(feature_score.nlargest(20,'Score')['Features'].tolist())
         return feature_score.nlargest(20,'Score')['Features'].tolist()
 
 
@@ -81,7 +81,7 @@ class FeatureFilter:
 
         feature_importance= pd.Series(ETC.feature_importances_, index = X.columns )
         feature_importance.nlargest(20).plot(kind='barh')
-        print(feature_importance.nlargest(20))
+        print(feature_importance.nlargest(20).index.tolist())
         plt.show()
         #print(feature_importance.nlargest(20).index.tolist())
         return feature_importance.nlargest(20).index.tolist()
