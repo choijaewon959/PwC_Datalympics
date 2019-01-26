@@ -46,10 +46,13 @@ y_test = dataProcessor.get_test_labels()
 # accuracy = algorithm.XGBClassifier(XGBClassifier_dict, X_train, y_train, X_test, y_test)
 # result.log_result('XGBClassifier', accuracy, XGBClassifier_dict)
 
+# accuracy = algorithm.XGBClassifier(XGBClassifier_dict, X_train, y_train, X_test, y_test)
+# result.log_result('XGBClassifier', accuracy, XGBClassifier_dict)
+#
 # accuracy = algorithm.decision_tree(decision_tree_dict, X_train, y_train, X_test, y_test)
 # result.log_result('decision_tree', accuracy, decision_tree_dict)
-
-# accuracy = algorithm.random_forest(random_forest_dict, normalized_X_train, st_y_train, st_X_test, st_y_test)
+#
+# accuracy = algorithm.random_forest(random_forest_dict, X_train, y_train, X_test, y_test)
 # result.log_result('random_forest', accuracy, random_forest_dict)
 for i in range(1,4):
     accuracy = algorithm.ff_network(i, X_train, y_train, X_test, y_test)

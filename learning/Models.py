@@ -147,10 +147,7 @@ class Models:
 
     def XGBClassifier(self, paramDic, X_train, y_train, X_test, y_test):
 
-        # print(X_train.head())
-        # print(y_train.head())
-        # print(X_test.shape)
-        # print(y_test.shape)
+        modelName = "XGBClassifier"
 
         eval_set=[(X_train, y_train), (X_test, y_test)]
 
@@ -180,46 +177,7 @@ class Models:
 
         xgb.fit(X_train, y_train, eval_metric=["merror", "mlogloss"], eval_set=eval_set, verbose=True)
 
-        y_pred = xgb.predict(X_test)
-
-        acc_xgb = (y_pred == y_test).sum().astype(float) / len(y_pred)*100
-        print("XGBoost's prediction accuracy is: %3.2f" % (acc_xgb))
-
-        accuracy = accuracy_score(np.array(y_test).flatten(), y_pred)
-        print("Accuracy: %.10f%%" % (accuracy * 100.0))
-
-        #Visualization
-        #performance metrix
-        results = xgb.evals_result()
-        epochs = len(results['validation_0']['merror'])
-
-        x_axis = range(epochs)
-
-        #Visualize log loss
-        fig, ax = plt.subplots()
-        ax.plot(x_axis, results['validation_0']['mlogloss'], label = 'Train')
-        ax.plot(x_axis, results['validation_1']['mlogloss'], label = 'Test')
-        ax.legend()
-        plt.ylabel('Log Loss')
-        plt.title('XGBoost Log Loss')
-        plt.show()
-
-        #visualize classification error
-        fig, ax = plt.subplots()
-        ax.plot(x_axis, results['validation_0']['merror'], label='Train')
-        ax.plot(x_axis, results['validation_1']['merror'], label = 'Test')
-        ax.legend()
-        plt.ylabel('Classification Error')
-        plt.title('XGBoost Classification Error')
-        plt.show()
-
-        visual = Visualization(y_pred)
-        visual.plot_confusion_matrix(y_train, y_test)
-        visual.classification_report(y_train, y_test)
-
-        return accuracy
-        #accuracy_per_roc_auc = roc_auc_score(np.array(testLabels).flatten(), y_pred)
-        #print("ROC-AUC: %.10f%%" % (accuracy_per_roc_auc * 100))
+        return (modelName, xgb)
 
 
     def linear_SVM(self, X_train, y_train, X_test, y_test):

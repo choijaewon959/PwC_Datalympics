@@ -36,7 +36,7 @@ class Preprocessor:
         self.__attributes_test = None
         self.__labels_test = None
 
-        #second classifier input 
+        #second classifier input
         self.sec_att_train = None
         self.sec_lab_train = None
 
@@ -46,13 +46,17 @@ class Preprocessor:
         self.__featurefilter = FeatureFilter()
 
         self.__retrieve_data()
-        #self.__dominant_feature_filter()
-
+        self.__dominant_feature_filter()
         # TODO: function call for preprocessing data
+
         self.__temp_data_process()
-        self.add_nodes()
+        #self.add_nodes()
+
+
+        #self.__select_k_best()
+        #self.__extra_tree_classify()
+
         self.__split_data()
-        self.__split_second_data()
         self.__resample_data_SMOTE()
 
         #self.__scale_data()
@@ -137,7 +141,7 @@ class Preprocessor:
         """
         #data = pd.read_csv(r"C:\Users\lasts\Google Drive\Etc\Coding\Data_lympics\Deeplearning\loan.csv")
         #data = pd.read_csv("Deeplearning/loan.csv")
-        #data = pd.read_csv("../loan_data/data/loanfull.csv")
+        data = pd.read_csv("../loan_data/data/loanfull.csv")
         #low_memory was added to avoid data compression
 
 
@@ -169,7 +173,7 @@ class Preprocessor:
 
         self.__attributes_train, self.__attributes_test, self.__labels_train, self.__labels_test = train_test_split(X, y, test_size=0.2, random_state = 1, shuffle =True, stratify=y)
         print("[split_data finished]")
- 
+
     def __split_second_data(self) :
         '''
         Split the dataframe into tw
@@ -196,7 +200,7 @@ class Preprocessor:
         :return: None
         '''
         print("resampling data...")
-        ada = SMOTE(random_state=10)
+        ada = SMOTE(random_state=1)
         X_train_res, y_train_res = ada.fit_resample(self.__attributes_train, self.__labels_train)
         self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res), pd.Series(y_train_res)
         print("[respamling finished]")
@@ -211,12 +215,10 @@ class Preprocessor:
         '''
         print("resampling data...")
 
-        X_train = self.__attributes_train
-        names_train = X_train.columns
-
         sm = SMOTE(random_state=6)
         X_train_res, y_train_res = sm.fit_resample(self.__attributes_train, self.__labels_train)
-        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res, columns = names_train), pd.Series(y_train_res)
+        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res), pd.Series(y_train_res)
+
         print("[respamling finished]")
 
     def __resample_data_NearMiss(self):
@@ -239,10 +241,18 @@ class Preprocessor:
         :param: None
         :return: None
         '''
+        X_train = self.__attributes_train
+        X_test = self.__attributes_test
+
+        names_train = X_train.columns
+        names_test = X_test.columns
+
         print("resampling data...")
+        print(self.__attributes_train, self.__labels_train)
         cnn = CondensedNearestNeighbour(random_state=42)
         X_train_res, y_train_res = cnn.fit_resample(self.__attributes_train, self.__labels_train)
-        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res), pd.Series(y_train_res)
+        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res, columns=names_train), pd.Series(y_train_res)
+        print(self.__attributes_train, self.__labels_train)
         print("[respamling finished]")
 
     def __resample_data_SMOTETomek(self):
@@ -456,7 +466,7 @@ class Preprocessor:
                ,'mths_since_last_delinq', 'mths_since_last_record', 'open_acc', 'pub_rec'
                ,'revol_bal', 'revol_util', 'total_acc', 'out_prncp', 'out_prncp_inv', 'total_pymnt'
                ,'total_pymnt_inv', 'total_rec_prncp', 'total_rec_int', 'total_rec_late_fee'
-               ,'recoveries', 'collection_recovery_fee', 'last_pymnt_amnt' 
+               ,'recoveries', 'collection_recovery_fee', 'last_pymnt_amnt'
             ]
 
         for col in cols:
@@ -503,7 +513,7 @@ class Preprocessor:
         self.__loanData = self.__loanData.drop(['home_ownership', 'verification_status','pymnt_plan','purpose', 'initial_list_status','application_type'], axis=1)
         print(self.__loanData.columns.values)
         print(len(self.__loanData.columns.values))
-    
+
     def __graph(self):
         visual = Visualization(self.__loanData)
         visual.plot_heatmap()
