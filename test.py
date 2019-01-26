@@ -14,6 +14,11 @@ dataProcessor = Preprocessor()
 # filtering = FeatureFilter()
 algorithm = Models()
 result = ResultLog()
+# result.get_best()
+# result.get_best_param()
+#data for training
+X_train = dataProcessor.get_train_attributes()
+y_train = dataProcessor.get_train_labels()
 
 # #data for training
 # X_train = dataProcessor.get_train_attributes()
@@ -38,7 +43,7 @@ st_y_test = dataProcessor.get_stratified_test_labels()
 #filtered X_train attributes
 # filtered_data = filtering.PCA(X_train, 4)
 
-# accuracy = algorithm.logistic_regression(logistic_regression_dict, normalized_X_train, normalized_y_train, st_X_test, st_y_test)
+# accuracy = algorithm.logistic_regression(logistic_regression_dict, X_train, y_train, X_test, y_test)
 # result.log_result('logistic_regression', accuracy, logistic_regression_dict)
 
 # ff_accuracy = algorithm.ff_network(3, X_train, y_train, X_test, y_test, dataProcessor)

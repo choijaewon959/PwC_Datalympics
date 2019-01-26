@@ -258,6 +258,7 @@ class Models:
         :return: None
         '''
         print("Training logistic regression...")
+        start_time = time.time()
         lg = LogisticRegression(
             penalty=paramDic['penalty'],
             dual=paramDic['dual'],
@@ -283,6 +284,13 @@ class Models:
         cross_valid_accuracy = cross_val_score(lg, X_train, y_train, scoring='accuracy', cv = num_of_folds).mean()/num_of_folds
         print("Accuracy: ", accuracy)
         print("cross validation accuracy ", cross_valid_accuracy)
+        #print("Logistic Regression training time: %.2f sec" % time.time() - start_time)
+
+        #visualize
+        visual = Visualization(lg_pred)
+        visual.plot_confusion_matrix(X_train, y_train, X_test, y_test)
+        visual.classification_report(X_train, y_train, X_test, y_test)
+
         return accuracy
 
     def ff_network(self, n, X_train, y_train, X_test, y_test):
