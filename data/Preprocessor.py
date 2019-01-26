@@ -41,15 +41,17 @@ class Preprocessor:
         # TODO: function call for preprocessing data
         self.__temp_data_process()
         #self.add_nodes()
+
+        self.__select_k_best()
+        #self.__extra_tree_classify()
+
         self.__split_data()
         self.__resample_data_SMOTE()
         self.__stratify_data()
         self.__scale_data()
         #self.__graph()
-        #self.__select_k_best()
         #self.__scale_data(self)
-        #self.__extra_tree_classify()
-    
+
     def __scale_data(self):
         '''
         Normalize data.
@@ -75,13 +77,31 @@ class Preprocessor:
 
     def __select_k_best(self):
 
+
         self.__meaningfulfeatures = self.__featurefilter.feature_score(self.__loanData)
-        print(self.__meaningfulfeatures)
+
+        cols= self.__meaningfulfeatures
+        cols.append('loan_status')
+
+        dfdataset=self.__loanData
+        dfdataset= dfdataset[cols]
+
+        self.__loanData=dfdataset
+        print("Select K Best features replaced original feature list")
 
     def __extra_tree_classify(self):
 
-        self.__meaningfulfeatures = self.__featurefilter.feature_importance(self.__loanData)
-        print(self.__meaningfulfeatures)
+        self.__meaningfulfeatures = self.__featurefilter.feature_score(self.__loanData)
+
+        cols= self.__meaningfulfeatures
+        cols.append('loan_status')
+
+        dfdataset=self.__loanData
+        dfdataset= dfdataset[cols]
+
+        self.__loanData=dfdataset
+        print("Extra_tree_classify() features replaced original feature list")
+
 
     def __retrieve_data(self):
         '''
