@@ -27,12 +27,8 @@ class Preprocessor:
         self.__loanData = None # data mainly used.
         self.__meaningfulfeatures=[]
 
-<<<<<<< HEAD
         self.__smallData = None
-        self.currentData = None
-=======
-        #self.__data_minority = None
->>>>>>> b236e66b7efa901eabddd9875baca7ea05461d47
+        self.__currentData = None
 
         self.__attributes_train = None
         self.__labels_train = None
@@ -40,27 +36,25 @@ class Preprocessor:
         self.__attributes_test = None
         self.__labels_test = None
 
+        #second classifier input 
+        self.sec_att_train = None
+        self.sec_lab_train = None
+
+        self.sec_att_test = None
+        self.sec_lab_train = None
+
         self.__featurefilter = FeatureFilter()
 
         self.__retrieve_data()
-        self.__dominant_feature_filter()
+        #self.__dominant_feature_filter()
 
         # TODO: function call for preprocessing data
         self.__temp_data_process()
-<<<<<<< HEAD
         self.add_nodes()
-        self.__stratify_data()
-        self.__resample_data_SMOTE()
-        # self.__split_data()
-=======
-        #self.add_nodes()
-
-        #self.__select_k_best()
-        #self.__extra_tree_classify()
-        self.__resample_data_SMOTE()
         self.__split_data()
-        #self.__stratify_data()
->>>>>>> b236e66b7efa901eabddd9875baca7ea05461d47
+        self.__split_second_data()
+        self.__resample_data_SMOTE()
+
         #self.__scale_data()
         #self.__graph()
 
@@ -155,7 +149,7 @@ class Preprocessor:
 
         #Taemin's debugging tool@!!
         #data = pd.read_csv("Deeplearning/loan.csv")
-        #data = pd.read_csv("../loanfull.csv")
+        data = pd.read_csv("../loanfull.csv")
 
         self.__colnames= data.columns.values
         self.__loanData = data
@@ -173,26 +167,25 @@ class Preprocessor:
         X = self.__loanData.drop('loan_status', axis = 1)
         y = self.__loanData['loan_status']
 
-        self.__attributes_train, self.__attributes_test, self.__labels_train, self.__labels_test = train_test_split(X, y, test_size=0.2, random_state = 1)
+        self.__attributes_train, self.__attributes_test, self.__labels_train, self.__labels_test = train_test_split(X, y, test_size=0.2, random_state = 1, shuffle =True, stratify=y)
         print("[split_data finished]")
+ 
+    def __split_second_data(self) :
+        '''
+        Split the dataframe into tw
+        '''
+        dfTrain = self.__loanData
+        dfTrain = dfTrain.drop(dfTrain[dfTrain.loan_status < 3].index)
+        dfTrain = dfTrain.drop(dfTrain[dfTrain.loan_status > 5].index)
+        y = dfTrain['loan_status']
+        X = dfTrain.drop('loan_status', axis=1)
 
-    def __stratify_data(self):
-        '''
-        splits data in to training and testing with the ratios of label kept similar
-        '''
-        stratifier = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
-        for train_set, test_set in stratifier.split(self.__loanData, self.__loanData['loan_status']):
-            stratified_train = self.__loanData.loc[train_set]
-            stratified_test = self.__loanData.loc[test_set]
-        self.__labels_test = stratified_test['loan_status']
-        self.__attributes_test = stratified_test.drop('loan_status', axis=1)
-        self.__labels_train = stratified_train['loan_status']
-        self.__attributes_train = stratified_train.drop('loan_status', axis=1)
-        # print(self.__labels_train)
-        # print(self.__attributes_train)
-        # print(self.__labels_test)
-        # print(self.__attributes_test)
-        print("[stratify_data finished]")
+        self.__sec_att_train, self.__sec_att_test, self.__sec_lab_train, self.__sec_lab_test = train_test_split(X, y, test_size=0.2, random_state = 1, shuffle =True, stratify=y)
+        # print(self.__sec_att_train)
+        # print(self.__sec_att_test)
+        # print(self.__sec_lab_test)
+        # print(self.__sec_lab_train)
+        print("[split_data finished]")
 
     def __resample_data_ADASYN(self):
         '''
@@ -432,23 +425,10 @@ class Preprocessor:
 
         #print('Transform: loan_status...')
         # for loan status just gave random 0 / 1 of binary representation of good or bad loan
-<<<<<<< HEAD
-        mapping = {'loan_status': {'Fully Paid': 0 , 'Current': 9, 'Charged Off': 1,
-                    'In Grace Period': 2, 'Late (31-120 days)': 3, 'Late (16-30 days)': 4,
-                    'Issued': 5, 'Default': 6, 'Does not meet the credit policy. Status:Fully Paid': 7,
-                    'Does not meet the credit policy. Status:Charged Off': 8}
-=======
-        # loan status with current label
-        # mapping = {'loan_status': {'Fully Paid': 0 , 'Current': 1, 'Charged Off': 2,
-        #             'In Grace Period': 3, 'Late (31-120 days)': 4, 'Late (16-30 days)': 5,
-        #             'Issued': 6, 'Default': 7, 'Does not meet the credit policy. Status:Fully Paid': 8,
-        #             'Does not meet the credit policy. Status:Charged Off': 9}
-        # }
-        mapping = {'loan_status': {'Fully Paid': 0 , 'Charged Off': 2,
-                    'In Grace Period': 3, 'Late (31-120 days)': 4, 'Late (16-30 days)': 5,
+        mapping = {'loan_status': {'Fully Paid': 0 , 'Current': -1, 'Charged Off': 2,
+                    'In Grace Period': 3, 'Late (31-120 days)': 3, 'Late (16-30 days)': 3,
                     'Issued': 6, 'Default': 7, 'Does not meet the credit policy. Status:Fully Paid': 8,
                     'Does not meet the credit policy. Status:Charged Off': 9}
->>>>>>> b236e66b7efa901eabddd9875baca7ea05461d47
         }
         dfTrain= dfTrain.replace(mapping)
 
@@ -491,7 +471,6 @@ class Preprocessor:
         self.__currentData = dfTrain[dfTrain.loan_status < 0]
         dfTrain = dfTrain.drop(dfTrain[dfTrain.loan_status < 0].index)
         self.__loanData = dfTrain
-        print(dfTrain['loan_status'])
         tempProcessTime= time.time() - start_time
         print("[tempProcessTime finished with %.2f seconds]"  % tempProcessTime)
 
@@ -523,12 +502,8 @@ class Preprocessor:
                         self.__loanData[col+' '+str(uniq)] = self.__loanData[col].apply(self.additional_feature,args=(uniq,))
         self.__loanData = self.__loanData.drop(['home_ownership', 'verification_status','pymnt_plan','purpose', 'initial_list_status','application_type'], axis=1)
         print(self.__loanData.columns.values)
-<<<<<<< HEAD
         print(len(self.__loanData.columns.values))
     
-=======
-
->>>>>>> b236e66b7efa901eabddd9875baca7ea05461d47
     def __graph(self):
         visual = Visualization(self.__loanData)
         visual.plot_heatmap()
