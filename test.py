@@ -25,6 +25,7 @@ y_train = dataProcessor.get_train_labels()
 # y_train = dataProcessor.get_train_labels()
 
 #data for test
+#data for test
 X_test = dataProcessor.get_test_attributes()
 y_test = dataProcessor.get_test_labels()
 
@@ -40,17 +41,22 @@ y_test = dataProcessor.get_test_labels()
 # # accuracy = algorithm.SVM(SVM_dict, X_train, y_train, X_test, y_test)
 # result.log_result('ff_network', ff_accuracy, ff_network_dict)
 
-# accuracy = algorithm.k_neighbor(k_neighor_dict, X_train, y_train, X_test, y_test)
-# result.log_result('k_neighbor', accuracy, k_neighor_dict)
+accuracy = algorithm.k_neighbor(k_neighor_dict, X_train, y_train, X_test, y_test)
+result.log_result('k_neighbor', accuracy, k_neighor_dict)
 
-accuracy = algorithm.XGBClassifier(XGBClassifier_dict, X_train, y_train, X_test, y_test)
-result.log_result('XGBClassifier', accuracy, XGBClassifier_dict)
-
+# accuracy = algorithm.XGBClassifier(XGBClassifier_dict, X_train, y_train, X_test, y_test)
+# result.log_result('XGBClassifier', accuracy, XGBClassifier_dict)
+#
 # accuracy = algorithm.decision_tree(decision_tree_dict, X_train, y_train, X_test, y_test)
 # result.log_result('decision_tree', accuracy, decision_tree_dict)
-
-# accuracy = algorithm.random_forest(random_forest_dict, normalized_X_train, st_y_train, st_X_test, st_y_test)
+#
+# accuracy = algorithm.random_forest(random_forest_dict, X_train, y_train, X_test, y_test)
 # result.log_result('random_forest', accuracy, random_forest_dict)
+
+# for i in range(1,4):
+#     accuracy = algorithm.ff_network(i, X_train, y_train, X_test, y_test)
+#     result.log_result('ff_network', accuracy, ff_network_dict)
+
 # for i in range(1,3):
 #     accuracy = algorithm.ff_network(i, st_X_train, st_y_train, st_X_test, st_y_test)
 #     result.log_result('ff_network', accuracy, ff_network_dict)

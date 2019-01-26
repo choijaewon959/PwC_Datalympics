@@ -27,6 +27,8 @@ class Preprocessor:
         self.__loanData = None # data mainly used.
         self.__meaningfulfeatures=[]
 
+        self.__smallData = None
+        self.currentData = None
         #self.__data_minority = None
 
         self.__attributes_train = None
@@ -40,17 +42,16 @@ class Preprocessor:
         self.__retrieve_data()
         self.__dominant_feature_filter()
         # TODO: function call for preprocessing data
-        self.__temp_data_process()
-        print(self.__loanData)
 
+        self.__temp_data_process()
         #self.add_nodes()
+
 
         #self.__select_k_best()
         #self.__extra_tree_classify()
         
         self.__split_data()
         self.__resample_data_SMOTE()
-        self.__stratify_data()
         
         #self.__scale_data()
         #self.__graph()
@@ -175,12 +176,14 @@ class Preprocessor:
         for train_set, test_set in stratifier.split(self.__loanData, self.__loanData['loan_status']):
             stratified_train = self.__loanData.loc[train_set]
             stratified_test = self.__loanData.loc[test_set]
-
         self.__labels_test = stratified_test['loan_status']
         self.__attributes_test = stratified_test.drop('loan_status', axis=1)
-
         self.__labels_train = stratified_train['loan_status']
         self.__attributes_train = stratified_train.drop('loan_status', axis=1)
+        # print(self.__labels_train)
+        # print(self.__attributes_train)
+        # print(self.__labels_test)
+        # print(self.__attributes_test)
         print("[stratify_data finished]")
 
     def __resample_data_ADASYN(self):
@@ -392,7 +395,7 @@ class Preprocessor:
                ,'mths_since_last_delinq', 'mths_since_last_record', 'open_acc', 'pub_rec'
                ,'revol_bal', 'revol_util', 'total_acc', 'out_prncp', 'out_prncp_inv', 'total_pymnt'
                ,'total_pymnt_inv', 'total_rec_prncp', 'total_rec_int', 'total_rec_late_fee'
-               ,'recoveries', 'collection_recovery_fee', 'last_pymnt_amnt'
+               ,'recoveries', 'collection_recovery_fee', 'last_pymnt_amnt', 'home_ownership', 'verification_status','pymnt_plan','purpose', 'initial_list_status','application_type'
             ]]
 
         # TODO: Feature transformation can be done beforehand or after
@@ -427,6 +430,11 @@ class Preprocessor:
 
         #print('Transform: loan_status...')
         # for loan status just gave random 0 / 1 of binary representation of good or bad loan
+        # mapping = {'loan_status': {'Fully Paid': 0 , 'Current': 9, 'Charged Off': 1,
+        #             'In Grace Period': 2, 'Late (31-120 days)': 3, 'Late (16-30 days)': 4,
+        #             'Issued': 5, 'Default': 6, 'Does not meet the credit policy. Status:Fully Paid': 7,
+        #             'Does not meet the credit policy. Status:Charged Off': 8}
+
         # loan status with current label
         # mapping = {'loan_status': {'Fully Paid': 0 , 'Current': 1, 'Charged Off': 2,
         #             'In Grace Period': 3, 'Late (31-120 days)': 4, 'Late (16-30 days)': 5,
@@ -476,10 +484,10 @@ class Preprocessor:
             #print('Imputation with Zero: %s' % (col))
             dfTrain[col].fillna(0, inplace=True)
         #print('Missing value imputation done.')
-
-
+        self.__currentData = dfTrain[dfTrain.loan_status < 0]
+        dfTrain = dfTrain.drop(dfTrain[dfTrain.loan_status < 0].index)
         self.__loanData = dfTrain
-
+        # print(dfTrain['loan_status'])
         tempProcessTime= time.time() - start_time
         print("[tempProcessTime finished with %.2f seconds]"  % tempProcessTime)
 
@@ -500,7 +508,7 @@ class Preprocessor:
         '''
         'dummy' nodes added
         '''
-        stop = ['sub_grade','emp_length','loan_status','annual_inc','term','grade', 'delinq_2yrs','inq_last_6mths']
+        stop = ['sub_grade','emp_length','loan_status','annual_inc','term','grade', 'delinq_2yrs','inq_last_6mths', 'pub_rec']
         for col in list(self.__loanData.columns.values):
             try:
                 if(stop.index(col) != -1):
@@ -509,8 +517,9 @@ class Preprocessor:
                 if(len(self.__loanData[col].unique()) < 30):
                     for uniq in self.__loanData[col].unique():
                         self.__loanData[col+' '+str(uniq)] = self.__loanData[col].apply(self.additional_feature,args=(uniq,))
-        self.__loanData = self.__loanData.drop(['home_ownership', 'verification_status','pymnt_plan','purpose', 'initial_list_status', 'collections_12_mths_ex_med','application_type'], axis=1)
+        self.__loanData = self.__loanData.drop(['home_ownership', 'verification_status','pymnt_plan','purpose', 'initial_list_status','application_type'], axis=1)
         print(self.__loanData.columns.values)
+        print(len(self.__loanData.columns.values))
 
     def __graph(self):
         visual = Visualization(self.__loanData)

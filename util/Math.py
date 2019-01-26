@@ -26,5 +26,15 @@ def create_class_weight(loanData,mu=0.9):
         score = math.log(mu*total/float(num))
         class_weight[tmp] = score if score > 1.0 else 1.0
         tmp = tmp + 1
+    # for i in range(0,3):
+    #     if i ==4 :
+    #         class_weight[i] += 20
+    #         continue
+    #     if i ==8: 
+    #         class_weight[i] += 30
+    #         continue
+    #     if i ==9: 
+    #         class_weight[i] += 30
+    #         continue
+    #     class_weight[i] += 50
     return class_weight
-    
