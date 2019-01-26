@@ -50,22 +50,22 @@ random_forest_dict = {
 }
 
 XGBClassifier_dict = {
-     'max_depth':7, #default: 3
+     'max_depth':4, #default: 3
      'learning_rate':0.1,
-     'n_estimators':400,
+     'n_estimators':50,
      'silent':True,
      'objective':'multi:softprob',
      'booster':'gbtree',
      'n_jobs':3,
      'nthread':None,
-     'gamma':1, #0 : no regularization, 1: medium regularization, 5: high regularization
+     'gamma':5, #0 : no regularization, 1: medium regularization, 5: high regularization
      'min_child_weight':1,
      'max_delta_step':0,
      'subsample':0.8,
      'colsample_bytree':0.8,
      'colsample_bylevel':1,
-     'reg_alpha':1,
-     'reg_lambda':1,
+     'reg_alpha':3,
+     'reg_lambda':3,
      'scale_pos_weight':1,
      'base_score':0.5,
      'random_state':0,
@@ -111,5 +111,14 @@ logistic_regression_dict = {
 }
 
 ff_network_dict = {
-
+    'activation': 'tanh',
+    'class_weight': '{ 0:1.0, 1:1.0, 2:3.0,3: 10,4:20,5:20,6:20,7:10}',
+    'n' : 2,
+    'output_activation':'softmax',
+    'loss':'categorical_crossentropy',
+    'optimizer':'adam',
+    'batch_size':20,
+    'epochs':20,
+    'hidden_layer': 80,
+    'weight_mu' : 0.8
 }

@@ -7,7 +7,7 @@ from numpy import argmax
 import matplotlib.pyplot as plt
 from data.Preprocessor import Preprocessor
 from learning.Hyperparameter import *
-
+from util.Math import *
 import xgboost
 
 from sklearn.svm import SVC
@@ -34,10 +34,10 @@ from num_node import *
 import time
 import itertools
 from evaluation.Visualization import *
-
-# from keras.models import Sequential
-# from keras.layers import Dense
-# from num_node import *
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.utils import to_categorical
+from num_node import *
 
 class Models:
     def __init__(self):
@@ -152,27 +152,63 @@ class Models:
         # print(X_test.shape)
         # print(y_test.shape)
 
-        eval_set=[(X_test, y_test)]
+        eval_set=[(X_train, y_train)]
 
-        clf = xgboost.sklearn.XGBClassifier(
-            max_depth=paramDic['max_depth'], learning_rate=paramDic['learning_rate'], n_estimators=paramDic['n_estimators'],
-            silent=paramDic['silent'], objective=paramDic['objective'],
-            booster=paramDic['booster'], n_jobs=paramDic['n_jobs'], nthread=paramDic['nthread'], gamma=paramDic['gamma'],
-             min_child_weight=paramDic['min_child_weight'], max_delta_step=paramDic['max_delta_step'],
-            subsample=paramDic['subsample'], colsample_bytree=paramDic['colsample_bytree'], colsample_bylevel=paramDic['colsample_bylevel'],
-             reg_alpha=paramDic['reg_alpha'], reg_lambda=paramDic['reg_lambda'], scale_pos_weight=paramDic['scale_pos_weight'],
-             base_score=paramDic['base_score'],
-             random_state=paramDic['random_state'], seed=paramDic['seed'], missing=paramDic['missing'], importance_type=paramDic['importance_type'])
+        xgb = xgboost.sklearn.XGBClassifier(
+            max_depth=paramDic['max_depth'], 
+            learning_rate=paramDic['learning_rate'], 
+            n_estimators=paramDic['n_estimators'],
+            silent=paramDic['silent'], 
+            objective=paramDic['objective'],
+            booster=paramDic['booster'], 
+            n_jobs=paramDic['n_jobs'], 
+            nthread=paramDic['nthread'], 
+            gamma=paramDic['gamma'],
+            min_child_weight=paramDic['min_child_weight'], 
+            max_delta_step=paramDic['max_delta_step'],
+            subsample=paramDic['subsample'], 
+            colsample_bytree=paramDic['colsample_bytree'], 
+            colsample_bylevel=paramDic['colsample_bylevel'],
+            reg_alpha=paramDic['reg_alpha'], 
+            reg_lambda=paramDic['reg_lambda'], 
+            scale_pos_weight=paramDic['scale_pos_weight'],
+            base_score=paramDic['base_score'],
+            random_state=paramDic['random_state'], 
+            seed=paramDic['seed'], missing=paramDic['missing'], 
+            importance_type=paramDic['importance_type']
+        )
 
-        clf.fit(X_train, y_train, early_stopping_rounds=20,  eval_set=eval_set, verbose=True)
+        xgb.fit(X_train, y_train, eval_metric=["error", "logloss"], early_stopping_rounds=20,  eval_set=eval_set, verbose=True)
 
-        y_pred = clf.predict(X_test)
+        y_pred = xgb.predict(X_test)
 
         acc_xgb = (y_pred == y_test).sum().astype(float) / len(y_pred)*100
         print("XGBoost's prediction accuracy is: %3.2f" % (acc_xgb))
 
         accuracy = accuracy_score(np.array(y_test).flatten(), y_pred)
         print("Accuracy: %.10f%%" % (accuracy * 100.0))
+
+        #Visualization
+        #performance metrix
+        results = xgb.evals_result()
+        epochs = len(results['validation_0']['error'])
+        x_axis = range(epochs)
+
+        #Visualize log loss
+        fig, ax = plt.subplots()
+        ax.plot(x_axis, results['validation_0']['logloss'], label = 'Train')
+        ax.legend()
+        plt.ylabel('Log Loss')
+        plt.title('XGBoost Log Loss')
+        plt.show()
+
+        #visualize classification error
+        fig, ax = plt.subplots()
+        ax.plot(x_axis, results['validation_0']['error'], label='Train')
+        ax.legend()
+        plt.ylabel('Classification Error')
+        pyplot.title('XGBoost Classification Error')
+        pyplot.show()
 
         visual = Visualization(y_pred)
         visual.plot_confusion_matrix(y_train, y_test)
@@ -298,35 +334,40 @@ class Models:
         Forward feeding neural network with one/two hidden layer.
 
         '''
-        X = X_train
-        Y = y_train
         in_len = 70 # number of input feature
-        out_len = 8 # number of output label
-        YY = to_categorical(Y)
+        out_len = 10 # number of output label
+        hidden_layer = 80
+
+        weight_mu = 0.8
+        print(y_train)
+        YY = to_categorical(y_train,weight_mu)
         print("Train label converted into vector label")
         model = Sequential()
         hidden_act = ['tanh']
-        epoch = [20]
+        epoch = [5]
         Y_test = to_categorical(y_test)
         out = ""
-        #class_weight = { 0:1.0, 1:1.0, 2:3.0,3: 10,4:,5:,6:,7:}
+
+        class_weight = create_class_weight(y_test)
+        print(class_weight)
+
         for act in hidden_act:
             for ep in epoch:
                 if(n==1):
-                    model.add(Dense(int(num_hidden_layer1(in_len,out_len,len(Y))), input_dim=in_len, activation=act))
+                    model.add(Dense(hidden_layer),input_dim=in_len,activation=act)
                 elif(n==2):
                     model.add(Dense(int(num_hidden_layer2(in_len,out_len)), input_dim=in_len, activation=act))
                 elif(n==3):
-                    model.add(Dense(int(num_hidden_layer3(in_len,out_len,len(Y))[0]), input_dim=in_len, activation=act))
-                    model.add(Dense(int(num_hidden_layer3(in_len,out_len,len(Y))[1]), activation=act))
-                model.add(Dense(out_len, activation='softmax'))
-                model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-                model.fit(X, YY, epochs=ep, batch_size=20, verbose=0)
-                scores = model.evaluate(X_test, Y_test)
-                out = out +"Accuracy : "+ str(scores[1]) + ", Hidden layer activation : " + act +" Epoch:"+str(ep) +" |"
-                print(out)
-        y_pred = np.argmax(model.predict(X_test),axis=1)
-        visual = Visualization(y_pred)
-        visual.plot_confusion_matrix(X_train, y_train, X_test, y_test)
-        visual.classification_report(X_train, y_train, X_test, y_test)
+                    model.add(Dense(int(num_hidden_layer3(in_len,out_len,len(y_train))[0]), input_dim=in_len, activation=act))
+                    model.add(Dense(int(num_hidden_layer3(in_len,out_len,len(y_train))[1]), activation=act))
+            model.add(Dense(out_len, activation='softmax'))
+            model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+            model.fit(X_train, YY, epochs=ep, batch_size=20, verbose=0)
+            scores = model.evaluate(X_test, Y_test)
+            out = "Accuracy : "+ str(scores[1]) + ", Hidden layer activation : " + act +" Epoch:"+str(ep) +'\n'
+            print(out)
+            y_pred = np.argmax(model.predict(X_test),axis=1)
+            visual = Visualization(y_pred)
+            visual.plot_confusion_matrix(y_train, y_test)
+            visual.classification_report(y_train, y_test)
         return scores[1]

@@ -1,5 +1,6 @@
 import numpy as np
-
+import pandas as pd
+import math
 def mse(predictionData, actualData):
     '''
     Mean squared error 
@@ -16,5 +17,14 @@ def mse(predictionData, actualData):
         sqrdError += (predictionData[i] - actualData[i]) ** 2
 
     return sqrdError / dataLength
-    
+def create_class_weight(loanData,mu=0.9):
+    total = loanData.shape[0]
+    labels_dict = pd.value_counts(loanData)
+    class_weight = dict()
+    tmp = 0
+    for num in labels_dict:
+        score = math.log(mu*total/float(num))
+        class_weight[tmp] = score if score > 1.0 else 1.0
+        tmp = tmp + 1
+    return class_weight
     
