@@ -25,16 +25,8 @@ y_train = dataProcessor.get_train_labels()
 # y_train = dataProcessor.get_train_labels()
 
 # #data for test
-# X_test = dataProcessor.get_test_attributes()
-# y_test = dataProcessor.get_test_labels()
-
-# #Statified data for training
-st_X_train = dataProcessor.get_stratified_train_attributes()
-st_y_train = dataProcessor.get_stratified_train_labels()
-
-# #Statified data for testing
-st_X_test = dataProcessor.get_stratified_test_attributes()
-st_y_test = dataProcessor.get_stratified_test_labels()
+X_test = dataProcessor.get_test_attributes()
+y_test = dataProcessor.get_test_labels()
 
 #Scale data
 # normalized_X_train = filtering.scale_data(st_X_train)
@@ -61,6 +53,6 @@ st_y_test = dataProcessor.get_stratified_test_labels()
 
 # accuracy = algorithm.random_forest(random_forest_dict, normalized_X_train, st_y_train, st_X_test, st_y_test)
 # result.log_result('random_forest', accuracy, random_forest_dict)
-for i in range(1,3):
-    accuracy = algorithm.ff_network(i, st_X_train, st_y_train, st_X_test, st_y_test)
+for i in range(1,4):
+    accuracy = algorithm.ff_network(i, X_train, y_train, X_test, y_test)
     result.log_result('ff_network', accuracy, ff_network_dict)
