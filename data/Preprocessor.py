@@ -4,6 +4,7 @@ Data Preprocessor
 import pandas as pd
 import numpy as np
 import time
+import math
 from util.Distribution import Distribution
 from sklearn import datasets
 from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
@@ -77,7 +78,7 @@ class Preprocessor:
 
         #Taemin's debugging tool@!!
         #data = pd.read_csv("Deeplearning/loan.csv")
-        #data = pd.read_csv("../loanfull.csv")
+        data = pd.read_csv("../loanfull.csv")
 
         self.__colnames= data.columns.values
         self.__loanData = data
@@ -418,10 +419,6 @@ class Preprocessor:
     def get_data(self):
         return self.__loanData
 
-        self.__stratified_train_label = stratified_train['loan_status']
-        self.__stratified_train_att = stratified_train.drop('loan_status', axis=1)
-        # print(self.__stratified_train_att)
-        # print(self.__stratified_train_label)
     def additional_feature(self,val,unique):
         if(val == unique):
             return 1
@@ -442,6 +439,7 @@ class Preprocessor:
                         self.__loanData[col+' '+str(uniq)] = self.__loanData[col].apply(self.additional_feature,args=(uniq,))
         self.__loanData = self.__loanData.drop(['home_ownership', 'verification_status','pymnt_plan','purpose', 'initial_list_status', 'collections_12_mths_ex_med','application_type'], axis=1)
         print(self.__loanData.columns.values)
+    
     def __graph(self):
         visual = Visualization(self.__loanData)
         visual.plot_heatmap()
