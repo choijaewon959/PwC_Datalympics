@@ -152,27 +152,63 @@ class Models:
         # print(X_test.shape)
         # print(y_test.shape)
 
-        eval_set=[(X_test, y_test)]
+        eval_set=[(X_train, y_train)]
 
-        clf = xgboost.sklearn.XGBClassifier(
-            max_depth=paramDic['max_depth'], learning_rate=paramDic['learning_rate'], n_estimators=paramDic['n_estimators'],
-            silent=paramDic['silent'], objective=paramDic['objective'],
-            booster=paramDic['booster'], n_jobs=paramDic['n_jobs'], nthread=paramDic['nthread'], gamma=paramDic['gamma'],
-             min_child_weight=paramDic['min_child_weight'], max_delta_step=paramDic['max_delta_step'],
-            subsample=paramDic['subsample'], colsample_bytree=paramDic['colsample_bytree'], colsample_bylevel=paramDic['colsample_bylevel'],
-             reg_alpha=paramDic['reg_alpha'], reg_lambda=paramDic['reg_lambda'], scale_pos_weight=paramDic['scale_pos_weight'],
-             base_score=paramDic['base_score'],
-             random_state=paramDic['random_state'], seed=paramDic['seed'], missing=paramDic['missing'], importance_type=paramDic['importance_type'])
+        xgb = xgboost.sklearn.XGBClassifier(
+            max_depth=paramDic['max_depth'], 
+            learning_rate=paramDic['learning_rate'], 
+            n_estimators=paramDic['n_estimators'],
+            silent=paramDic['silent'], 
+            objective=paramDic['objective'],
+            booster=paramDic['booster'], 
+            n_jobs=paramDic['n_jobs'], 
+            nthread=paramDic['nthread'], 
+            gamma=paramDic['gamma'],
+            min_child_weight=paramDic['min_child_weight'], 
+            max_delta_step=paramDic['max_delta_step'],
+            subsample=paramDic['subsample'], 
+            colsample_bytree=paramDic['colsample_bytree'], 
+            colsample_bylevel=paramDic['colsample_bylevel'],
+            reg_alpha=paramDic['reg_alpha'], 
+            reg_lambda=paramDic['reg_lambda'], 
+            scale_pos_weight=paramDic['scale_pos_weight'],
+            base_score=paramDic['base_score'],
+            random_state=paramDic['random_state'], 
+            seed=paramDic['seed'], missing=paramDic['missing'], 
+            importance_type=paramDic['importance_type']
+        )
 
-        clf.fit(X_train, y_train, early_stopping_rounds=20,  eval_set=eval_set, verbose=True)
+        xgb.fit(X_train, y_train, eval_metric=["error", "logloss"], early_stopping_rounds=20,  eval_set=eval_set, verbose=True)
 
-        y_pred = clf.predict(X_test)
+        y_pred = xgb.predict(X_test)
 
         acc_xgb = (y_pred == y_test).sum().astype(float) / len(y_pred)*100
         print("XGBoost's prediction accuracy is: %3.2f" % (acc_xgb))
 
         accuracy = accuracy_score(np.array(y_test).flatten(), y_pred)
         print("Accuracy: %.10f%%" % (accuracy * 100.0))
+
+        #Visualization
+        #performance metrix
+        results = xgb.evals_result()
+        epochs = len(results['validation_0']['error'])
+        x_axis = range(epochs)
+
+        #Visualize log loss
+        fig, ax = plt.subplots()
+        ax.plot(x_axis, results['validation_0']['logloss'], label = 'Train')
+        ax.legend()
+        plt.ylabel('Log Loss')
+        plt.title('XGBoost Log Loss')
+        plt.show()
+
+        #visualize classification error
+        fig, ax = plt.subplots()
+        ax.plot(x_axis, results['validation_0']['error'], label='Train')
+        ax.legend()
+        plt.ylabel('Classification Error')
+        pyplot.title('XGBoost Classification Error')
+        pyplot.show()
 
         visual = Visualization(y_pred)
         visual.plot_confusion_matrix(y_train, y_test)

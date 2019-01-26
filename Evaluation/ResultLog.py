@@ -55,16 +55,27 @@ class ResultLog:
         print(df.iloc[0])
         return df.iloc[0] 
 
-    def get_best_param(self):
+    def get_best_param(self, model=None):
         '''
-        Print the parameters returning best accuracy for specifit model
+        Print the parameters returning best accuracy for specifit model.
+        If no model specified, print out the hyperparameter of the algorithm with the best performance.
 
-        :param: None
+        :param: Model to be checked.
         :return: None
         '''
-        data = self.get_best()
-        print("<Hyperparameters for ", data['Model'], ">")
+        if model == None:   # if model not specified
+            data = self.get_best()
+        else:
+            df = pd.read_csv("evaluation/result.csv")
+            selectedDf = df.loc[df['Model'] == model]
+            selectedDf.sort_values(by = 'Accuracy', ascending = False)
+            data = selectedDf.iloc[0]
+
+        print("<Best Hyperparameters for", data['Model'], ">")
         print(data['Hyperparameter']) 
+        print("Accuracy: ", data['Accuracy'])
+
+        
 
 
             

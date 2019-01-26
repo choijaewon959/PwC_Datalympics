@@ -50,22 +50,22 @@ random_forest_dict = {
 }
 
 XGBClassifier_dict = {
-     'max_depth':7, #default: 3
+     'max_depth':4, #default: 3
      'learning_rate':0.1,
-     'n_estimators':400,
+     'n_estimators':50,
      'silent':True,
      'objective':'multi:softprob',
      'booster':'gbtree',
      'n_jobs':3,
      'nthread':None,
-     'gamma':1, #0 : no regularization, 1: medium regularization, 5: high regularization
+     'gamma':5, #0 : no regularization, 1: medium regularization, 5: high regularization
      'min_child_weight':1,
      'max_delta_step':0,
      'subsample':0.8,
      'colsample_bytree':0.8,
      'colsample_bylevel':1,
-     'reg_alpha':1,
-     'reg_lambda':1,
+     'reg_alpha':3,
+     'reg_lambda':3,
      'scale_pos_weight':1,
      'base_score':0.5,
      'random_state':0,
