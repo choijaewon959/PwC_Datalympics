@@ -15,17 +15,11 @@ dataProcessor = Preprocessor()
 algorithm = Models()
 result = ResultLog()
 
-<<<<<<< HEAD
 # result.get_best_param('XGBClassifier')
-=======
-result.get_best_param('XGBClassifier')
-
->>>>>>> df2f7af3e513f92db9caf44e474386970ec8a162
 #data for training
 X_train = dataProcessor.get_train_attributes()
 y_train = dataProcessor.get_train_labels()
 
-<<<<<<< HEAD
 # #data for training
 # X_train = dataProcessor.get_train_attributes()
 # y_train = dataProcessor.get_train_labels()
@@ -37,11 +31,6 @@ y_test = dataProcessor.get_test_labels()
 #Scale data
 # normalized_X_train = filtering.scale_data(st_X_train)
 # normalized_X_test = filtering.scale_data(st_X_test)
-=======
-#data for test
-X_test = dataProcessor.get_test_attributes()
-y_test = dataProcessor.get_test_labels()
->>>>>>> df2f7af3e513f92db9caf44e474386970ec8a162
 
 
 # accuracy = algorithm.logistic_regression(logistic_regression_dict, X_train, y_train, X_test, y_test)
@@ -54,13 +43,8 @@ y_test = dataProcessor.get_test_labels()
 # accuracy = algorithm.k_neighbor(k_neighor_dict, X_train, y_train, X_test, y_test)
 # result.log_result('k_neighbor', accuracy, k_neighor_dict)
 
-<<<<<<< HEAD
 accuracy = algorithm.XGBClassifier(XGBClassifier_dict, X_train, y_train, X_test, y_test)
 result.log_result('XGBClassifier', accuracy, XGBClassifier_dict)
-=======
-# accuracy = algorithm.XGBClassifier(XGBClassifier_dict, X_train, y_train, X_test, y_test)
-# result.log_result('XGBClassifier', accuracy, XGBClassifier_dict)
->>>>>>> df2f7af3e513f92db9caf44e474386970ec8a162
 
 # accuracy = algorithm.decision_tree(decision_tree_dict, X_train, y_train, X_test, y_test)
 # result.log_result('decision_tree', accuracy, decision_tree_dict)

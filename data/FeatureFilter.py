@@ -93,6 +93,7 @@ class FeatureFilter:
         :param: None
         :return: filtered data (data frame)
         '''
+        selectedDf = df.loc[df['Model'] == model]
 
-        df = data.loc[data['loan_status'] != 'current']
+        df = data.loc[data['loan_status'] != 'Current']
         return df
