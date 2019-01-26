@@ -4,7 +4,6 @@ Logistic Regression,0.944444444,"penalty:l2,dual:False,tol:0.0001,C:5.0,fit_inte
 Logistic Regression,0.916666667,"penalty:l2,dual:False,tol:0.0001,C:5.0,fit_intercept:True,intercept_scaling:1,class_weight:None,random_state:None,solver:liblinear,max_iter:100,multi_class:ovr,verbose:0,warm_start:False,n_jobs:None",24:37.1
 SVM,0.555555556,"C:1.0,cache_size:700,class_weight:None,coef0:0.0,decision_function_shape:ovo,degree:3,gamma:scale,kernel:rbf,max_iter:-1,probability:False,random_state:None,shrinking:True,tol:0.001,verbose:False",25:06.6
 SVM,0.777777778,"C:1.0,cache_size:700,class_weight:None,coef0:0.0,decision_function_shape:ovo,degree:3,gamma:scale,kernel:rbf,max_iter:-1,probability:False,random_state:None,shrinking:True,tol:0.001,verbose:False",25:51.5
-<<<<<<< HEAD
 ff_network,,,2019-01-23 22:26:24.398839
 ff_network,,,2019-01-23 22:41:07.838096
 k_neighbor,0.55515,"n_neighbors:5,weights:uniform,algorithm:auto,leaf_size:30,p:2,metric:minkowski,metric_params:None,n_jobs:None",2019-01-23 22:47:00.193127
@@ -50,7 +49,6 @@ XGBClassifier,0.9644346277806577,"max_depth:6,learning_rate:0.01,n_estimators:40
 XGBClassifier,0.9644233586513106,"max_depth:6,learning_rate:0.01,n_estimators:200,silent:True,objective:multi:softprob,booster:gbtree,n_jobs:3,nthread:None,gamma:1,min_child_weight:1,max_delta_step:0,subsample:0.8,colsample_bytree:0.8,colsample_bylevel:1,reg_alpha:1,reg_lambda:1,scale_pos_weight:1,base_score:0.5,random_state:0,seed:None,missing:None,importance_type:gain",2019-01-26 00:05:02.531634
 decision_tree,0.9458631026166918,"criterion:gini,splitter:best,max_depth:None,min_samples_split:2,min_samples_leaf:1,min_weight_fraction_leaf:0,max_features:None,random_state:None,max_leaf_nodes:None,min_impurity_decrease:0.0,min_impurity_split:None,class_weight:None,presort:False",2019-01-26 14:37:47.801952
 XGBClassifier,0.9704129008992766,"max_depth:7,learning_rate:0.1,n_estimators:400,silent:True,objective:multi:softprob,booster:gbtree,n_jobs:3,nthread:None,gamma:1,min_child_weight:1,max_delta_step:0,subsample:0.8,colsample_bytree:0.8,colsample_bylevel:1,reg_alpha:1,reg_lambda:1,scale_pos_weight:1,base_score:0.5,random_state:0,seed:None,missing:None,importance_type:gain",2019-01-26 15:22:07.602005
-=======
 ,,,
 ,,,
 k_neighbor,0.55515,"n_neighbors:5,weights:uniform,algorithm:auto,leaf_size:30,p:2,metric:minkowski,metric_params:None,n_jobs:None",47:00.2
@@ -94,4 +92,3 @@ logistic_regression,0.959177579,"penalty:l2,dual:False,tol:0.0001,C:1.0,fit_inte
 logistic_regression,0.959177579,"penalty:l2,dual:False,tol:0.0001,C:1.0,fit_intercept:True,intercept_scaling:1,class_weight:None,random_state:1,solver:liblinear,max_iter:100,multi_class:ovr,verbose:0,warm_start:False,n_jobs:None",09:33.4
 XGBClassifier,0.964434628,"max_depth:6,learning_rate:0.01,n_estimators:400,silent:True,objective:multi:softprob,booster:gbtree,n_jobs:3,nthread:None,gamma:0,min_child_weight:1,max_delta_step:0,subsample:0.8,colsample_bytree:0.8,colsample_bylevel:1,reg_alpha:1,reg_lambda:1,scale_pos_weight:1,base_score:0.5,random_state:0,seed:None,missing:None,importance_type:gain",53:22.5
 XGBClassifier,0.964423359,"max_depth:6,learning_rate:0.01,n_estimators:200,silent:True,objective:multi:softprob,booster:gbtree,n_jobs:3,nthread:None,gamma:1,min_child_weight:1,max_delta_step:0,subsample:0.8,colsample_bytree:0.8,colsample_bylevel:1,reg_alpha:1,reg_lambda:1,scale_pos_weight:1,base_score:0.5,random_state:0,seed:None,missing:None,importance_type:gain",05:02.5
->>>>>>> 5244942169afb65d2f2114fea665a18eb4471708

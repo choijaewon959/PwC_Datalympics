@@ -34,7 +34,7 @@ class Visualization:
         return
 
 
-    def print_CM_stats(self):
+    def print_CM_stats(self,y_test):
 
         dft=y_test.values
         cm = ConfusionMatrix(actual_vector=dft, predict_vector=self.__dataset)

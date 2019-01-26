@@ -45,10 +45,11 @@ class Preprocessor:
         self.__select_k_best()
         #self.__extra_tree_classify()
 
-        self.__split_data()
-        self.__resample_data_SMOTE()
+        #self.__split_data()
         self.__stratify_data()
-        #self.__scale_data()
+
+        self.__resample_data_SMOTE()
+        self.__scale_data()
         #self.__graph()
         #self.__scale_data(self)
 
@@ -133,7 +134,7 @@ class Preprocessor:
 
         #Taemin's debugging tool@!!
         #data = pd.read_csv("Deeplearning/loan.csv")
-        data = pd.read_csv("../loanfull.csv")
+        #data = pd.read_csv("../loanfull.csv")
 
         self.__colnames= data.columns.values
         self.__loanData = data
@@ -404,7 +405,13 @@ class Preprocessor:
 
         #print('Transform: loan_status...')
         # for loan status just gave random 0 / 1 of binary representation of good or bad loan
-        mapping = {'loan_status': {'Fully Paid': 0 , 'Current': 1, 'Charged Off': 2,
+        # loan status with current label
+        # mapping = {'loan_status': {'Fully Paid': 0 , 'Current': 1, 'Charged Off': 2,
+        #             'In Grace Period': 3, 'Late (31-120 days)': 4, 'Late (16-30 days)': 5,
+        #             'Issued': 6, 'Default': 7, 'Does not meet the credit policy. Status:Fully Paid': 8,
+        #             'Does not meet the credit policy. Status:Charged Off': 9}
+        # }
+        mapping = {'loan_status': {'Fully Paid': 0 , 'Charged Off': 2,
                     'In Grace Period': 3, 'Late (31-120 days)': 4, 'Late (16-30 days)': 5,
                     'Issued': 6, 'Default': 7, 'Does not meet the credit policy. Status:Fully Paid': 8,
                     'Does not meet the credit policy. Status:Charged Off': 9}
@@ -482,7 +489,7 @@ class Preprocessor:
                         self.__loanData[col+' '+str(uniq)] = self.__loanData[col].apply(self.additional_feature,args=(uniq,))
         self.__loanData = self.__loanData.drop(['home_ownership', 'verification_status','pymnt_plan','purpose', 'initial_list_status', 'collections_12_mths_ex_med','application_type'], axis=1)
         print(self.__loanData.columns.values)
-    
+
     def __graph(self):
         visual = Visualization(self.__loanData)
         visual.plot_heatmap()
