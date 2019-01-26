@@ -99,3 +99,5 @@ XGBClassifier,0.9680745565597602,"max_depth:4,learning_rate:0.1,n_estimators:100
 =======
 >>>>>>> 5244942169afb65d2f2114fea665a18eb4471708
 >>>>>>> bd20a42ebd1070d6f758176310a2dc7218a00625
+XGBClassifier,0.9680182109130249,"max_depth:4,learning_rate:0.1,n_estimators:100,silent:True,objective:multi:softprob,booster:gbtree,n_jobs:3,nthread:None,gamma:5,min_child_weight:1,max_delta_step:0,subsample:0.8,colsample_bytree:0.8,colsample_bylevel:1,reg_alpha:3,reg_lambda:3,scale_pos_weight:1,base_score:0.5,random_state:0,seed:None,missing:None,importance_type:gain",2019-01-26 16:06:37.040692
+XGBClassifier,0.9680182109130249,"max_depth:4,learning_rate:0.1,n_estimators:100,silent:True,objective:multi:softprob,booster:gbtree,n_jobs:3,nthread:None,gamma:5,min_child_weight:1,max_delta_step:0,subsample:0.8,colsample_bytree:0.8,colsample_bylevel:1,reg_alpha:3,reg_lambda:3,scale_pos_weight:1,base_score:0.5,random_state:0,seed:None,missing:None,importance_type:gain",2019-01-26 16:19:35.922794

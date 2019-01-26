@@ -15,7 +15,7 @@ dataProcessor = Preprocessor()
 algorithm = Models()
 result = ResultLog()
 
-#result.get_best_param('XGBClassifier')
+result.get_best_param('XGBClassifier')
 
 #data for training
 X_train = dataProcessor.get_train_attributes()
@@ -26,8 +26,8 @@ X_test = dataProcessor.get_test_attributes()
 y_test = dataProcessor.get_test_labels()
 
 
-accuracy = algorithm.logistic_regression(logistic_regression_dict, X_train, y_train, X_test, y_test)
-result.log_result('logistic_regression', accuracy, logistic_regression_dict)
+# accuracy = algorithm.logistic_regression(logistic_regression_dict, X_train, y_train, X_test, y_test)
+# result.log_result('logistic_regression', accuracy, logistic_regression_dict)
 
 # ff_accuracy = algorithm.ff_network(3, X_train, y_train, X_test, y_test, dataProcessor)
 # # accuracy = algorithm.SVM(SVM_dict, X_train, y_train, X_test, y_test)
