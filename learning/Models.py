@@ -9,6 +9,7 @@ from data.Preprocessor import Preprocessor
 from learning.Hyperparameter import *
 from util.Math import *
 import xgboost
+import sys
 
 from sklearn.svm import SVC
 from sklearn.svm import SVR
@@ -24,13 +25,13 @@ from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.utils import to_categorical
-import sys
+# from keras.models import Sequential
+# from keras.layers import Dense
+# from keras.utils import to_categorical
+
 sys.path.append('./learning')
 from num_node import *
-from livelossplot.keras import PlotLossesCallback
+# from livelossplot.keras import PlotLossesCallback
 
 import time
 import itertools

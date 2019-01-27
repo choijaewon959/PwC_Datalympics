@@ -13,13 +13,11 @@ print('test began')
 
 #objects
 dataProcessor = Preprocessor()
+loanData = dataProcessor.get_data() #original given data
 algorithm = Models()
 result = ResultLog()
+miniProcessor = MiniProcessor(loanData)
 
-#original given data
-loanData = dataProcessor.get_data()
-p = MiniProcessor(loanData)
-p.get_second_data(0)
 #data for training
 X_train = dataProcessor.get_train_attributes()
 y_train = dataProcessor.get_train_labels()
@@ -51,12 +49,9 @@ evaluation = ModelEvaluation(X_train, y_train, X_test, y_test)
 accuracy_first = evaluation.evaluate_model(trainedModel1)
 result.log_result(trainedModel1[0], accuracy_first, XGBClassifier_dict)
 
-y_predicted = evaluation.get_predicted_label()
-miniProcessor = MiniProcessor(loanData)
-
-newData = miniProcessor.get_second_data(3)
-
-trainedModel2 = algorithm.XGBClassifier(XGBClassifier_dict, newData)
+# y_predicted = evaluation.get_predicted_label()
+# newData = miniProcessor.get_second_data(3)
+# trainedModel2 = algorithm.XGBClassifier(XGBClassifier_dict2, newData[0], newData[1], newData[2], newData[3])
 
 
 # accuracy = algorithm.XGBClassifier(XGBClassifier_dict, X_train, y_train, X_test, y_test)
