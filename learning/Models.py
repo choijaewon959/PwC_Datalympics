@@ -24,9 +24,9 @@ from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 
-# from keras.models import Sequential
-# from keras.layers import Dense
-# from keras.utils import to_categorical
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.utils import to_categorical
 import sys
 sys.path.append('./learning')
 from num_node import *
@@ -294,11 +294,13 @@ class Models:
     def ff_network(self, n, X_train, y_train, X_test, y_test):
         '''
         Forward feeding neural network with one/two hidden layer.
-
+        
+        :param: None
+        :return: None
         '''
         
-        in_len = 38 # number of input feature
-        out_len = 10 # number of output label
+        in_len = X_train.shape[1] # number of input feature
+        out_len = len(y_train.unique()) # number of output label
         hidden_layer_l = [25, 15]
         weight_mu = [0.1]
         hidden_act = 'tanh'

@@ -50,7 +50,7 @@ class Preprocessor:
         # TODO: function call for preprocessing data
 
         self.__temp_data_process()
-        self.add_nodes()
+        #self.add_nodes()
 
         #self.__select_k_best()
         #self.__extra_tree_classify()
@@ -151,7 +151,7 @@ class Preprocessor:
 
         #Taemin's debugging tool@!!
         #data = pd.read_csv("Deeplearning/loan.csv")
-        #data = pd.read_csv("../loanfull.csv")
+        data = pd.read_csv("../loanfull.csv")
 
         self.__colnames= data.columns.values
         self.__loanData = data
@@ -452,27 +452,3 @@ class Preprocessor:
         visual = Visualization(self.__loanData)
         visual.plot_heatmap()
 
-    def get_second_data(self,n):
-        '''
-        Split the data into train and test data for second classifier
-        :parameter: Label number
-        :return : tuple of label n data, splited into test, train data
-        '''
-        dfTrain = self.__loanData
-        out = ()
-        dfTrain = dfTrain.drop(dfTrain[dfTrain.loan_status < n].index)
-        dfTrain = dfTrain.drop(dfTrain[dfTrain.loan_status > n].index)
-        y = dfTrain['loan_status']
-        X = dfTrain.drop('loan_status', axis=1)
-        X_train = None
-        y_train = None
-        X_test = None
-        y_test = None
-        X_test, X_train, y_test, y_train = train_test_split(X, y, test_size=0.2, random_state = 1, shuffle =True, stratify=y)
-        out = (X_test, X_train, y_test, y_train)
-        print(X_test)
-        print(X_train)
-        print(y_test)
-        print(y_train)
-        print("[split_data finished]")
-        return out

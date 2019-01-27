@@ -85,5 +85,28 @@ class MiniProcessor:
 
         return mergedFrame.sort_index()
 
-
+    def get_second_data(self,n):
+        '''
+        Split the data into train and test data for second classifier
+        :parameter: Label number
+        :return : tuple of label n data, splited into test, train data
+        '''
+        dfTrain = self.__loanData
+        out = ()
+        dfTrain = dfTrain.drop(dfTrain[dfTrain.loan_status < n].index)
+        dfTrain = dfTrain.drop(dfTrain[dfTrain.loan_status > n].index)
+        y = dfTrain['loan_status']
+        X = dfTrain.drop('loan_status', axis=1)
+        X_train = None
+        y_train = None
+        X_test = None
+        y_test = None
+        X_test, X_train, y_test, y_train = train_test_split(X, y, test_size=0.2, random_state = 1, shuffle =True, stratify=y)
+        out = (X_test, X_train, y_test, y_train)
+        print(X_test)
+        print(X_train)
+        print(y_test)
+        print(y_train)
+        print("[split_data finished]")
+        return out
     
