@@ -44,8 +44,8 @@ class FeatureFilter:
 
     def feature_score(self, data):
 
-        X = data.drop('loan_status', axis = 1)
-        y = data['loan_status']
+        X = data.drop('new_loan_status', axis = 1)
+        y = data['new_loan_status']
 
         #apply SelectKBest
         bestfeatures= SelectKBest(score_func=chi2, k=20)

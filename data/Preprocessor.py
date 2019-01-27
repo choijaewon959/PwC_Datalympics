@@ -36,6 +36,8 @@ class Preprocessor:
         self.__attributes_test = None
         self.__labels_test = None
 
+        self.__true_y = None
+
         #second classifier input
         self.sec_att_train = None
         self.sec_lab_train = None
@@ -52,8 +54,8 @@ class Preprocessor:
         self.__temp_data_process()
         #self.add_nodes()
 
-        #self.__select_k_best()
-        self.__extra_tree_classify()
+        self.__select_k_best()
+        #self.__extra_tree_classify()
 
         self.__split_data()
         self.__resample_data_SMOTE()
@@ -97,9 +99,10 @@ class Preprocessor:
     def __select_k_best(self):
 
 
-        self.__meaningfulfeatures = self.__featurefilter.feature_score(self.__loanData)
+        self.__meaningfulfeatures = self.__featurefilter.feature_score(self.__loanData.drop('loan_status',axis=1))
 
         cols= self.__meaningfulfeatures
+        cols.append('new_loan_status')
         cols.append('loan_status')
 
         dfdataset=self.__loanData
@@ -166,8 +169,10 @@ class Preprocessor:
         '''
         print("split_data running...")
         # TODO: loan status may not be the label -> change to label accordingly.
-        X = self.__loanData.drop('loan_status', axis = 1)
-        y = self.__loanData['loan_status']
+        X = self.__loanData.drop(['new_loan_status','loan_status'], axis = 1)
+        y = self.__loanData['new_loan_status']
+
+        self.__true_y = self.__loanData['loan_status']
 
         self.__attributes_train, self.__attributes_test, self.__labels_train, self.__labels_test = train_test_split(X, y, test_size=0.2, random_state = 1, shuffle =True, stratify=y)
         print("[split_data finished]")
@@ -371,7 +376,7 @@ class Preprocessor:
         #print('Transform: loan_status...')
         # for loan status just gave random 0 / 1 of binary representation of good or bad loan
         mapping = {'loan_status': {'Fully Paid': 0 , 'Current': -1, 'Charged Off': 2,
-                    'In Grace Period': 3, 'Late (31-120 days)': 3, 'Late (16-30 days)': 3,
+                    'In Grace Period': 3, 'Late (31-120 days)': 4, 'Late (16-30 days)': 5,
                     'Issued': 6, 'Default': 7, 'Does not meet the credit policy. Status:Fully Paid': 8,
                     'Does not meet the credit policy. Status:Charged Off': 9}
         }
@@ -416,6 +421,11 @@ class Preprocessor:
         self.__currentData = dfTrain[dfTrain.loan_status < 0]
         dfTrain = dfTrain.drop(dfTrain[dfTrain.loan_status < 0].index)
         self.__loanData = dfTrain
+
+        #add new column which merges certain labels
+        self.__loanData['new_loan_status'] = self.__loanData['loan_status'].apply(self.add_column)
+
+        print(self.__loanData['new_loan_status'].unique())
         tempProcessTime= time.time() - start_time
         print("[tempProcessTime finished with %.2f seconds]"  % tempProcessTime)
 
@@ -451,3 +461,17 @@ class Preprocessor:
     def __graph(self):
         visual = Visualization(self.__loanData)
         visual.plot_heatmap()
+
+    def add_column(self,val):
+        if(val == 5 or val == 4):
+            return 3
+        return val
+
+    def get_true_y(self):
+        '''
+        return the y value from the raw data.
+
+        :param: None
+        :return: true_y
+        '''
+        return self.__true_y
