@@ -10,7 +10,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 class ModelEvaluation:
-    def __init__(self, X_train, y_train, X_test, y_test):
+    def __init__(self, X_test, y_test=None, X_train=None, y_train=None):
         '''
         Constructor
 
@@ -68,6 +68,26 @@ class ModelEvaluation:
         return accuracy
         #accuracy_per_roc_auc = roc_auc_score(np.array(testLabels).flatten(), y_pred)
         #print("ROC-AUC: %.10f%%" % (accuracy_per_roc_auc * 100))
+
+    def run_model(self, model):
+        '''
+        Runs the trained model.
+        Saves the predicted label into private variable predicted_label.
+        Only used in test.py
+
+        :param: None
+        :return: None
+        '''
+        modelName = model[0]
+        model = model[1]
+
+        X_train = self.__X_train
+        y_train = self.__y_train
+        X_test = self.__X_test
+        y_test = self.__y_test
+        
+        y_pred = model.predict(X_test)
+        self.__predicted_label = y_pred
 
     def get_predicted_label(self):
         '''
