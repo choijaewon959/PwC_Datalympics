@@ -23,8 +23,8 @@ def create_class_weight(loanData,mu=0.9):
     labels_dict = pd.value_counts(loanData)
     class_weight = dict()
     for num ,tmp in zip(labels_dict, [0,2,3,6,7,8,9]):
-        score = math.log(mu*total/float(num))
-        class_weight[tmp] = score if score > 1.0 else 1.0
+        sco = math.log(mu*total/float(num))
+        class_weight[tmp] = sco if sco > 1.0 else 1.0
         tmp = tmp + 1
     # for i in range(0,3):
     #     if i ==4 :

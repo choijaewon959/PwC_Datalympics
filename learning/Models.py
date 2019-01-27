@@ -24,12 +24,13 @@ from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 
-# from keras.models import Sequential
-# from keras.layers import Dense
-# from keras.utils import to_categorical
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.utils import to_categorical
 import sys
 sys.path.append('./learning')
 from num_node import *
+from livelossplot.keras import PlotLossesCallback
 
 import time
 import itertools
@@ -293,56 +294,67 @@ class Models:
     def ff_network(self, n, X_train, y_train, X_test, y_test):
         '''
         Forward feeding neural network with one/two hidden layer.
-
-        '''
-        in_len = 57 # number of input feature
-        out_len = 10 # number of output label
-        hidden_layer = 45
-        weight_mu = 0.9
-        hidden_act = ['tanh']
-        epoch = [10, 15]
         
+        :param: None
+        :return: None
+        '''
+        
+        in_len = X_train.shape[1] # number of input feature
+        out_len = len(y_train.unique()) # number of output label
+        hidden_layer_l = [25, 15]
+        weight_mu = [0.1]
+        hidden_act = 'tanh'
+        ep = 150
+        plot_losses = PlotLossesCallback()
+
         print("Train label converted into vector label")
         Y_test = to_categorical(y_test)
         Y_train = to_categorical(y_train)
         
         model = Sequential()
-        class_weight = create_class_weight(y_test,weight_mu)
         out = ""
-        print(X_train)
-        print(class_weight)
-        print(X_train.columns.values)
-        
-        for act in hidden_act:
-            for ep in epoch:
+        print(Y_train)
+        for hidden_layer in hidden_layer_l:
+            for weight in weight_mu:
+                class_weight = create_class_weight(y_test,weight)
+                print(class_weight)
+
                 if(n==1):
-                    model.add(Dense(hidden_layer,input_dim=in_len,activation=act))
+                    model.add(Dense(hidden_layer,input_dim=in_len,activation=hidden_act))
                 elif(n==2):
-                    model.add(Dense(int(num_hidden_layer2(in_len,out_len)), input_dim=in_len, activation=act))
+                    model.add(Dense(int(num_hidden_layer2(in_len,out_len)), input_dim=in_len, activation=hidden_act))
                 elif(n==3):
-                    model.add(Dense(int(num_hidden_layer3(in_len,out_len,len(y_train))[0]), input_dim=in_len, activation=act))
-                    model.add(Dense(int(num_hidden_layer3(in_len,out_len,len(y_train))[1]), activation=act))
+                    model.add(Dense(int(num_hidden_layer3(in_len,out_len,len(y_train))[0]), input_dim=in_len, activation=hidden_act))
+                    model.add(Dense(int(num_hidden_layer3(in_len,out_len,len(y_train))[1]), activation=hidden_act))
             model.add(Dense(out_len, activation='softmax'))
             model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-            model.fit(X_train, Y_train, epochs=ep, batch_size=20, verbose=1, class_weight=class_weight)
-            scores = model.evaluate(X_test, Y_test)
-            scores = model.evaluate(X_train, Y_train)
-            
-            out = "Accuracy : "+ str(scores[1]) + ", Hidden layer activation : " + act +" Epoch:"+str(ep) +'\n'
-            print(out)
+            model.fit(X_train, Y_train, epochs=ep, batch_size=20, verbose=1, class_weight=class_weight, validation_data=(X_test, Y_test),callbacks=[plot_losses])
+            scores_test = model.evaluate(X_test, Y_test)
+            scores_train = model.evaluate(X_train, Y_train)
+              
+            #back to array
             y_pred = np.argmax(model.predict(X_test),axis=1)
-            print("y_pred == ", y_pred)
             visual = Visualization(y_pred)
+            visual.plot_confusion_matrix(y_train, y_test) 
+            print("y_pred == ", y_pred)
+            print("confusion matrix printed")
+            visual.classification_report(y_train, y_test)
+            
+                        
+            out = "Accuracy : "+ str(scores_test[1]) + ", Hidden layer activation : " + hidden_act +" Epoch:"+str(ep) +'\n'
+            f = open(str(weight)+"_"+str(n)+"_"+str(hidden_layer)+".txt", "a")
+            f.write(out)
+            f.write("Test file Accurcy= "+str(scores_test))
+            f.write("Train file Accurcy= "+str(scores_train))
+            f.write(visual.plot_confusion_matrix(y_train, y_test))
+
             #save model
             model_json = model.to_json()
             with open("model.json", "w") as json_file:
                 json_file.write(model_json)
             model.save_weights("model.h5")
             print("Saved model to disk")
-            #matrix = visual.print_CM_stats(y_test,y_train)
-            print("confusion matrix printed")
-            visual.plot_confusion_matrix(y_train, y_test)
-            visual.classification_report(y_train, y_test)
+        
         return scores[1]
 
     def ffnn_eval(X_test):
@@ -353,11 +365,10 @@ class Models:
         # load weights into new model
         loaded_model.load_weights("model.h5")
         print("Loaded model from disk")
-
+        
         # evaluate loaded model on test data
         loaded_model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
         y_pred = np.argmax(model.predict(X_test),axis=1)
         data = X_test.join(pd.DataFrame(y_pred))
-
         print(data)
          

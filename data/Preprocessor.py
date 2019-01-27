@@ -56,7 +56,7 @@ class Preprocessor:
         #self.__extra_tree_classify()
 
         self.__split_data()
-        self.__resample_data_SMOTE()
+        #self.__resample_data_SMOTE()
 
         #self.__scale_data()
         #self.__graph()
@@ -139,7 +139,7 @@ class Preprocessor:
         """
         #data = pd.read_csv(r"C:\Users\lasts\Google Drive\Etc\Coding\Data_lympics\Deeplearning\loan.csv")
         #data = pd.read_csv("Deeplearning/loan.csv")
-        data = pd.read_csv("../loan_data/data/loanfull.csv")
+        #data = pd.read_csv("../loan_data/data/loanfull.csv")
         #low_memory was added to avoid data compression
 
 
@@ -151,7 +151,7 @@ class Preprocessor:
 
         #Taemin's debugging tool@!!
         #data = pd.read_csv("Deeplearning/loan.csv")
-        #data = pd.read_csv("../loanfull.csv")
+        data = pd.read_csv("../loanfull.csv")
 
         self.__colnames= data.columns.values
         self.__loanData = data
@@ -444,10 +444,11 @@ class Preprocessor:
                 if(len(self.__loanData[col].unique()) < 30):
                     for uniq in self.__loanData[col].unique():
                         self.__loanData[col+' '+str(uniq)] = self.__loanData[col].apply(self.additional_feature,args=(uniq,))
-        self.__loanData = self.__loanData.drop(['home_ownership', 'verification_status','pymnt_plan','purpose', 'initial_list_status','application_type'], axis=1)
+        self.__loanData = self.__loanData.drop(['home_ownership', 'initial_list_status','application_type'], axis=1)
         print(self.__loanData.columns.values)
         print(len(self.__loanData.columns.values))
 
     def __graph(self):
         visual = Visualization(self.__loanData)
         visual.plot_heatmap()
+
