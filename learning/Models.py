@@ -298,9 +298,8 @@ class Models:
         :param: None
         :return: None
         '''
-        
         in_len = X_train.shape[1] # number of input feature
-        out_len = len(y_train.unique()) # number of output label
+        out_len = 10 # number of output label
         hidden_layer_l = [25, 15]
         weight_mu = [0.1]
         hidden_act = 'tanh'
@@ -371,4 +370,4 @@ class Models:
         y_pred = np.argmax(model.predict(X_test),axis=1)
         data = X_test.join(pd.DataFrame(y_pred))
         print(data)
-         
+        

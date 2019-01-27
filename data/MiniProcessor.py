@@ -1,7 +1,7 @@
 '''
 Class preprocessing data obtained from the first training, merging data at the end for the final evaluation of the model.
 '''
-import pandas as pd 
+import pandas as pd
 import numpy as np
 from imblearn.over_sampling import SMOTE
 from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
@@ -25,7 +25,7 @@ class MiniProcessor:
         self.sec_lab_train = None
 
         self.__split_second_data()
-    
+
     def __split_second_data(self) :
         '''
         Split the dataframe into two.
@@ -103,10 +103,9 @@ class MiniProcessor:
         y_test = None
         X_test, X_train, y_test, y_train = train_test_split(X, y, test_size=0.2, random_state = 1, shuffle =True, stratify=y)
         out = (X_test, X_train, y_test, y_train)
-        print(X_test)
-        print(X_train)
-        print(y_test)
-        print(y_train)
+        # print(X_test)
+        # print(X_train)
+        # print(y_test)
+        # print(y_train)
         print("[split_data finished]")
         return out
-    
