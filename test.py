@@ -13,4 +13,3 @@ from config import *
 
 #load the trained data.
 trainedModel1 = pickle.load(open(MODELFILE1, 'rb'))
-evaluation.run_model(trainedModel1)
