@@ -56,9 +56,18 @@ class FeatureFilter:
         #concatenate two datafrmae for Visualization
         feature_score = pd.concat([dfcolumns, dfscores], axis=1)
         feature_score.columns = ['Features', 'Score']
-        print(feature_score.nlargest(20, 'Score'))
+        #print(feature_score.nlargest(20, 'Score'))
+        print("20 features are selected and saved to Featurelist.txt")
         #plt.show()
         #print(feature_score.nlargest(20,'Score')['Features'].tolist())
+        text_file = open("Featurelist.txt", "w")
+
+        #text_file.write("feature_score by SELECTKBEST :\n")
+        text_file.write(str(feature_score.nlargest(20,'Score')['Features'].tolist()))
+
+        text_file.close()
+
+
         return feature_score.nlargest(20,'Score')['Features'].tolist()
 
 
@@ -80,10 +89,19 @@ class FeatureFilter:
         # return feature_score.nlargest(20,'Score')['Features'].tolist()
 
         feature_importance= pd.Series(ETC.feature_importances_, index = X.columns )
-        feature_importance.nlargest(20).plot(kind='barh')
-        print(feature_importance.nlargest(20).index.tolist())
-        plt.show()
-        #print(feature_importance.nlargest(20).index.tolist())
+
+        text_file = open("Featurelist.txt", "w")
+
+        #text_file.write("feature_score by SELECTKBEST :\n")
+        text_file.write(str(feature_importance.nlargest(20).index.tolist()))
+
+        text_file.close()
+        print("20 features are selected and saved to Featurelist.txt")
+
+        # feature_importance.nlargest(20).plot(kind='barh')
+        # print(feature_importance.nlargest(20).index.tolist())
+        # plt.show()
+        # #print(feature_importance.nlargest(20).index.tolist())
         return feature_importance.nlargest(20).index.tolist()
 
     def dominant_feature_filter(self, data):

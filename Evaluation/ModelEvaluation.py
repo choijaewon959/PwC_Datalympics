@@ -40,7 +40,7 @@ class ModelEvaluation:
         y_train = self.__y_train
         X_test = self.__X_test
         y_test = self.__y_test
-        
+
         y_pred = model.predict(X_test)
         self.__predicted_label = y_pred
 
@@ -85,7 +85,7 @@ class ModelEvaluation:
         y_train = self.__y_train
         X_test = self.__X_test
         y_test = self.__y_test
-        
+
         y_pred = model.predict(X_test)
         self.__predicted_label = y_pred
 
@@ -96,6 +96,4 @@ class ModelEvaluation:
         :param: None
         :return: predicted numpy array
         '''
-        return pd.Series(self.__predicted_label) 
-
-    
+        return pd.Series(self.__predicted_label)

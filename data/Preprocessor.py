@@ -53,10 +53,10 @@ class Preprocessor:
         #self.add_nodes()
 
         #self.__select_k_best()
-        #self.__extra_tree_classify()
+        self.__extra_tree_classify()
 
         self.__split_data()
-        #self.__resample_data_SMOTE()
+        self.__resample_data_SMOTE()
 
         #self.__scale_data()
         #self.__graph()
@@ -139,7 +139,7 @@ class Preprocessor:
         """
         #data = pd.read_csv(r"C:\Users\lasts\Google Drive\Etc\Coding\Data_lympics\Deeplearning\loan.csv")
         #data = pd.read_csv("Deeplearning/loan.csv")
-        #data = pd.read_csv("../loan_data/data/loanfull.csv")
+        data = pd.read_csv("../loan_data/data/loanfull.csv")
         #low_memory was added to avoid data compression
 
 
@@ -151,7 +151,7 @@ class Preprocessor:
 
         #Taemin's debugging tool@!!
         #data = pd.read_csv("Deeplearning/loan.csv")
-        data = pd.read_csv("../loanfull.csv")
+        #data = pd.read_csv("../loanfull.csv")
 
         self.__colnames= data.columns.values
         self.__loanData = data
@@ -451,4 +451,3 @@ class Preprocessor:
     def __graph(self):
         visual = Visualization(self.__loanData)
         visual.plot_heatmap()
-
