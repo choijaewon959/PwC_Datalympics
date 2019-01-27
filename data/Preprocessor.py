@@ -52,7 +52,6 @@ class Preprocessor:
         self.__temp_data_process()
         #self.add_nodes()
 
-
         #self.__select_k_best()
         #self.__extra_tree_classify()
 
@@ -61,7 +60,6 @@ class Preprocessor:
 
         #self.__scale_data()
         #self.__graph()
-
 
     def __dominant_feature_filter(self):
         '''
@@ -153,7 +151,7 @@ class Preprocessor:
 
         #Taemin's debugging tool@!!
         #data = pd.read_csv("Deeplearning/loan.csv")
-        data = pd.read_csv("../loanfull.csv")
+        #data = pd.read_csv("../loanfull.csv")
 
         self.__colnames= data.columns.values
         self.__loanData = data
@@ -174,37 +172,6 @@ class Preprocessor:
         self.__attributes_train, self.__attributes_test, self.__labels_train, self.__labels_test = train_test_split(X, y, test_size=0.2, random_state = 1, shuffle =True, stratify=y)
         print("[split_data finished]")
 
-    def __split_second_data(self) :
-        '''
-        Split the dataframe into tw
-        '''
-        dfTrain = self.__loanData
-        dfTrain = dfTrain.drop(dfTrain[dfTrain.loan_status < 3].index)
-        dfTrain = dfTrain.drop(dfTrain[dfTrain.loan_status > 5].index)
-        y = dfTrain['loan_status']
-        X = dfTrain.drop('loan_status', axis=1)
-
-        self.__sec_att_train, self.__sec_att_test, self.__sec_lab_train, self.__sec_lab_test = train_test_split(X, y, test_size=0.2, random_state = 1, shuffle =True, stratify=y)
-        # print(self.__sec_att_train)
-        # print(self.__sec_att_test)
-        # print(self.__sec_lab_test)
-        # print(self.__sec_lab_train)
-        print("[split_data finished]")
-
-    def __resample_data_ADASYN(self):
-        '''
-        Resampling imbalanced data with ADASYN algorithm. (Oversampling)
-        Update train attributes, train labels
-
-        :param: None
-        :return: None
-        '''
-        print("resampling data...")
-        ada = SMOTE(random_state=1)
-        X_train_res, y_train_res = ada.fit_resample(self.__attributes_train, self.__labels_train)
-        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res), pd.Series(y_train_res)
-        print("[respamling finished]")
-
     def __resample_data_SMOTE(self):
         '''
         Resampling imbalanced data with smote algorithm. (Oversampling)
@@ -213,11 +180,12 @@ class Preprocessor:
         :param: None
         :return: None
         '''
+        name_train = self.__attributes_train.columns
         print("resampling data...")
 
         sm = SMOTE(random_state=6)
         X_train_res, y_train_res = sm.fit_resample(self.__attributes_train, self.__labels_train)
-        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res), pd.Series(y_train_res)
+        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res, columns=name_train), pd.Series(y_train_res)
 
         print("[respamling finished]")
 
@@ -228,44 +196,12 @@ class Preprocessor:
         :param: None
         :return: None
         '''
+        name_train = self.__attributes_train.columns
+
         print("resampling data...")
         nm = NearMiss(random_state=6)
         X_train_res, y_train_res = nm.fit_resample(self.__attributes_train, self.__labels_train)
-        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res), pd.Series(y_train_res)
-        print("[respamling finished]")
-
-    def __reample_data_CNN(self):
-        '''
-        Resampling imbalanced data with near miss algorithm. (Undersampling)
-
-        :param: None
-        :return: None
-        '''
-        X_train = self.__attributes_train
-        X_test = self.__attributes_test
-
-        names_train = X_train.columns
-        names_test = X_test.columns
-
-        print("resampling data...")
-        print(self.__attributes_train, self.__labels_train)
-        cnn = CondensedNearestNeighbour(random_state=42)
-        X_train_res, y_train_res = cnn.fit_resample(self.__attributes_train, self.__labels_train)
-        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res, columns=names_train), pd.Series(y_train_res)
-        print(self.__attributes_train, self.__labels_train)
-        print("[respamling finished]")
-
-    def __resample_data_SMOTETomek(self):
-        '''
-        Resampling imbalanced data with SMOTETomek algorithm. (Oversampling with tomek cleaning)
-
-        :param: None
-        :return: None
-        '''
-        print("resampling data...")
-        smt = SMOTETomek(random_state=42)
-        X_train_res, y_train_res = smt.fit_resample(self.__attributes_train, self.__labels_train)
-        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res), pd.Series(y_train_res)
+        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res, columns = name_train), pd.Series(y_train_res)
         print("[respamling finished]")
 
     def __scale_data(self):
@@ -293,7 +229,6 @@ class Preprocessor:
 
         self.__attributes_train = pd.DataFrame(X_train_scaled, columns = names_train)
         self.__attributes_test = pd.DataFrame(X_test_scaled, columns = names_test)
-
 
     def get_train_attributes(self):
         '''
@@ -400,7 +335,7 @@ class Preprocessor:
                ,'mths_since_last_delinq', 'mths_since_last_record', 'open_acc', 'pub_rec'
                ,'revol_bal', 'revol_util', 'total_acc', 'out_prncp', 'out_prncp_inv', 'total_pymnt'
                ,'total_pymnt_inv', 'total_rec_prncp', 'total_rec_int', 'total_rec_late_fee'
-               ,'recoveries', 'collection_recovery_fee', 'last_pymnt_amnt', 'home_ownership', 'verification_status','pymnt_plan','purpose', 'initial_list_status','application_type'
+               ,'recoveries', 'collection_recovery_fee', 'last_pymnt_amnt'
             ]]
 
         # TODO: Feature transformation can be done beforehand or after
@@ -487,7 +422,6 @@ class Preprocessor:
     def get_labels(self):
         print(self.__loanData['loan_status'].unique())
         return self.__loanData['loan_status'].unique()
-
 
     def get_data(self):
         return self.__loanData

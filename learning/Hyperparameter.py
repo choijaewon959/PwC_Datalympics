@@ -51,14 +51,14 @@ random_forest_dict = {
 
 XGBClassifier_dict = {
      'max_depth':4, #default: 3
-     'learning_rate':0.01,
-     'n_estimators':200,
+     'learning_rate':0.005,
+     'n_estimators':100,
      'silent':True,
      'objective':'multi:softprob',
      'booster':'gbtree',
      'n_jobs':3,
      'nthread':None,
-     'gamma':5, #0 : no regularization, 1: medium regularization, 5: high regularization
+     'gamma':10, #0 : no regularization, 1: medium regularization, 5: high regularization
      'min_child_weight':1,
      'max_delta_step':0,
      'subsample':0.8,
