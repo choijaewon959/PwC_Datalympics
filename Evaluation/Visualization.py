@@ -14,7 +14,6 @@ The F1 score is the harmonic average of the precision and recall,
 where an F1 score reaches its best value at 1 (perfect precision and recall) and worst at 0.
 """
 
-
 class Visualization:
     def __init__(self, dataset):
         self.__dataset=dataset
@@ -33,14 +32,12 @@ class Visualization:
 
         return
 
-
     def print_CM_stats(self,y_test):
 
         dft=y_test.values
         cm = ConfusionMatrix(actual_vector=dft, predict_vector=self.__dataset)
         print (cm)
         return cm
-
 
     def plot_confusion_matrix(self, y_train, y_test):
         '''
@@ -112,7 +109,6 @@ class Visualization:
 
         plt.show()
 
-
     def classification_report(self, y_train, y_test):
         """
         This function prints a classification_report.
@@ -132,3 +128,42 @@ class Visualization:
         #result = np.array2string(result, precision=2)
 
         print(classification_report(y_test, self.__dataset, target_names=list))
+
+    def draw_log_loss(self, results):
+        '''
+        Draw the log loss function of the results.
+
+        :param: results: result obtained from model evaluation score.
+        :return: None.
+        '''
+        epochs = len(results['validation_0']['mlogloss'])
+        x_axis = range(0, epochs)
+        
+        # plot log loss
+        fig, ax = plt.subplots()
+        ax.plot(x_axis, results['validation_0']['mlogloss'], label='Train')
+        ax.plot(x_axis, results['validation_1']['mlogloss'], label='Test')
+        ax.legend()
+        plt.ylabel('Log Loss')
+        plt.title('XGBoost Log Loss')
+        plt.show()
+
+    def draw_classification_error(self, results):
+        '''
+        Draw the classification error of the results.
+
+        :param: results obtained from model evaluation score.
+        :return: None
+        '''
+        epochs = len(results['validation_0']['merror'])
+        x_axis = range(0, epochs)
+
+        # plot classification error
+        fig, ax = plt.subplots()
+        ax.plot(x_axis, results['validation_0']['merror'], label='Train')
+        ax.plot(x_axis, results['validation_1']['merror'], label='Test')
+        ax.legend()
+        plt.ylabel('Classification Error')
+        plt.title('XGBoost Classification Error')
+        plt.show()
+

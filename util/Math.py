@@ -17,6 +17,7 @@ def mse(predictionData, actualData):
         sqrdError += (predictionData[i] - actualData[i]) ** 2
 
     return sqrdError / dataLength
+    
 def create_class_weight(loanData,mu=0.9):
     total = loanData.shape[0]
     labels_dict = pd.value_counts(loanData)

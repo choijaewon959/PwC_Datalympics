@@ -24,9 +24,9 @@ from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.utils import to_categorical
+# from keras.models import Sequential
+# from keras.layers import Dense
+# from keras.utils import to_categorical
 import sys
 sys.path.append('./learning')
 from num_node import *
