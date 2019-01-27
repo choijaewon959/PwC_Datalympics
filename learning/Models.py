@@ -48,11 +48,6 @@ class Models:
         #Accuracy: 0.7485575514435755 using 800k dataset
         start_time = time.time()
 
-        """if scaling is necessary for running this algorithm"""
-        # scaling = preprocessing.MinMaxScaler(feature_range=(-1,1)).fit(X_train)
-        # X_train = scaling.transform(X_train)
-        # X_test = scaling.transform(X_test)
-
         knn = KNeighborsClassifier(
             n_neighbors=paramDic['n_neighbors'],
             weights=paramDic['weights'], algorithm=paramDic['algorithm'], leaf_size=paramDic['leaf_size'],
@@ -153,26 +148,26 @@ class Models:
         eval_set=[(X_train, y_train), (X_test, y_test)]
 
         xgb = xgboost.sklearn.XGBClassifier(
-            max_depth=paramDic['max_depth'], 
-            learning_rate=paramDic['learning_rate'], 
+            max_depth=paramDic['max_depth'],
+            learning_rate=paramDic['learning_rate'],
             n_estimators=paramDic['n_estimators'],
-            silent=paramDic['silent'], 
+            silent=paramDic['silent'],
             objective=paramDic['objective'],
-            booster=paramDic['booster'], 
-            n_jobs=paramDic['n_jobs'], 
-            nthread=paramDic['nthread'], 
+            booster=paramDic['booster'],
+            n_jobs=paramDic['n_jobs'],
+            nthread=paramDic['nthread'],
             gamma=paramDic['gamma'],
-            min_child_weight=paramDic['min_child_weight'], 
+            min_child_weight=paramDic['min_child_weight'],
             max_delta_step=paramDic['max_delta_step'],
-            subsample=paramDic['subsample'], 
-            colsample_bytree=paramDic['colsample_bytree'], 
+            subsample=paramDic['subsample'],
+            colsample_bytree=paramDic['colsample_bytree'],
             colsample_bylevel=paramDic['colsample_bylevel'],
-            reg_alpha=paramDic['reg_alpha'], 
-            reg_lambda=paramDic['reg_lambda'], 
+            reg_alpha=paramDic['reg_alpha'],
+            reg_lambda=paramDic['reg_lambda'],
             scale_pos_weight=paramDic['scale_pos_weight'],
             base_score=paramDic['base_score'],
-            random_state=paramDic['random_state'], 
-            seed=paramDic['seed'], missing=paramDic['missing'], 
+            random_state=paramDic['random_state'],
+            seed=paramDic['seed'], missing=paramDic['missing'],
             importance_type=paramDic['importance_type']
         )
 
@@ -294,11 +289,11 @@ class Models:
     def ff_network(self, n, X_train, y_train, X_test, y_test):
         '''
         Forward feeding neural network with one/two hidden layer.
-        
+
         :param: None
         :return: None
         '''
-        
+
         in_len = X_train.shape[1] # number of input feature
         out_len = len(y_train.unique()) # number of output label
         hidden_layer_l = [25, 15]
@@ -310,7 +305,7 @@ class Models:
         print("Train label converted into vector label")
         Y_test = to_categorical(y_test)
         Y_train = to_categorical(y_train)
-        
+
         model = Sequential()
         out = ""
         print(Y_train)
@@ -331,16 +326,16 @@ class Models:
             model.fit(X_train, Y_train, epochs=ep, batch_size=20, verbose=1, class_weight=class_weight, validation_data=(X_test, Y_test),callbacks=[plot_losses])
             scores_test = model.evaluate(X_test, Y_test)
             scores_train = model.evaluate(X_train, Y_train)
-              
+
             #back to array
             y_pred = np.argmax(model.predict(X_test),axis=1)
             visual = Visualization(y_pred)
-            visual.plot_confusion_matrix(y_train, y_test) 
+            visual.plot_confusion_matrix(y_train, y_test)
             print("y_pred == ", y_pred)
             print("confusion matrix printed")
             visual.classification_report(y_train, y_test)
-            
-                        
+
+
             out = "Accuracy : "+ str(scores_test[1]) + ", Hidden layer activation : " + hidden_act +" Epoch:"+str(ep) +'\n'
             f = open(str(weight)+"_"+str(n)+"_"+str(hidden_layer)+".txt", "a")
             f.write(out)
@@ -354,7 +349,7 @@ class Models:
                 json_file.write(model_json)
             model.save_weights("model.h5")
             print("Saved model to disk")
-        
+
         return scores[1]
 
     def ffnn_eval(X_test):
@@ -365,10 +360,9 @@ class Models:
         # load weights into new model
         loaded_model.load_weights("model.h5")
         print("Loaded model from disk")
-        
+
         # evaluate loaded model on test data
         loaded_model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
         y_pred = np.argmax(model.predict(X_test),axis=1)
         data = X_test.join(pd.DataFrame(y_pred))
         print(data)
-         
