@@ -75,21 +75,21 @@ XGBClassifier_dict = {
 }
 
 XGBClassifier_dict2 = {
-     'max_depth':4, #default: 3
-     'learning_rate':0.0001,
-     'n_estimators':50,
+     'max_depth':5, #default: 3
+     'learning_rate':0.01,
+     'n_estimators':200,
      'silent':True,
-     'objective':'binary:logistic',
+     'objective':'multi:softprob',
      'booster':'gbtree',
      'n_jobs':3,
      'nthread':None,
-     'gamma':10, #0 : no regularization, 1: medium regularization, 5: high regularization
+     'gamma':5, #0 : no regularization, 1: medium regularization, 5: high regularization
      'min_child_weight':1,
      'max_delta_step':0,
      'subsample':0.8,
      'colsample_bytree':0.8,
      'colsample_bylevel':1,
-     'reg_alpha':3,
+     'reg_alpha':0,
      'reg_lambda':3,
      'scale_pos_weight':1,
      'base_score':0.5,
@@ -125,22 +125,22 @@ XGBClassifier_dict2 = {
 # }
 
 XGBClassifier_dict3 = {
-     'max_depth':4, #default: 3
-     'learning_rate':0.0075,
-     'n_estimators':100,
+     'max_depth':5, #default: 3
+     'learning_rate':0.01,
+     'n_estimators':200,
      'silent':True,
      'objective':'multi:softprob',
      'booster':'gbtree',
      'n_jobs':3,
      'nthread':None,
-     'gamma':10, #0 : no regularization, 1: medium regularization, 5: high regularization
+     'gamma':5, #0 : no regularization, 1: medium regularization, 5: high regularization
      'min_child_weight':1,
      'max_delta_step':0,
      'subsample':0.8,
      'colsample_bytree':0.8,
      'colsample_bylevel':1,
-     'reg_alpha':3,
-     'reg_lambda':3,
+     'reg_alpha':0,
+     'reg_lambda':1,
      'scale_pos_weight':1,
      'base_score':0.5,
      'random_state':0,
@@ -170,13 +170,13 @@ logistic_regression_dict = {
     'penalty' : 'l2',
     'dual' : False,
     'tol' : 0.0001,
-    'C' : 0.001,
+    'C' : 10,
     'fit_intercept' : True,
     'intercept_scaling' : 1,
     'class_weight' : None,
-    'random_state' : 1,
+    'random_state' : 42,
     'solver' : 'newton-cg',
-    'max_iter' : 100,
+    'max_iter' : 400,
     'multi_class' : 'multinomial',
     'verbose' : 0,
     'warm_start' : False,
@@ -213,6 +213,21 @@ ridge_regression_dict = {
     'tol' : 0.001,
     'solver' : 'auto',
     'random_state' : None
+}
+
+decision_tree_regressor_dict = {
+    'criterion':'mse', 
+    'splitter':'best', 
+    'max_depth':None, 
+    'min_samples_split':2, 
+    'min_samples_leaf':1, 
+    'min_weight_fraction_leaf':0.0, 
+    'max_features':None, 
+    'random_state':None, 
+    'max_leaf_nodes':None, 
+    'min_impurity_decrease':0.0, 
+    'min_impurity_split':None, 
+    'presort':False
 }
 
 ff_network_dict = {

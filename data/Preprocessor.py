@@ -137,7 +137,7 @@ class Preprocessor:
         #data = pd.read_csv("../loan_data/data/loanfull.csv")
         #low_memory was added to avoid data compression
 
-        data = pd.read_csv("../data/InvoicePayment-training.csv")
+        data = pd.read_csv("../data/InvoicePayment-evaluation.csv")
 
         self.__transactionData = data
         print("[retrieve_data finished]")
@@ -151,7 +151,7 @@ class Preprocessor:
         '''
         print("split_data running...")
         # TODO: loan status may not be the label -> change to label accordingly.
-        X = self.__transactionData.drop(['difference', 'label', 'PwC_RowID'], axis = 1)
+        X = self.__transactionData.drop(['difference', 'label'], axis = 1)
         y = self.__transactionData['label']
 
         self.__true_y = self.__transactionData['label']
@@ -271,7 +271,7 @@ class Preprocessor:
         '''
         data = self.__transactionData
         self.__colnames= data.columns.values
-        
+
         return self.__colnames
 
     def get_feature_size(self):
@@ -335,7 +335,7 @@ class Preprocessor:
         }
 
         col  = ['CompanyName', 'EntryDate', 'DocumentTypeDesc', 'EntryTime',
-                'InvoiceDate', 'LocalCurrency',
+                'InvoiceDate', 'LocalCurrency', 'PwC_RowID',
                 'PO_PurchasingDocumentNumber', 'PostingDate', 'PurchasingDocumentDate',
                 'ReportingAmount', 'TransactionCodeDesc', 'Year', 'PaymentDate', 'PaymentDueDate'
             ]
@@ -355,7 +355,7 @@ class Preprocessor:
 
         #print(dfTrain.columns)
 
-        cols = ['PwC_RowID', 'BusinessTransaction', 'CompanyCode', 'DocumentType',
+        cols = [ 'BusinessTransaction', 'CompanyCode', 'DocumentType',
        'InvoiceAmount', 'PO_FLag', 'TransactionCode', 'UserName', 'difference',
        'label']
 

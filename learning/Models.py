@@ -17,13 +17,10 @@ from sklearn import preprocessing, linear_model
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import auc
-from sklearn.metrics import roc_auc_score
-from sklearn.metrics import classification_report
+from sklearn.metrics import accuracy_score, classification_report, roc_auc_score, auc
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 
 # from keras.models import Sequential
 # from keras.layers import Dense
@@ -265,7 +262,7 @@ class Models:
             copy_X = paramDic['copy_X'],
             n_jobs = paramDic['n_jobs']
         )
-
+        print(x_poly.shape,y_train.shape)
         pr.fit(x_poly,y_train)
 
         return (modelName, pr)
@@ -297,6 +294,38 @@ class Models:
         rr.fit(X_train,y_train)
 
         return (modelName, rr)
+
+    def decision_tree_regressor(self, paramDic, X_train, y_train, X_test, y_test):
+        '''
+        Decision tree regression model being used for the second learning phase.
+
+        :param: paramDic:   Dictionary containing all the necessary hyperparameters.
+                X_train:    Training attributes.
+                y_train:    Training labels.
+                X_test:     Test attributes.
+                y_test:     Test labels.
+        :return: (model name, trained model)
+        '''
+        modelName = "decision_tree_regressor"
+
+        dtr = DecisionTreeRegressor(
+            criterion=paramDic['criterion'], 
+            splitter=paramDic['splitter'], 
+            max_depth=paramDic['max_depth'], 
+            min_samples_split=paramDic['min_samples_split'], 
+            min_samples_leaf=paramDic['min_samples_leaf'], 
+            min_weight_fraction_leaf=paramDic['min_weight_fraction_leaf'], 
+            max_features=paramDic['max_features'], 
+            random_state=paramDic['random_state'], 
+            max_leaf_nodes=paramDic['max_leaf_nodes'], 
+            min_impurity_decrease=paramDic['min_impurity_decrease'], 
+            min_impurity_split=paramDic['min_impurity_split'], 
+            presort=paramDic['presort']
+        )
+
+        dtr.fit(X_train,y_train)
+
+        return (modelName, dtr)
 
     def ff_network(self, n, X_train, y_train, X_test, y_test):
         '''

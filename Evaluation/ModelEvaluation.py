@@ -1,7 +1,7 @@
 '''
 Class for evaluating the trained model.
 '''
-from sklearn.metrics import accuracy_score, auc, roc_auc_score, classification_report, mean_squared_error, r2_score
+from sklearn.metrics import accuracy_score, auc, roc_auc_score, classification_report, mean_squared_error, r2_score, confusion_matrix
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.preprocessing import PolynomialFeatures
 
@@ -55,10 +55,9 @@ class ModelEvaluation:
         #visualization
         visual = Visualization(y_pred)
 
-        #confusion matrix
-        # visual.plot_confusion_matrix(y_train, y_test)
-        # visual.classification_report(y_train, y_test)
+        
 
+        #when regression model is used.
         if modelName == "linear_regression" or modelName == "polynomial_regression" or modelName == "ridge_regression":
             print("model: ", modelName)
             print('Coefficients: ', model.coef_)
@@ -71,10 +70,15 @@ class ModelEvaluation:
             results = model.evals_result()
             visual.draw_log_loss(results)   #log loss
             visual.draw_classification_error(results)   #classification error
+            # visual.plot_confusion_matrix(y_train, y_test)
+            # visual.classification_report(y_train, y_test)
 
         acc_model = (y_pred == y_test).sum().astype(float) / len(y_pred)*100
         accuracy = accuracy_score(np.array(y_test).flatten(), y_pred)
         print(modelName,"'s prediction accuracy is: %3.2f" % (acc_model))
+
+        print ('\nClasification report:\n', classification_report(y_test, y_pred))
+        print ('\nConfussion matrix:\n',confusion_matrix(y_test, y_pred))
 
         return accuracy
 
