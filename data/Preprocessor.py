@@ -39,8 +39,9 @@ class Preprocessor:
         self.__labels_test = None
 
         self.__true_y = None
-
-        #self.__featurefilter = FeatureFilter()
+        self.late_nodes = None 
+        self.early_nodes = None
+        self.__featurefilter = FeatureFilter()
 
         self.__retrieve_data()
         self.__transactionData = datetime_data(self.__transactionData)
@@ -49,9 +50,9 @@ class Preprocessor:
 
         #self.__dominant_feature_filter()
 
-        #self.__select_k_best()
         #self.__extra_tree_classify()
         self.vendor_column()
+        self.__select_k_best()
 
         self.__split_data()
         self.classify_label()
@@ -97,16 +98,16 @@ class Preprocessor:
 
     def __select_k_best(self):
 
-        self.__meaningfulfeatures = self.__featurefilter.feature_score(self.__transactionData.drop('loan_status',axis=1))
+        self.__meaningfulfeatures = self.__featurefilter.feature_score(self.__transactionData)
 
         cols= self.__meaningfulfeatures
-        cols.append('new_loan_status')
-        cols.append('loan_status')
+        cols.append('label')
 
         dfdataset=self.__transactionData
         dfdataset= dfdataset[cols]
 
         self.__transactionData=dfdataset
+        print(self.__meaningfulfeatures)
         print("Select K Best features replaced original feature list")
 
     def __extra_tree_classify(self):
@@ -121,7 +122,6 @@ class Preprocessor:
 
         self.__transactionData=dfdataset
         print("Extra_tree_classify() features replaced original feature list")
-
 
     def __retrieve_data(self):
         '''
@@ -143,7 +143,7 @@ class Preprocessor:
         #data = pd.read_csv("../loan_data/data/loanfull.csv")
         #low_memory was added to avoid data compression
 
-        data = pd.read_csv("../InvoicePayment-evaluation.csv")
+        data = pd.read_csv("../InvoicePayment-training.csv")
 
         self.__colnames= data.columns.values
         self.__transactionData = data
@@ -481,7 +481,8 @@ class Preprocessor:
             late_nodes[i] = dfTrain.drop(dfTrain[dfTrain.difference > -1].index)['difference'].quantile(tmp)
             tmp += 0.1
         self.__transactionData['payment_label'] = self.__transactionData['difference'].apply(self.classify, args=(early_nodes,late_nodes,))
-        print(early_nodes, late_nodes)
+        self.early_nodes = early_nodes
+        self.late_nodes = late_nodes
 
     def vendor_apply(self,val,name):
         if(val == name):
@@ -490,11 +491,11 @@ class Preprocessor:
 
     def vendor_column(self):
         for name in list(self.__transactionData['VendorName'].unique()):
-            if(len(self.__transactionData[self.__transactionData.VendorName == name].index)> 10000):
+            if(len(self.__transactionData[self.__transactionData.VendorName == name].index)> 3000):
                 self.__transactionData[name] = self.__transactionData['VendorName'].apply(self.vendor_apply, args=(name,))
         #print(self.__transactionData)
         for country in list(self.__transactionData['VendorCountry'].unique()):
-            if(len(self.__transactionData[self.__transactionData.VendorCountry == country].index)> 10000):
+            if(len(self.__transactionData[self.__transactionData.VendorCountry == country].index)> 3000):
                 self.__transactionData[country] = self.__transactionData['VendorCountry'].apply(self.vendor_apply, args=(name,))
 
         dfTrain =self.__transactionData.copy()
@@ -502,6 +503,6 @@ class Preprocessor:
         #print(dfTrain['Vendor 01899'].value_counts())
         dfTrain=dfTrain.drop('VendorName', axis=1)
         dfTrain=dfTrain.drop('VendorCountry', axis=1)
-
-        print(dfTrain.dtypes)
+        print("XXXXXXXXXXXXXX")
+        print(dfTrain.columns.values)
         self.__transactionData = dfTrain

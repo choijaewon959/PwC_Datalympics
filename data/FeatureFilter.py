@@ -43,9 +43,9 @@ class FeatureFilter:
         return self.__reducedDimension
 
     def feature_score(self, data):
-
-        X = data.drop('new_loan_status', axis = 1)
-        y = data['new_loan_status']
+        data['InvoiceAmount'] = data['InvoiceAmount'].abs()
+        X = data.drop(['label','difference'], axis = 1)
+        y = data['label']
 
         #apply SelectKBest
         bestfeatures= SelectKBest(score_func=chi2, k=20)

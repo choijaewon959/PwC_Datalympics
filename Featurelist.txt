@@ -1,0 +1,1 @@
+['InvoiceAmount', 'PwC_RowID', 'DocumentNo', 'PaymentDocumentNo', 'InvoiceItemDesc', 'ReferenceDocumentNo', 'InvoiceDesc', 'Vendor 00332', 'UserName', 'TransactionCode', 'Vendor 01089', 'Vendor 00415', 'Vendor 01876', 'Period', 'Vendor 01024', 'Vendor 00070', 'CompanyCode', 'Vendor 01689', 'PO_FLag', 'Vendor 01532']
