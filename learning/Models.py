@@ -173,6 +173,11 @@ class Models:
         )
 
         xgb.fit(X_train, y_train, eval_metric=["merror", "mlogloss"], eval_set=eval_set, verbose=True)
+        y_pred = xgb.predict(X_test)
+
+        visual = Visualization(y_pred)
+        visual.plot_confusion_matrix(y_train, y_test)
+        visual.classification_report(y_train, y_test)
 
         return (modelName, xgb)
 

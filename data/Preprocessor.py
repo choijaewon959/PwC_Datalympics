@@ -51,9 +51,9 @@ class Preprocessor:
 
         self.__retrieve_data()
         self.__loanData = datetime_data(self.__loanData)
-
         self.__data_preprocess()
 
+        self.vendor_column()
 
         #print(self.__loanData)
 
@@ -67,10 +67,11 @@ class Preprocessor:
         #self.__extra_tree_classify()
 
         self.__split_data()
-        #self.__resample_data_SMOTE()
+        #print(self.__loanData)
+        self.__resample_data_SMOTE()
 
         #self.__scale_data()
-        #self.__graph()
+        self.__graph()
 
     def __dominant_feature_filter(self):
         '''
@@ -155,6 +156,8 @@ class Preprocessor:
         #low_memory was added to avoid data compression
 
         data = pd.read_csv("../datalympics/InvoicePayment-training.csv")
+        #data = pd.read_csv("../datalympics/InvoicePayment-evaluation.csv")
+
 
         self.__colnames= data.columns.values
         self.__loanData = data
@@ -434,6 +437,7 @@ class Preprocessor:
         return int(val[-2:])
     def change2(self,val):
         return int(val[-1:])
+
     def __data_preprocess(self):
 
         dfTrain = self.__loanData
@@ -450,29 +454,21 @@ class Preprocessor:
        'TransactionCode', 'TransactionCodeDesc', 'UserName', 'VendorName',
        'VendorCountry', 'Year', 'PaymentDueDate', 'difference', 'label']]
 
-        print(dfTrain['VendorCountry'].unique().tolist())
-        li= dfTrain['VendorCountry'].unique().tolist()
-
-        mapping={}
-
-        num=0
-        for i in li:
-            mapping['VendorCountry']= { i : num }
-
+        # print(dfTrain['VendorCountry'].unique().tolist())
+        # li= dfTrain['VendorCountry'].unique().tolist()
 
         mapping = {'BusinessTransaction': {'Business transaction type 0002': 2 , 'Business transaction type 0003': 3, 'Business transaction type 0001': 1},
         'CompanyCode' : {'C002':2, 'C001':1, 'C003':3},
-        'DocumentType': {'T03':3,'T04':4,'T02':2,'T01':1,'T09':9,'T07':7,'T06':6,'T08':8},
+        'DocumentType': {'T03':3,'T04':4,'T02':2,'T01':1,'T09':9,'T07':7,'T06':6,'T08':8, 'T05':5},
         'DocumentTypeDesc': {'Vendor invoice': 0, 'Invoice receipt':1,'Vendor credit memo':2,'Vendor document':3,'TOMS (Jul2003)/ TWMS':4 ,'Interf.with SMIS-CrM':5,'Interf.with SMIS-IV':6 ,'Interface with PIMS':7},
         'PO_FLag': {'N': 0 , 'Y':1},
         'TransactionCode': {'TR 0005':0,'TR 0006':1,'TR 0002':2,'TR 0008':3,'TR 0007':4,'TR 0003':5,'TR 0004':6, 'TR 0001':7},
-
         }
 
         col  = ['CompanyName', 'DocumentNo', 'EntryDate', 'DocumentTypeDesc', 'EntryTime',
                 'InvoiceDate', 'InvoiceDesc', 'InvoiceItemDesc', 'LocalCurrency', 'PaymentDocumentNo',
                 'Period', 'PO_PurchasingDocumentNumber', 'PostingDate', 'PurchasingDocumentDate', 'ReferenceDocumentNo',
-                'ReportingAmount', 'TransactionCodeDesc', 'Year', 'VendorName' , 'VendorCountry', 'PaymentDate', 'PaymentDueDate'
+                'ReportingAmount', 'TransactionCodeDesc', 'Year', 'PaymentDate', 'PaymentDueDate'
                 ]
 
         dfTrain['UserName'] = dfTrain['UserName'].apply(self.change)
@@ -480,7 +476,9 @@ class Preprocessor:
         dfTrain = dfTrain.replace(mapping)
         dfTrain = dfTrain.drop(col, axis=1)
 
-        print(dfTrain.dtypes)
+        dfTrain= dfTrain.loc[dfTrain['VendorCountry'] == 'HK']
+
+        #print(dfTrain.dtypes)
 
         self.__loanData = dfTrain
 
@@ -514,6 +512,7 @@ class Preprocessor:
         print(len(self.__loanData.columns.values))
 
     def __graph(self):
+        print(self.__loanData)
         visual = Visualization(self.__loanData)
         visual.plot_heatmap()
 
@@ -530,3 +529,26 @@ class Preprocessor:
         :return: true_y
         '''
         return self.__true_y
+
+    def vendor_apply(self,val,name):
+        if(val == name):
+            return 1
+        return 0
+
+    def vendor_column(self):
+        for name in list(self.__loanData['VendorName'].unique()):
+            if(len(self.__loanData[self.__loanData.VendorName == name].index)> 1000):
+                self.__loanData[name] = self.__loanData['VendorName'].apply(self.vendor_apply, args=(name,))
+        #print(self.__loanData)
+        for country in list(self.__loanData['VendorCountry'].unique()):
+            if(len(self.__loanData[self.__loanData.VendorCountry == country].index)> 1000):
+                self.__loanData[country] = self.__loanData['VendorCountry'].apply(self.vendor_apply, args=(name,))
+
+        dfTrain =self.__loanData.copy()
+        #print(dfTrain.loc[dfTrain.index[dfTrain['VendorName'] == 'Vendor 01024'].tolist()])
+        #print(dfTrain['Vendor 01899'].value_counts())
+        dfTrain=dfTrain.drop('VendorName', axis=1)
+        dfTrain=dfTrain.drop('VendorCountry', axis=1)
+
+        print(dfTrain.dtypes)
+        self.__loanData = dfTrain
