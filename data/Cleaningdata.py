@@ -165,6 +165,24 @@ def label2result(val):
     if(val == 2):
         return 'Late'
 
+def regression2label(val):
+    if(val > 0):
+        return 'Early'
+    elif(val == 0):
+        return 'On time'
+    elif(val < 0):
+        return 'Late'
+
+def regression_final_result(data,y_predicted):
+    '''
+    conversion of regression result to predicted date
+    :param - data including duedate, regression result
+    :return - data appended with predicted date
+    '''
+    y_predicted = y_predicted.round()
+    data['predicted_date'] = data['PaymentDueDate'] - y_predicted.map(pd.offsets.Day) 
+    data['label'] = y_predicted.apply(regression2label)
+
 def final_result(data, y_predicted,early_nodes,late_nodes):
     '''
     :param - Dataframe type column vector y_predicted 
@@ -172,11 +190,13 @@ def final_result(data, y_predicted,early_nodes,late_nodes):
     '''
     data['predicted_date'] = data['PaymentDueDate'] - y_predicted.apply(convert_back,args=(early_nodes,late_nodes,)).map(pd.offsets.Day) 
     data['label'] = data['label'].apply(label2result)
+
 def result2csv(data):
     '''
     save result in format of PwC's format
     '''
-    data[['PwC_RowID','label','predicted_date']].to_csv('HKU_KD_result.csv', index=False)
+    data[['PwC_RowID','predicted_date','label']].to_csv('HKU_KD_result.csv', index=False)
+
 def csv2score(result_dir,data):
     '''
     evaluate score of result
@@ -194,6 +214,7 @@ def csv2score(result_dir,data):
     error = data['error'].sum()
     print(error)
     return error/24
+
 def generate_node(dfTrain):
     tmp = 0.1
     early_nodes = dict()

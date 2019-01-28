@@ -252,7 +252,7 @@ class Models:
         :return: (model name, trained model)
         '''
         modelName = "polynomial_regression"
-        
+
         poly = preprocessing.PolynomialFeatures(2)
         x_poly = poly.fit_transform(X_train)
 
@@ -309,17 +309,17 @@ class Models:
         modelName = "decision_tree_regressor"
 
         dtr = DecisionTreeRegressor(
-            criterion=paramDic['criterion'], 
-            splitter=paramDic['splitter'], 
-            max_depth=paramDic['max_depth'], 
-            min_samples_split=paramDic['min_samples_split'], 
-            min_samples_leaf=paramDic['min_samples_leaf'], 
-            min_weight_fraction_leaf=paramDic['min_weight_fraction_leaf'], 
-            max_features=paramDic['max_features'], 
-            random_state=paramDic['random_state'], 
-            max_leaf_nodes=paramDic['max_leaf_nodes'], 
-            min_impurity_decrease=paramDic['min_impurity_decrease'], 
-            min_impurity_split=paramDic['min_impurity_split'], 
+            criterion=paramDic['criterion'],
+            splitter=paramDic['splitter'],
+            max_depth=paramDic['max_depth'],
+            min_samples_split=paramDic['min_samples_split'],
+            min_samples_leaf=paramDic['min_samples_leaf'],
+            min_weight_fraction_leaf=paramDic['min_weight_fraction_leaf'],
+            max_features=paramDic['max_features'],
+            random_state=paramDic['random_state'],
+            max_leaf_nodes=paramDic['max_leaf_nodes'],
+            min_impurity_decrease=paramDic['min_impurity_decrease'],
+            min_impurity_split=paramDic['min_impurity_split'],
             presort=paramDic['presort']
         )
 
