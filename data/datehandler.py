@@ -35,7 +35,7 @@ def datetime_data(data):
 
     data['label'] = data['difference'].apply(add_label)
 
-    print(data['difference'].value_counts())
+    #print(data['difference'].value_counts())
     #return those with negative days (days passed due date)
     #lateday = data.loc[data['result'] < 0]
 
@@ -54,11 +54,11 @@ def datetime_data(data):
 
 def add_label(val):
     if val > 0 :
-        return -1
-    elif val < 0:
-        return 1
-    else:
         return 0
+    elif val < 0:
+        return 2
+    else:
+        return 1
 
 #data,lateday = retrieve_data()
 #data=comparison_check(data)

@@ -46,24 +46,23 @@ class Preprocessor:
         self.__transactionData = datetime_data(self.__transactionData)
 
         self.__data_preprocess()
-        #print(self.__loanData)
 
         #self.__dominant_feature_filter()
-        # TODO: function call for preprocessing data
-
-        #self.__temp_data_process()
-        #self.add_nodes()
 
         #self.__select_k_best()
         #self.__extra_tree_classify()
+        self.vendor_column()
 
         self.__split_data()
         self.classify_label()
 
         self.__resample_data_SMOTE()
 
+        print(self.__attributes_train)
+
         #self.__scale_data()
         #self.__graph()
+
 
     def __dominant_feature_filter(self):
         '''
@@ -156,14 +155,14 @@ class Preprocessor:
 
     def __split_data(self):
         '''
-        Split the dataframe into two datasets: Traning data, test data.
+        Split the dataframe into two datasets: Training data, test data.
 
         :param: whole given data frame
         :return: None
         '''
         print("split_data running...")
         # TODO: loan status may not be the label -> change to label accordingly.
-        X = self.__transactionData.drop(['difference', 'label'], axis = 1)
+        X = self.__transactionData.drop(['difference', 'label', 'PwC_RowID'], axis = 1)
         y = self.__transactionData['label']
 
         self.__true_y = self.__transactionData['label']
@@ -314,6 +313,9 @@ class Preprocessor:
     def change2(self,val):
         return int(val[-1:])
 
+    def change3(self,val):
+        return int(val[-6:])
+
     def __data_preprocess(self):
 
         dfTrain = self.__transactionData
@@ -340,21 +342,27 @@ class Preprocessor:
         'TransactionCode': {'TR 0005':0,'TR 0006':1,'TR 0002':2,'TR 0008':3,'TR 0007':4,'TR 0003':5,'TR 0004':6, 'TR 0001':7},
         }
 
-        col  = ['CompanyName', 'DocumentNo', 'EntryDate', 'DocumentTypeDesc', 'EntryTime',
-                'InvoiceDate', 'InvoiceDesc', 'InvoiceItemDesc', 'LocalCurrency', 'PaymentDocumentNo',
-                'Period', 'PO_PurchasingDocumentNumber', 'PostingDate', 'PurchasingDocumentDate', 'ReferenceDocumentNo',
-                'ReportingAmount', 'TransactionCodeDesc', 'Year', 'PaymentDate', 'PaymentDueDate','VendorName',
-                'VendorCountry'
+        col  = ['CompanyName', 'EntryDate', 'DocumentTypeDesc', 'EntryTime',
+                'InvoiceDate', 'LocalCurrency',
+                'PO_PurchasingDocumentNumber', 'PostingDate', 'PurchasingDocumentDate',
+                'ReportingAmount', 'TransactionCodeDesc', 'Year', 'PaymentDate', 'PaymentDueDate'
                 ]
 
         dfTrain['UserName'] = dfTrain['UserName'].apply(self.change)
         dfTrain['TransactionCodeDesc'] = dfTrain['TransactionCodeDesc'].apply(self.change2)
+        dfTrain['ReferenceDocumentNo'] = dfTrain['ReferenceDocumentNo'].apply(self.change3)
+        dfTrain['DocumentNo'] = dfTrain['DocumentNo'].apply(self.change3)
+        dfTrain['PaymentDocumentNo'] = dfTrain['PaymentDocumentNo'].apply(self.change3)
+        dfTrain['InvoiceItemDesc'] = dfTrain['InvoiceItemDesc'].apply(self.change3)
+        dfTrain['InvoiceDesc'] = dfTrain['InvoiceDesc'].apply(self.change3)
+
+        print(dfTrain)
         dfTrain = dfTrain.replace(mapping)
         dfTrain = dfTrain.drop(col, axis=1)
 
         # dfTrain= dfTrain.loc[dfTrain['VendorCountry'] == 'HK']
 
-        print(dfTrain.columns)
+        #print(dfTrain.columns)
 
         cols = ['PwC_RowID', 'BusinessTransaction', 'CompanyCode', 'DocumentType',
        'InvoiceAmount', 'PO_FLag', 'TransactionCode', 'UserName', 'difference',
@@ -364,7 +372,7 @@ class Preprocessor:
             print('Imputation with Median: %s' % (col))
             dfTrain[col].fillna(dfTrain[col].median(), inplace=True)
 
-
+        print(dfTrain.describe)
         self.__transactionData = dfTrain
 
     # def get_labels(self):
@@ -486,19 +494,19 @@ class Preprocessor:
         return 0
 
     def vendor_column(self):
-        for name in list(self.__loanData['VendorName'].unique()):
-            if(len(self.__loanData[self.__loanData.VendorName == name].index)> 1000):
-                self.__loanData[name] = self.__loanData['VendorName'].apply(self.vendor_apply, args=(name,))
-        #print(self.__loanData)
-        for country in list(self.__loanData['VendorCountry'].unique()):
-            if(len(self.__loanData[self.__loanData.VendorCountry == country].index)> 1000):
-                self.__loanData[country] = self.__loanData['VendorCountry'].apply(self.vendor_apply, args=(name,))
+        for name in list(self.__transactionData['VendorName'].unique()):
+            if(len(self.__transactionData[self.__transactionData.VendorName == name].index)> 10000):
+                self.__transactionData[name] = self.__transactionData['VendorName'].apply(self.vendor_apply, args=(name,))
+        #print(self.__transactionData)
+        for country in list(self.__transactionData['VendorCountry'].unique()):
+            if(len(self.__transactionData[self.__transactionData.VendorCountry == country].index)> 10000):
+                self.__transactionData[country] = self.__transactionData['VendorCountry'].apply(self.vendor_apply, args=(name,))
 
-        dfTrain =self.__loanData.copy()
+        dfTrain =self.__transactionData.copy()
         #print(dfTrain.loc[dfTrain.index[dfTrain['VendorName'] == 'Vendor 01024'].tolist()])
         #print(dfTrain['Vendor 01899'].value_counts())
         dfTrain=dfTrain.drop('VendorName', axis=1)
         dfTrain=dfTrain.drop('VendorCountry', axis=1)
 
         print(dfTrain.dtypes)
-        self.__loanData = dfTrain
+        self.__transactionData = dfTrain

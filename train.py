@@ -20,6 +20,7 @@ print('test began')
 #objects
 dataProcessor = Preprocessor()
 transactionData = dataProcessor.get_data() #original given data
+print(transactionData)
 algorithm = Models()
 result = ResultLog()
 miniProcessor = MiniProcessor(transactionData)
@@ -33,6 +34,8 @@ y_train = dataProcessor.get_train_labels()
 X_test = dataProcessor.get_test_attributes()
 y_test = dataProcessor.get_test_labels()
 
+print(X_train)
+print(X_test)
 # accuracy = algorithm.logistic_regression(logistic_regression_dict, X_train, y_train, X_test, y_test)
 # result.log_result('logistic_regression', accuracy, logistic_regression_dict)
 
@@ -47,7 +50,7 @@ y_test = dataProcessor.get_test_labels()
 First Learning to classify the rows into early, ontime, late
 '''
 
-trainedModel = algorithm.XGBClassifier(XGBClassifier_dict,X_train, y_train, X_test, y_test)
+trainedModel = algorithm.decision_tree(decision_tree_dict,X_train, y_train, X_test, y_test)
 
 #save trained model
 pickle.dump(trainedModel, open(MODELFILE1, 'wb'))
@@ -74,7 +77,7 @@ early_paid_Data = miniProcessor.get_second_data(0)
 # print(early_paid_Data[3].value_counts())
 
 #Retrieve the trained model.
-early_paid_trainedModel = algorithm.XGBClassifier(XGBClassifier_dict2, early_paid_Data[2], early_paid_Data[3], early_paid_Data[0], early_paid_Data[1])
+early_paid_trainedModel = algorithm.decision_tree(decision_tree_dict, early_paid_Data[2], early_paid_Data[3], early_paid_Data[0], early_paid_Data[1])
 
 #save early paid trained model.
 pickle.dump(early_paid_trainedModel, open(MODELFILE2, 'wb'))
@@ -95,7 +98,7 @@ Specifically predict the date the user with 'late paid' would pay.
 late_paid_Data = miniProcessor.get_second_data(2)
 
 #Retrieve the trained model.
-late_paid_trainedModel = algorithm.XGBClassifier(XGBClassifier_dict2, late_paid_Data[2], late_paid_Data[3], late_paid_Data[0], late_paid_Data[1])
+late_paid_trainedModel = algorithm.decision_tree(decision_tree_dict, late_paid_Data[2], late_paid_Data[3], late_paid_Data[0], late_paid_Data[1])
 
 #save early paid trained model.
 pickle.dump(late_paid_trainedModel, open(MODELFILE3, 'wb'))
