@@ -43,9 +43,16 @@ class FeatureFilter:
         return self.__reducedDimension
 
     def feature_score(self, data):
+        # for column in data.columns:
+        #     s= data[column]
+        #     print(any(s<0))
+        # print(data[(data[0,27] < 0).all(1)])
+        dfTrain = data
+        dfTrain['InvoiceAmount'] = dfTrain['InvoiceAmount'].abs()
+        dfTrain['duration'] = dfTrain['duration'].abs()
 
-        X = data.drop('new_loan_status', axis = 1)
-        y = data['new_loan_status']
+        X = dfTrain.drop(['label','difference'], axis = 1)
+        y = dfTrain['label']
 
         #apply SelectKBest
         bestfeatures= SelectKBest(score_func=chi2, k=20)

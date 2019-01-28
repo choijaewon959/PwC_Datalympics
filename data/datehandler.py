@@ -30,18 +30,21 @@ def datetime_data(data):
 
     #make new column with result which keep track of dates belated or early
     data['difference']=data['PaymentDueDate']-data['PaymentDate']
+    data['duration'] = data['PaymentDueDate']-data['InvoiceDate']
+
     #format into integer format
     data['difference']=data['difference'].dt.days
+    data['duration']= data['duration'].dt.days
 
     data['label'] = data['difference'].apply(add_label)
 
+    #print(data['label'].value_counts())
     #print(data['difference'].value_counts())
     #return those with negative days (days passed due date)
     #lateday = data.loc[data['result'] < 0]
 
     # print(data['difference'])
     # print(data['label'])
-
     #print(data)
 
     """

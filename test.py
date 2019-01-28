@@ -62,7 +62,7 @@ print(cols)
 
 #load the trained data.
 trainedModel1 = pickle.load(open(MODELFILE1, 'rb'))
-trainedModel2 = pickle.load(open(MODELFILE1, 'rb'))
+trainedModel2 = pickle.load(open(MODELFILE2, 'rb'))
 
 #New object to evaluate the given dataset
 eval = ModelEvaluation(data)
@@ -72,7 +72,7 @@ evaluated_result = eval.get_predicted_label()
 print( evaluated_result)
 
 #Add new column with predicted data
-data['loan_status']=evaluated_result
+data['label']=evaluated_result
 origin['First_classification']= evaluated_result
 
 #Gather data with specific label
