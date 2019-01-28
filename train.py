@@ -19,20 +19,7 @@ print('test began')
 
 #objects
 dataProcessor = Preprocessor()
-<<<<<<< HEAD
 transactionData = dataProcessor.get_data() #original given data
-=======
-loanData = dataProcessor.get_data() #original given data
-dataProcessor.classify_label()
-algorithm = Models()
-result = ResultLog()
-miniProcessor = MiniProcessor(loanData)
-#data for training
-X_train = dataProcessor.get_train_attributes()
-y_train = dataProcessor.get_train_labels()
-
-# loanData = dataProcessor.get_data() #original given data
->>>>>>> fc1dd3335167a53881957f7fdb9d179e37f45972
 algorithm = Models()
 result = ResultLog()
 miniProcessor = MiniProcessor(transactionData)
@@ -81,8 +68,8 @@ y_predicted = evaluation.get_predicted_label()
 
 #TODO: convery y value to string
 #log the submission result.
-submission.update_paymentTiming(y_predicted)    # update the timing value to csv. (early, ontime, late)
-submission.update_PwC_RowID(y_predicted)    # update the row ID.
+# submission.update_paymentTiming(y_predicted)    # update the timing value to csv. (early, ontime, late)
+# submission.update_PwC_RowID(y_predicted)    # update the row ID.
 
 '''
 Learning for data with early paid label.
@@ -91,6 +78,8 @@ Specifically predict the date the user with 'early paid' would pay.
 #TODO:  change the n value to retrieve the data.
 #Retrieve the data to be used for early paid training.
 early_paid_Data = miniProcessor.get_second_data(0)
+# print(early_paid_Data[2].value_counts())
+# print(early_paid_Data[3].value_counts())
 
 #Retrieve the trained model.
 early_paid_trainedModel = algorithm.XGBClassifier(XGBClassifier_dict2, early_paid_Data[2], early_paid_Data[3], early_paid_Data[0], early_paid_Data[1])
@@ -120,7 +109,7 @@ late_paid_trainedModel = algorithm.XGBClassifier(XGBClassifier_dict2, late_paid_
 pickle.dump(late_paid_trainedModel, open(MODELFILE3, 'wb'))
 
 #Evaluate early-paid model. (Second classification)
-late_paid_evaluation = ModelEvaluation(late_paid_trainedModel[0],late_paid_trainedModel[1],late_paid_trainedModel[2],late_paid_trainedModel[3])
+late_paid_evaluation = ModelEvaluation(late_paid_Data[0],late_paid_Data[1],late_paid_Data[2],late_paid_Data[3])
 accuracy_late = late_paid_evaluation.evaluate_model(late_paid_trainedModel)
 
 late_paid_y_predicted = late_paid_evaluation.get_predicted_label()

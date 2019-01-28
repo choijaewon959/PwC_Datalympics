@@ -56,10 +56,14 @@ class MiniProcessor:
         :return : tuple of label n data, splited into test, train data
         '''
         dfTrain = self.__transactionData
-        dfTrain = dfTrain.drop(dfTrain[dfTrain.loan_status < 3].index)
-        dfTrain = dfTrain.drop(dfTrain[dfTrain.loan_status > 5].index)
-        y = dfTrain['loan_status']
-        X = dfTrain.drop(['loan_status','new_loan_status'], axis=1)
+        if(n ==0):
+            dfTrain = dfTrain.drop(dfTrain[dfTrain.payment_label < 10].index)
+            dfTrain = dfTrain.drop(dfTrain[dfTrain.payment_label > 19].index)
+        elif(n==2):
+            dfTrain = dfTrain.drop(dfTrain[dfTrain.payment_label < 40].index)
+            dfTrain = dfTrain.drop(dfTrain[dfTrain.payment_label > 50].index)
+        y = dfTrain['payment_label']
+        X = dfTrain.drop(['label','payment_label'], axis=1)
         self.__sec_att_train ,self.__sec_att_test, self.__sec_lab_train,self.__sec_lab_test = train_test_split(X, y, test_size=0.2, random_state = 1, shuffle =True, stratify=y)
         print(self.__sec_lab_test)
         print(self.__sec_lab_train)
