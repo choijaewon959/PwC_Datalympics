@@ -561,7 +561,7 @@ class Preprocessor:
             return 0
         elif(val > 0):
             if(val >= early_nodes[9]):
-                return 20
+                return 19
             elif(val>= early_nodes[8]):
                 return 19
             elif(val>= early_nodes[7]):
@@ -621,7 +621,7 @@ class Preprocessor:
         self.__loanData['payment_label'] = self.__loanData['difference'].apply(self.classify, args=(early_nodes,late_nodes,))
         print(early_nodes, late_nodes)
         print(self.__loanData[['payment_label','difference']])
-
+        print(self.__loanData['payment_label'].value_counts())
     def vendor_apply(self,val,name):
         if(val == name):
             return 1
