@@ -32,6 +32,8 @@ y_train = dataProcessor.get_train_labels()
 X_test = dataProcessor.get_test_attributes()
 y_test = dataProcessor.get_test_labels()
 
+print(X_train)
+print(X_test)
 # accuracy = algorithm.logistic_regression(logistic_regression_dict, X_train, y_train, X_test, y_test)
 # result.log_result('logistic_regression', accuracy, logistic_regression_dict)
 
@@ -46,7 +48,7 @@ y_test = dataProcessor.get_test_labels()
 First Learning to classify the rows into early, ontime, late
 '''
 
-trainedModel = algorithm.XGBClassifier(XGBClassifier_dict,X_train, y_train, X_test, y_test)
+trainedModel = algorithm.decision_tree(decision_tree_dict,X_train, y_train, X_test, y_test)
 
 #save trained model
 pickle.dump(trainedModel, open(MODELFILE1, 'wb'))

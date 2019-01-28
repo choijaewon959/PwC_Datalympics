@@ -57,6 +57,7 @@ class Preprocessor:
         #self.__scale_data()
         #self.__graph()
 
+
     def __dominant_feature_filter(self):
         '''
         Filter out the dominant term to avoid overfitting
@@ -144,7 +145,7 @@ class Preprocessor:
 
     def __split_data(self):
         '''
-        Split the dataframe into two datasets: Traning data, test data.
+        Split the dataframe into two datasets: Training data, test data.
 
         :param: whole given data frame
         :return: None
@@ -302,6 +303,9 @@ class Preprocessor:
     def change2(self,val):
         return int(val[-1:])
 
+    def change3(self,val):
+        return int(val[-6:])
+
     def __data_preprocess(self):
 
         dfTrain = self.__transactionData
@@ -328,20 +332,27 @@ class Preprocessor:
         'TransactionCode': {'TR 0005':0,'TR 0006':1,'TR 0002':2,'TR 0008':3,'TR 0007':4,'TR 0003':5,'TR 0004':6, 'TR 0001':7},
         }
 
-        col  = ['CompanyName', 'DocumentNo', 'EntryDate', 'DocumentTypeDesc', 'EntryTime',
-                'InvoiceDate', 'InvoiceDesc', 'InvoiceItemDesc', 'LocalCurrency', 'PaymentDocumentNo',
-                'Period', 'PO_PurchasingDocumentNumber', 'PostingDate', 'PurchasingDocumentDate', 'ReferenceDocumentNo',
+        col  = ['CompanyName', 'EntryDate', 'DocumentTypeDesc', 'EntryTime',
+                'InvoiceDate', 'LocalCurrency',
+                'PO_PurchasingDocumentNumber', 'PostingDate', 'PurchasingDocumentDate',
                 'ReportingAmount', 'TransactionCodeDesc', 'Year', 'PaymentDate', 'PaymentDueDate'
-                ]
+            ]
 
         dfTrain['UserName'] = dfTrain['UserName'].apply(self.change)
         dfTrain['TransactionCodeDesc'] = dfTrain['TransactionCodeDesc'].apply(self.change2)
+        dfTrain['ReferenceDocumentNo'] = dfTrain['ReferenceDocumentNo'].apply(self.change3)
+        dfTrain['DocumentNo'] = dfTrain['DocumentNo'].apply(self.change3)
+        dfTrain['PaymentDocumentNo'] = dfTrain['PaymentDocumentNo'].apply(self.change3)
+        dfTrain['InvoiceItemDesc'] = dfTrain['InvoiceItemDesc'].apply(self.change3)
+        dfTrain['InvoiceDesc'] = dfTrain['InvoiceDesc'].apply(self.change3)
+
+        print(dfTrain)
         dfTrain = dfTrain.replace(mapping)
         dfTrain = dfTrain.drop(col, axis=1)
 
         # dfTrain= dfTrain.loc[dfTrain['VendorCountry'] == 'HK']
 
-        print(dfTrain.columns)
+        #print(dfTrain.columns)
 
         cols = ['PwC_RowID', 'BusinessTransaction', 'CompanyCode', 'DocumentType',
        'InvoiceAmount', 'PO_FLag', 'TransactionCode', 'UserName', 'difference',
@@ -351,7 +362,7 @@ class Preprocessor:
             print('Imputation with Median: %s' % (col))
             dfTrain[col].fillna(dfTrain[col].median(), inplace=True)
 
-
+        print(dfTrain.describe)
         self.__transactionData = dfTrain
 
     # def get_labels(self):
@@ -474,11 +485,11 @@ class Preprocessor:
 
     def vendor_column(self):
         for name in list(self.__transactionData['VendorName'].unique()):
-            if(len(self.__transactionData[self.__transactionData.VendorName == name].index)> 1000):
+            if(len(self.__transactionData[self.__transactionData.VendorName == name].index)> 10000):
                 self.__transactionData[name] = self.__transactionData['VendorName'].apply(self.vendor_apply, args=(name,))
         #print(self.__transactionData)
         for country in list(self.__transactionData['VendorCountry'].unique()):
-            if(len(self.__transactionData[self.__transactionData.VendorCountry == country].index)> 1000):
+            if(len(self.__transactionData[self.__transactionData.VendorCountry == country].index)> 10000):
                 self.__transactionData[country] = self.__transactionData['VendorCountry'].apply(self.vendor_apply, args=(name,))
 
         dfTrain =self.__transactionData.copy()

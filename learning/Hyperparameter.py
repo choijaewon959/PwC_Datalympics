@@ -77,7 +77,7 @@ XGBClassifier_dict = {
 XGBClassifier_dict2 = {
      'max_depth':4, #default: 3
      'learning_rate':0.0001,
-     'n_estimators':10,
+     'n_estimators':50,
      'silent':True,
      'objective':'binary:logistic',
      'booster':'gbtree',
