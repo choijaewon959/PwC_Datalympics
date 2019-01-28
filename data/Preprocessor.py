@@ -138,7 +138,7 @@ class Preprocessor:
         #data = pd.read_csv("../loan_data/data/loanfull.csv")
         #low_memory was added to avoid data compression
 
-        data = pd.read_csv("../data/InvoicePayment-training.csv")
+        data = pd.read_csv("../InvoicePayment-training.csv")
 
         self.__transactionData = data
         print("[retrieve_data finished]")

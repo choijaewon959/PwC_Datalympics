@@ -47,7 +47,7 @@ Testing file
 print("Reading Test case data...")
 #data = pd.read_csv(sys.argv[1])
 
-data = pd.read_csv("../data/InvoicePayment-evaluation.csv")
+data = pd.read_csv("../InvoicePayment-evaluation.csv")
 
 """
 The data given is supposed to have attributes of Training dataset

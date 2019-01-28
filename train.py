@@ -67,7 +67,7 @@ filtered_X_test = featureFilter.PCA(early_paid_Data[0], 10)
 
 #Retrieve the trained model.
 #1.without PCA
-early_paid_trainedModel = algorithm.decision_tree(decision_tree_dict, early_paid_Data[2], early_paid_Data[3],early_paid_Data[0], early_paid_Data[1])
+early_paid_trainedModel = algorithm.polynomial_regression(polynomial_regression_dict, early_paid_Data[2], early_paid_Data[3],early_paid_Data[0], early_paid_Data[1])
 #2.PCA
 #early_paid_trainedModel = algorithm.SVM(SVM_dict, filtered_X_train, early_paid_Data[3],filtered_X_test, early_paid_Data[1])
 
@@ -96,7 +96,7 @@ filtered_X_test = featureFilter.PCA(late_paid_Data[0], 10)
 
 #Retrieve the trained model.
 #1.without PCA
-late_paid_trainedModel = algorithm.XGBClassifier(XGBClassifier_dict3, late_paid_Data[2], late_paid_Data[3], late_paid_Data[0], late_paid_Data[1])
+late_paid_trainedModel = algorithm.polynomial_regression(polynomial_regression_dict, late_paid_Data[2], late_paid_Data[3], late_paid_Data[0], late_paid_Data[1])
 #2.PCA
 #late_paid_trainedModel = algorithm.SVM(SVM_dict, filtered_X_train, late_paid_Data[3], filtered_X_test, late_paid_Data[1])
 
