@@ -14,7 +14,6 @@ from sklearn.metrics import accuracy_score, auc, roc_auc_score, classification_r
 from sklearn.model_selection import train_test_split, cross_val_score
 from config import *
 
-
 print('test began')
 
 #objects
@@ -28,14 +27,7 @@ submission = Submission()
 #data for training
 X_train = dataProcessor.get_train_attributes()
 y_train = dataProcessor.get_train_labels()
-
-# #data for training
-# X_train = dataProcessor.get_train_attributes()
-# y_train = dataProcessor.get_train_labels()
-#
-#data for training
-X_train = dataProcessor.get_train_attributes()
-y_train = dataProcessor.get_train_labels()
+print(X_train)
 
 #data for test
 X_test = dataProcessor.get_test_attributes()
@@ -68,8 +60,8 @@ y_predicted = evaluation.get_predicted_label()
 
 #TODO: convery y value to string
 #log the submission result.
-submission.update_paymentTiming(y_predicted)    # update the timing value to csv. (early, ontime, late)
-submission.update_PwC_RowID(y_predicted)    # update the row ID.
+# submission.update_paymentTiming(y_predicted)    # update the timing value to csv. (early, ontime, late)
+# submission.update_PwC_RowID(y_predicted)    # update the row ID.
 
 '''
 Learning for data with early paid label.
@@ -80,7 +72,7 @@ Specifically predict the date the user with 'early paid' would pay.
 early_paid_Data = miniProcessor.get_second_data(0)
 
 #Retrieve the trained model.
-early_paid_trainedModel = algorithm.XGBClassifier(XGBClassifier_dict2, early_paid_Data[2], early_paid_Data[3], early_paid_Data[0], early_paid_Data[1])
+early_paid_trainedModel = algorithm.decision_tree(decision_tree_dict, early_paid_Data[2], early_paid_Data[3], early_paid_Data[0], early_paid_Data[1])
 
 #save early paid trained model.
 pickle.dump(early_paid_trainedModel, open(MODELFILE2, 'wb'))
@@ -100,7 +92,7 @@ Specifically predict the date the user with 'late paid' would pay.
 late_paid_Data = miniProcessor.get_second_data(2)
 
 #Retrieve the trained model.
-late_paid_trainedModel = algorithm.XGBClassifier(XGBClassifier_dict2, late_paid_Data[2], late_paid_Data[3], late_paid_Data[0], late_paid_Data[1])
+late_paid_trainedModel = algorithm.decision_tree(decision_tree_dict, late_paid_Data[2], late_paid_Data[3], late_paid_Data[0], late_paid_Data[1])
 
 #save early paid trained model.
 pickle.dump(late_paid_trainedModel, open(MODELFILE3, 'wb'))
@@ -114,14 +106,14 @@ late_paid_y_predicted = late_paid_evaluation.get_predicted_label()
 #log the payment timing (early, on time, late) result.
 submission.update_paymentTiming(y_predicted)
 
-'''
-Change the virtual label into more specific label.
-'''
-finalEval = miniProcessor.finalize_label(y_predicted, early_paid_y_predicted, late_paid_y_predicted)
-print(finalEval.unique())
+# '''
+# Change the virtual label into more specific label.
+# '''
+# finalEval = miniProcessor.finalize_label(y_predicted, early_paid_y_predicted, late_paid_y_predicted)
+# print(finalEval.unique())
 
-accuracy = accuracy_score(np.array(y_test).flatten(), finalEval)
-print(accuracy)
+# accuracy = accuracy_score(np.array(y_test).flatten(), finalEval)
+# print(accuracy)
 
 # accuracy = algorithm.XGBClassifier(XGBClassifier_dict, X_train, y_train, X_test, y_test)
 # result.log_result('XGBClassifier', accuracy, XGBClassifier_dict)

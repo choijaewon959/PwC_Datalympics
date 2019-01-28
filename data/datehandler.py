@@ -23,7 +23,6 @@ def datetime_data(data):
     data['EntryDate']= pd.to_datetime(data['EntryDate'])
     data['PaymentDueDate']= pd.to_datetime(data['PaymentDueDate'])
 
-
     #normalize each date time into same format
     #data['paid_off_time']=data['paid_off_time'].dt.strftime('%Y-%m-%d')
     #data['paid_off_time']=pd.to_datetime(data['paid_off_time'])
@@ -35,6 +34,7 @@ def datetime_data(data):
 
     data['label'] = data['difference'].apply(add_label)
 
+    print(data['difference'].value_counts())
     #return those with negative days (days passed due date)
     #lateday = data.loc[data['result'] < 0]
 

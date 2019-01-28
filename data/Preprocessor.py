@@ -32,7 +32,7 @@ class Preprocessor:
         self.__smallData = None
         self.__currentData = None
 
-        self.__attributes_train = None
+        self.__attributes_train = None 
         self.__labels_train = None
 
         self.__attributes_test = None
@@ -47,19 +47,11 @@ class Preprocessor:
 
         self.__data_preprocess()
 
-        #print(self.__loanData)
-
-        #self.__dominant_feature_filter()
-        # TODO: function call for preprocessing data
-
-        #self.__temp_data_process()
-        #self.add_nodes()
-
         #self.__select_k_best()
         #self.__extra_tree_classify()
+
         self.__split_data()
         self.classify_label()
-
         self.__resample_data_SMOTE()
 
         #self.__scale_data()
@@ -144,7 +136,7 @@ class Preprocessor:
         #data = pd.read_csv("../loan_data/data/loanfull.csv")
         #low_memory was added to avoid data compression
 
-        data = pd.read_csv("../data/InvoicePayment-evaluation.csv")
+        data = pd.read_csv("../data/InvoicePayment-training.csv")
 
         self.__colnames= data.columns.values
         self.__transactionData = data
@@ -349,6 +341,17 @@ class Preprocessor:
         dfTrain = dfTrain.drop(col, axis=1)
 
         # dfTrain= dfTrain.loc[dfTrain['VendorCountry'] == 'HK']
+
+        print(dfTrain.columns)
+
+        cols = ['PwC_RowID', 'BusinessTransaction', 'CompanyCode', 'DocumentType',
+       'InvoiceAmount', 'PO_FLag', 'TransactionCode', 'UserName', 'difference',
+       'label']
+
+        for col in cols:
+            print('Imputation with Median: %s' % (col))
+            dfTrain[col].fillna(dfTrain[col].median(), inplace=True)
+
 
         self.__transactionData = dfTrain
 
