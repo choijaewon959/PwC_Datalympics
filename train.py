@@ -68,8 +68,8 @@ y_predicted = evaluation.get_predicted_label()
 
 #TODO: convery y value to string
 #log the submission result.
-# submission.update_paymentTiming(y_predicted)    # update the timing value to csv. (early, ontime, late)
-# submission.update_PwC_RowID(y_predicted)    # update the row ID.
+submission.update_paymentTiming(y_predicted)    # update the timing value to csv. (early, ontime, late)
+submission.update_PwC_RowID(y_predicted)    # update the row ID.
 
 '''
 Learning for data with early paid label.

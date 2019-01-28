@@ -63,7 +63,8 @@ class MiniProcessor:
             dfTrain = dfTrain.drop(dfTrain[dfTrain.payment_label < 40].index)
             dfTrain = dfTrain.drop(dfTrain[dfTrain.payment_label > 50].index)
         y = dfTrain['payment_label']
-        X = dfTrain.drop(['label','payment_label'], axis=1)
+        X = dfTrain.drop(['label','payment_label', 'difference'], axis=1)
+        print(dfTrain['InvoiceAmount'])
         self.__sec_att_train ,self.__sec_att_test, self.__sec_lab_train,self.__sec_lab_test = train_test_split(X, y, test_size=0.2, random_state = 1, shuffle =True, stratify=y)
         print(self.__sec_lab_test)
         print(self.__sec_lab_train)

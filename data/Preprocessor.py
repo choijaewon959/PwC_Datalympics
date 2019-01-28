@@ -46,7 +46,7 @@ class Preprocessor:
         self.__transactionData = datetime_data(self.__transactionData)
 
         self.__data_preprocess()
-        exit()
+
         #print(self.__loanData)
 
         #self.__dominant_feature_filter()
@@ -57,14 +57,13 @@ class Preprocessor:
 
         #self.__select_k_best()
         #self.__extra_tree_classify()
-        exit()
         self.__split_data()
         self.classify_label()
 
         self.__resample_data_SMOTE()
 
         #self.__scale_data()
-        self.__graph()
+        #self.__graph()
 
     def __dominant_feature_filter(self):
         '''
@@ -125,7 +124,6 @@ class Preprocessor:
         self.__transactionData=dfdataset
         print("Extra_tree_classify() features replaced original feature list")
 
-
     def __retrieve_data(self):
         '''
         Retrieve the data from the csv file and process to store data to datastructures.
@@ -146,7 +144,7 @@ class Preprocessor:
         #data = pd.read_csv("../loan_data/data/loanfull.csv")
         #low_memory was added to avoid data compression
 
-        data = pd.read_csv("../data/InvoicePayment-evaluation.csv", low_memory=False)
+        data = pd.read_csv("../data/InvoicePayment-evaluation.csv")
 
         self.__colnames= data.columns.values
         self.__transactionData = data
@@ -330,7 +328,7 @@ class Preprocessor:
         # print(dfTrain['VendorCountry'].unique().tolist())
         # li= dfTrain['VendorCountry'].unique().tolist()
 
-        mapping = {'BusinessTransaction': {'Business transaction type 0002': 2 , 'Business transaction type 0003': 3, 'Business transaction type 0001': 1},
+        mapping = {'BusinessTransaction': {'Business transaction type 0001': 1,'Business transaction type 0002': 2 , 'Business transaction type 0003': 3},
         'CompanyCode' : {'C002':2, 'C001':1, 'C003':3},
         'DocumentType': {'T03':3,'T04':4,'T02':2,'T01':1,'T09':9,'T07':7,'T06':6,'T08':8, 'T05':5},
         'DocumentTypeDesc': {'Vendor invoice': 0, 'Invoice receipt':1,'Vendor credit memo':2,'Vendor document':3,'TOMS (Jul2003)/ TWMS':4 ,'Interf.with SMIS-CrM':5,'Interf.with SMIS-IV':6 ,'Interface with PIMS':7},
@@ -351,8 +349,6 @@ class Preprocessor:
         dfTrain = dfTrain.drop(col, axis=1)
 
         # dfTrain= dfTrain.loc[dfTrain['VendorCountry'] == 'HK']
-
-        print(dfTrain.dtypes)
 
         self.__transactionData = dfTrain
 
