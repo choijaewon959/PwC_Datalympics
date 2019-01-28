@@ -55,7 +55,7 @@ y_test = dataProcessor.get_test_labels()
 First Learning to classify the rows into early, ontime, late
 '''
 
-trainedModel = algorithm.XGBClassifier(XGBClassifier_dict, X_train, y_train, X_test, y_test)
+trainedModel = algorithm.XGBClassifier(XGBClassifier_dict,X_train, y_train, X_test, y_test)
 
 #save trained model
 pickle.dump(trainedModel, open(MODELFILE1, 'wb'))
@@ -66,64 +66,72 @@ accuracy_first = evaluation.evaluate_model(trainedModel)
 
 y_predicted = evaluation.get_predicted_label()
 
-# '''
-# Learning for data with early paid label.
-# Specifically predict the date the user with 'early paid' would pay.
-# '''
-# #TODO:  change the n value to retrieve the data.
-# #Retrieve the data to be used for early paid training.
-# early_paid_Data = miniProcessor.get_second_data(0)
+#TODO: convery y value to string
+#log the submission result.
+submission.update_paymentTiming(y_predicted)    # update the timing value to csv. (early, ontime, late)
+submission.update_PwC_RowID(y_predicted)    # update the row ID.
 
-# #Retrieve the trained model.
-# early_paid_trainedModel = algorithm.XGBClassifier(XGBClassifier_dict2, early_paid_Data[2], early_paid_Data[3], early_paid_Data[0], early_paid_Data[1])
+'''
+Learning for data with early paid label.
+Specifically predict the date the user with 'early paid' would pay.
+'''
+#TODO:  change the n value to retrieve the data.
+#Retrieve the data to be used for early paid training.
+early_paid_Data = miniProcessor.get_second_data(0)
 
-# #save early paid trained model.
-# pickle.dump(early_paid_trainedModel, open(MODELFILE2, 'wb'))
+#Retrieve the trained model.
+early_paid_trainedModel = algorithm.XGBClassifier(XGBClassifier_dict2, early_paid_Data[2], early_paid_Data[3], early_paid_Data[0], early_paid_Data[1])
 
-# #Evaluate early-paid model. (Second classification)
-# early_paid_evaluation = ModelEvaluation(early_paid_Data[0],early_paid_Data[1],early_paid_Data[2],early_paid_Data[3])
-# accuracy_early = early_paid_evaluation.evaluate_model(early_paid_trainedModel)
+#save early paid trained model.
+pickle.dump(early_paid_trainedModel, open(MODELFILE2, 'wb'))
 
-# early_paid_y_predicted = early_paid_evaluation.get_predicted_label()
+#Evaluate early-paid model. (Second classification)
+early_paid_evaluation = ModelEvaluation(early_paid_Data[0],early_paid_Data[1],early_paid_Data[2],early_paid_Data[3])
+accuracy_early = early_paid_evaluation.evaluate_model(early_paid_trainedModel)
 
-# '''
-# Learning for data with late paid label.
-# Specifically predict the date the user with 'late paid' would pay.
-# '''
-# #TODO:  change the n value to retrieve the data.
-# #Retrieve the data to be used for early paid training.
-# late_paid_Data = miniProcessor.get_second_data(2)
+early_paid_y_predicted = early_paid_evaluation.get_predicted_label()
 
-# #Retrieve the trained model.
-# late_paid_trainedModel = algorithm.XGBClassifier(XGBClassifier_dict2, late_paid_Data[2], late_paid_Data[3], late_paid_Data[0], late_paid_Data[1])
 
-# #save early paid trained model.
-# pickle.dump(late_paid_trainedModel, open(MODELFILE3, 'wb'))
+'''
+Learning for data with late paid label.
+Specifically predict the date the user with 'late paid' would pay.
+'''
+#TODO:  change the n value to retrieve the data.
+#Retrieve the data to be used for early paid training.
+late_paid_Data = miniProcessor.get_second_data(2)
 
-# #Evaluate early-paid model. (Second classification)
-# late_paid_evaluation = ModelEvaluation(late_paid_trainedModel[0],late_paid_trainedModel[1],late_paid_trainedModel[2],late_paid_trainedModel[3])
-# accuracy_late = late_paid_evaluation.evaluate_model(late_paid_trainedModel)
+#Retrieve the trained model.
+late_paid_trainedModel = algorithm.XGBClassifier(XGBClassifier_dict2, late_paid_Data[2], late_paid_Data[3], late_paid_Data[0], late_paid_Data[1])
 
-# late_paid_y_predicted = late_paid_evaluation.get_predicted_label()
+#save early paid trained model.
+pickle.dump(late_paid_trainedModel, open(MODELFILE3, 'wb'))
 
-# '''
-# Change the virtual label into more specific label.
-# '''
-# finalEval = miniProcessor.finalize_label(y_predicted, early_paid_y_predicted, late_paid_y_predicted)
-# print(finalEval.unique())
+#Evaluate early-paid model. (Second classification)
+late_paid_evaluation = ModelEvaluation(late_paid_trainedModel[0],late_paid_trainedModel[1],late_paid_trainedModel[2],late_paid_trainedModel[3])
+accuracy_late = late_paid_evaluation.evaluate_model(late_paid_trainedModel)
 
-# accuracy = accuracy_score(np.array(y_test).flatten(), finalEval)
-# print(accuracy)
+late_paid_y_predicted = late_paid_evaluation.get_predicted_label()
 
-# # accuracy = algorithm.XGBClassifier(XGBClassifier_dict, X_train, y_train, X_test, y_test)
-# # result.log_result('XGBClassifier', accuracy, XGBClassifier_dict)
-# # #
+#log the payment timing (early, on time, late) result.
+submission.update_paymentTiming(y_predicted)
+'''
+Change the virtual label into more specific label.
+'''
+finalEval = miniProcessor.finalize_label(y_predicted, early_paid_y_predicted, late_paid_y_predicted)
+print(finalEval.unique())
+
+accuracy = accuracy_score(np.array(y_test).flatten(), finalEval)
+print(accuracy)
+
+# accuracy = algorithm.XGBClassifier(XGBClassifier_dict, X_train, y_train, X_test, y_test)
+# result.log_result('XGBClassifier', accuracy, XGBClassifier_dict)
+# #
 # accuracy = algorithm.decision_tree(decision_tree_dict, X_train, y_train, X_test, y_test)
 # result.log_result('decision_tree', accuracy, decision_tree_dict)
-# #
-# # accuracy = algorithm.random_forest(random_forest_dict, X_train, y_train, X_test, y_test)
-# # result.log_result('random_forest', accuracy, random_forest_dict)
+#
+# accuracy = algorithm.random_forest(random_forest_dict, X_train, y_train, X_test, y_test)
+# result.log_result('random_forest', accuracy, random_forest_dict)
 
-# # for i in range(1,4):
-# #     accuracy = algorithm.ff_network(i, X_train, y_train, X_test, y_test)
-# #     result.log_result('ff_network', accuracy, ff_network_dict)
+# for i in range(1,4):
+#     accuracy = algorithm.ff_network(i, X_train, y_train, X_test, y_test)
+#     result.log_result('ff_network', accuracy, ff_network_dict)

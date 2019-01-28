@@ -40,20 +40,12 @@ class Preprocessor:
 
         self.__true_y = None
 
-        #second classifier input
-        self.sec_att_train = None
-        self.sec_lab_train = None
-
-        self.sec_att_test = None
-        self.sec_lab_train = None
-
         self.__featurefilter = FeatureFilter()
 
         self.__retrieve_data()
         self.__transactionData = datetime_data(self.__transactionData)
 
         self.__data_preprocess()
-
 
         #print(self.__loanData)
 
@@ -460,7 +452,7 @@ class Preprocessor:
 
         mapping = {'BusinessTransaction': {'Business transaction type 0002': 2 , 'Business transaction type 0003': 3, 'Business transaction type 0001': 1},
         'CompanyCode' : {'C002':2, 'C001':1, 'C003':3},
-        'DocumentType': {'T03':3,'T04':4,'T02':2,'T01':1,'T09':9,'T07':7,'T06':6,'T08':8},
+        'DocumentType': {'T03':3,'T04':4,'T02':2,'T05': 5,'T01':1,'T09':9,'T07':7,'T06':6,'T08':8},
         'DocumentTypeDesc': {'Vendor invoice': 0, 'Invoice receipt':1,'Vendor credit memo':2,'Vendor document':3,'TOMS (Jul2003)/ TWMS':4 ,'Interf.with SMIS-CrM':5,'Interf.with SMIS-IV':6 ,'Interface with PIMS':7},
         'PO_FLag': {'N': 0 , 'Y':1},
         'TransactionCode': {'TR 0005':0,'TR 0006':1,'TR 0002':2,'TR 0008':3,'TR 0007':4,'TR 0003':5,'TR 0004':6, 'TR 0001':7},
