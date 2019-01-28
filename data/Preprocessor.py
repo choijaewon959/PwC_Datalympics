@@ -56,7 +56,7 @@ class Preprocessor:
         #self.__extra_tree_classify()
 
         self.__split_data()
-        #self.__resample_data_SMOTE()
+        self.__resample_data_SMOTE()
 
         #self.__scale_data()
         #self.__graph()
@@ -183,7 +183,7 @@ class Preprocessor:
         name_train = self.__attributes_train.columns
         print("resampling data...")
 
-        sm = SMOTE(random_state=6)
+        sm = SMOTE(random_state=12)
         X_train_res, y_train_res = sm.fit_resample(self.__attributes_train, self.__labels_train)
         self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res, columns=name_train), pd.Series(y_train_res)
 
@@ -419,8 +419,7 @@ class Preprocessor:
         
         #add new column which merges certain labels
         self.__loanData['new_loan_status'] = self.__loanData['loan_status'].apply(self.add_column)
-        
-        print(self.__loanData['new_loan_status'])
+        print(self.__loanData['new_loan_status'].unique())
         tempProcessTime= time.time() - start_time
         print("[tempProcessTime finished with %.2f seconds]"  % tempProcessTime)
 

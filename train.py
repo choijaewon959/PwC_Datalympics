@@ -35,28 +35,28 @@ y_test = dataProcessor.get_test_labels()
 # accuracy = algorithm.logistic_regression(logistic_regression_dict, X_train, y_train, X_test, y_test)
 # result.log_result('logistic_regression', accuracy, logistic_regression_dict)
 
-# ff_accuracy = algorithm.ff_network(3, X_train, y_train, X_test, y_test)
+ff_accuracy = algorithm.ff_network(3, X_train, y_train, X_test, y_test)
 # # accuracy = algorithm.SVM(SVM_dict, X_train, y_train, X_test, y_test)
 # result.log_result('ff_network', ff_accuracy, ff_network_dict)
 
 # accuracy = algorithm.k_neighbor(k_neighor_dict, X_train, y_train, X_test, y_test)
 # result.log_result('k_neighbor', accuracy, k_neighor_dict)
 
-trainedModel1 = algorithm.XGBClassifier(XGBClassifier_dict, X_train, y_train, X_test, y_test)
+# trainedModel1 = algorithm.XGBClassifier(XGBClassifier_dict, X_train, y_train, X_test, y_test)
 
-#save trained model
-pickle.dump(trainedModel1, open(MODELFILE1, 'wb'))
+# #save trained model
+# pickle.dump(trainedModel1, open(MODELFILE1, 'wb'))
 
-evaluation = ModelEvaluation(X_train, y_train, X_test, y_test)
-accuracy_first = evaluation.evaluate_model(trainedModel1)
-result.log_result(trainedModel1[0], accuracy_first, XGBClassifier_dict)
+# evaluation = ModelEvaluation(X_train, y_train, X_test, y_test)
+# accuracy_first = evaluation.evaluate_model(trainedModel1)
+# result.log_result(trainedModel1[0], accuracy_first, XGBClassifier_dict)
 
-y_predicted = evaluation.get_predicted_label()
-miniProcessor = MiniProcessor(loanData)
+# y_predicted = evaluation.get_predicted_label()
+# miniProcessor = MiniProcessor(loanData)
 
-newData = miniProcessor.get_second_data(3)
+# newData = miniProcessor.get_second_data(3)
 
-trainedModel2 = algorithm.XGBClassifier(XGBClassifier_dict, newData)
+# trainedModel2 = algorithm.XGBClassifier(XGBClassifier_dict, newData)
 
 
 # accuracy = algorithm.XGBClassifier(XGBClassifier_dict, X_train, y_train, X_test, y_test)
