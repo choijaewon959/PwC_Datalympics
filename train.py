@@ -19,6 +19,7 @@ print('test began')
 #objects
 dataProcessor = Preprocessor()
 transactionData = dataProcessor.get_data() #original given data
+featureFilter = FeatureFilter()
 algorithm = Models()
 result = ResultLog()
 miniProcessor = MiniProcessor(transactionData)
@@ -32,8 +33,6 @@ y_train = dataProcessor.get_train_labels()
 X_test = dataProcessor.get_test_attributes()
 y_test = dataProcessor.get_test_labels()
 
-print(X_train)
-print(X_test)
 # accuracy = algorithm.logistic_regression(logistic_regression_dict, X_train, y_train, X_test, y_test)
 # result.log_result('logistic_regression', accuracy, logistic_regression_dict)
 
@@ -47,7 +46,6 @@ print(X_test)
 '''
 First Learning to classify the rows into early, ontime, late
 '''
-
 trainedModel = algorithm.decision_tree(decision_tree_dict,X_train, y_train, X_test, y_test)
 
 #save trained model
@@ -64,16 +62,19 @@ y_predicted = evaluation.get_predicted_label()
 # submission.update_paymentTiming(y_predicted)    # update the timing value to csv. (early, ontime, late)
 # submission.update_PwC_RowID(y_predicted)    # update the row ID.
 
+#Use PCA to retrieve the meaningful features to train regression models.
+features = dataProcessor.get_features()
+meaningfulFeatures = featureFilter.PCA(features, 10)
+miniProcessor.drop_no_use_feature(meaningfulFeatures)
 '''
 Learning for data with early paid label.
 Specifically predict the date the user with 'early paid' would pay.
 '''
-#TODO:  change the n value to retrieve the data.
 #Retrieve the data to be used for early paid training.
-early_paid_Data = miniProcessor.get_second_data(0)
+early_paid_Data = miniProcessor.get_poly_data(0)
 
 #Retrieve the trained model.
-early_paid_trainedModel = algorithm.decision_tree(decision_tree_dict, early_paid_Data[2], early_paid_Data[3], early_paid_Data[0], early_paid_Data[1])
+early_paid_trainedModel = algorithm.polynomial_regression(polynomial_regression_dict, early_paid_Data[2], early_paid_Data[3], early_paid_Data[0], early_paid_Data[1])
 
 #save early paid trained model.
 pickle.dump(early_paid_trainedModel, open(MODELFILE2, 'wb'))
@@ -88,12 +89,12 @@ early_paid_y_predicted = early_paid_evaluation.get_predicted_label()
 Learning for data with late paid label.
 Specifically predict the date the user with 'late paid' would pay.
 '''
-#TODO:  change the n value to retrieve the data.
+
 #Retrieve the data to be used for early paid training.
-late_paid_Data = miniProcessor.get_second_data(2)
+late_paid_Data = miniProcessor.get_poly_data(2)
 
 #Retrieve the trained model.
-late_paid_trainedModel = algorithm.decision_tree(decision_tree_dict, late_paid_Data[2], late_paid_Data[3], late_paid_Data[0], late_paid_Data[1])
+late_paid_trainedModel = algorithm.polynomial_regression(polynomial_regression_dict, late_paid_Data[2], late_paid_Data[3], late_paid_Data[0], late_paid_Data[1])
 
 #save early paid trained model.
 pickle.dump(late_paid_trainedModel, open(MODELFILE3, 'wb'))

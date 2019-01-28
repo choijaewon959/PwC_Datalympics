@@ -13,7 +13,7 @@ import sys
 
 from sklearn.svm import SVC
 from sklearn.svm import SVR
-from sklearn import preprocessing
+from sklearn import preprocessing, linear_model
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
@@ -218,6 +218,85 @@ class Models:
         lg.fit(X_train, y_train)
 
         return (modelName, lg)
+
+    def linear_regression(self, paramDic, X_train, y_train, X_test, y_test):
+        '''
+        Linear regression model being used for the second learning phase.
+
+        :param: paramDic:   Dictionary containing all the necessary hyperparameters.
+                X_train:    Training attributes.
+                y_train:    Training labels.
+                X_test:     Test attributes.
+                y_test:     Test labels.
+        :return: (model name, trained model)
+        '''
+        modelName = "linear_regression"
+
+        lr = linear_model.LinearRegression(
+            fit_intercept = paramDic['fit_intercept'],
+            normalize = paramDic['normalize'],
+            copy_X = paramDic['copy_X'],
+            n_jobs = paramDic['n_jobs']
+        )
+
+        lr.fit(X_train, y_train)
+
+        return (modelName, lr)
+
+    def polynomial_regression(self,  paramDic, X_train, y_train, X_test, y_test):
+        '''
+        Polynomial regression model being used for the second learning phase.
+
+        :param: paramDic:   Dictionary containing all the necessary hyperparameters.
+                X_train:    Training attributes.
+                y_train:    Training labels.
+                X_test:     Test attributes.
+                y_test:     Test labels.
+        :return: (model name, trained model)
+        '''
+        modelName = "polynomial_regression"
+        
+        poly = preprocessing.PolynomialFeatures(2)
+        x_poly = poly.fit_transform(X_train)
+
+        pr = linear_model.LinearRegression(
+            fit_intercept = paramDic['fit_intercept'],
+            normalize = paramDic['normalize'],
+            copy_X = paramDic['copy_X'],
+            n_jobs = paramDic['n_jobs']
+        )
+
+        pr.fit(x_poly,y_train)
+
+        return (modelName, pr)
+
+    def ridge_regression(self,  paramDic, X_train, y_train, X_test, y_test):
+        '''
+        Polynomial regression model being used for the second learning phase.
+
+        :param: paramDic:   Dictionary containing all the necessary hyperparameters.
+                X_train:    Training attributes.
+                y_train:    Training labels.
+                X_test:     Test attributes.
+                y_test:     Test labels.
+        :return: (model name, trained model)
+        '''
+        modelName = "ridge_regression"
+
+        rr = linear_model.Ridge(
+            alpha = paramDic['alpha'],
+            fit_intercept = paramDic['fit_intercept'],
+            normalize = paramDic['normalize'],
+            copy_X = paramDic['copy_X'],
+            max_iter = paramDic['max_iter'],
+            tol = paramDic['tol'],
+            solver = paramDic['solver'],
+            random_state = paramDic['random_state']
+        )
+
+        rr.fit(X_train,y_train)
+
+        return (modelName, rr)
 
     def ff_network(self, n, X_train, y_train, X_test, y_test):
         '''

@@ -175,12 +175,44 @@ logistic_regression_dict = {
     'intercept_scaling' : 1,
     'class_weight' : None,
     'random_state' : 1,
-    'solver' : 'saga',
+    'solver' : 'newton-cg',
     'max_iter' : 100,
     'multi_class' : 'multinomial',
     'verbose' : 0,
     'warm_start' : False,
     'n_jobs' : None
+}
+
+linear_regression_dict = {
+    'fit_intercept' : True,
+    'normalize' : False,
+    'copy_X' : True,
+    'n_jobs' : None
+}
+
+polynomial_regression_dict = {
+    'fit_intercept' : True,
+    'normalize' : False,
+    'copy_X' : True,
+    'n_jobs' : None
+}
+
+polynomial_regression_dict2 = {
+    'fit_intercept' : True,
+    'normalize' : True,
+    'copy_X' : True,
+    'n_jobs' : None
+}
+
+ridge_regression_dict = {
+    'alpha' : 1.0,
+    'fit_intercept' : True,
+    'normalize' : False,
+    'copy_X' : True,
+    'max_iter' : None,
+    'tol' : 0.001,
+    'solver' : 'auto',
+    'random_state' : None
 }
 
 ff_network_dict = {

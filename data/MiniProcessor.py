@@ -9,7 +9,6 @@ from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
 class MiniProcessor:
     def __init__(self, Data):
         self.__transactionData = Data
-        self.__currentData = None
 
         #second classifier input
         self.__sec_att_train = None
@@ -31,24 +30,20 @@ class MiniProcessor:
 
         sm = SMOTE(random_state=6)
         X_train_res, y_train_res = sm.fit_resample(self.__sec_att_train, self.__sec_lab_train)
-        self.__sec_att_train, self.__sec_lab_train = pd.DataFrame(X_train_res, columns=name_train), pd.Series(y_train_res)
+        self.__sec_att_train, self.__sec_lab_train = pd.DataFrame(X_train_res, columns=name_train), pd.DataFrame(y_train_res)
 
         print("[respamling finished]")
 
-    # def merge_dataframes(self):
-    #     '''
-    #     Merge all the columns that were previously plitted to obtain more specific labels
+    def drop_no_use_feature(self, features):
+        '''
+        Drop the unnecessary features obtained from PCA
 
-    #     :param: df1: left data columns to be merged.    (Dataframe)
-    #             df2: middle data columns to be merged.   (Dataframe)
-    #             df3: right data columns to be merged.  (Datafrmae)
-    #     :return: mergedFrame: Merged data columns. (Data Frame)
-    #     '''
-    #     frames = [df1, df2, df3]
-    #     mergedFrame = pd.concat(frames)
-
-    #     return mergedFrame.sort_index()
-
+        :param: 
+            features:   useful features
+        :return: None
+        '''
+        self.__transactionData = self.__transactionData[features]
+        
     def get_second_data(self,n):
         '''
         Split the data into train and test data for second classifier
@@ -64,10 +59,31 @@ class MiniProcessor:
             dfTrain = dfTrain.drop(dfTrain[dfTrain.payment_label > 50].index)
         y = dfTrain['payment_label']
         X = dfTrain.drop(['label','payment_label','difference'], axis=1)
+
         self.__sec_att_train ,self.__sec_att_test, self.__sec_lab_train,self.__sec_lab_test = train_test_split(X, y, test_size=0.2, random_state = 1, shuffle =True, stratify=y)
-        print(self.__sec_lab_test)
-        print(self.__sec_lab_train)
         self.__resample_data_SMOTE()
+
+        print("[split_data finished]")
+        return (self.__sec_att_test, self.__sec_lab_test,self.__sec_att_train,self.__sec_lab_train)
+
+    def get_poly_data(self,n):
+        '''
+        Split the data into train and test data for second classifier
+        :parameter: Label number
+        :return : tuple of label n data, splited into test, train data
+        '''
+        dfTrain = self.__transactionData
+        if(n == 0):
+            dfTrain = dfTrain.drop(dfTrain[dfTrain.label < n].index)
+            dfTrain = dfTrain.drop(dfTrain[dfTrain.label > n].index)
+        elif(n==2):
+            dfTrain = dfTrain.drop(dfTrain[dfTrain.label < n].index)
+            dfTrain = dfTrain.drop(dfTrain[dfTrain.label > n].index)
+        y = dfTrain['difference']
+        X = dfTrain.drop(['label','payment_label','difference'], axis=1)
+
+        self.__sec_att_train ,self.__sec_att_test, self.__sec_lab_train,self.__sec_lab_test = train_test_split(X, y, test_size=0.2, random_state = 1, shuffle =True)
+        #self.__resample_data_SMOTE()
 
         print("[split_data finished]")
         return (self.__sec_att_test, self.__sec_lab_test,self.__sec_att_train,self.__sec_lab_train)

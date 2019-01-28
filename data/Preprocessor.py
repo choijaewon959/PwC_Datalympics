@@ -139,7 +139,6 @@ class Preprocessor:
 
         data = pd.read_csv("../data/InvoicePayment-training.csv")
 
-        self.__colnames= data.columns.values
         self.__transactionData = data
         print("[retrieve_data finished]")
 
@@ -173,7 +172,7 @@ class Preprocessor:
 
         sm = SMOTE(random_state=12)
         X_train_res, y_train_res = sm.fit_resample(self.__attributes_train, self.__labels_train)
-        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res, columns=name_train), pd.Series(y_train_res)
+        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res, columns=name_train), pd.DataFrame(y_train_res)
 
         print("[respamling finished]")
 
@@ -189,7 +188,7 @@ class Preprocessor:
         print("resampling data...")
         nm = NearMiss(random_state=6)
         X_train_res, y_train_res = nm.fit_resample(self.__attributes_train, self.__labels_train)
-        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res, columns = name_train), pd.Series(y_train_res)
+        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res, columns = name_train), pd.DataFrame(y_train_res)
         print("[respamling finished]")
 
     def __scale_data(self):
@@ -270,6 +269,9 @@ class Preprocessor:
         :param:None
         :return: set of strings that represent each feature.
         '''
+        data = self.__transactionData
+        self.__colnames= data.columns.values
+        
         return self.__colnames
 
     def get_feature_size(self):
@@ -346,7 +348,6 @@ class Preprocessor:
         dfTrain['InvoiceItemDesc'] = dfTrain['InvoiceItemDesc'].apply(self.change3)
         dfTrain['InvoiceDesc'] = dfTrain['InvoiceDesc'].apply(self.change3)
 
-        print(dfTrain)
         dfTrain = dfTrain.replace(mapping)
         dfTrain = dfTrain.drop(col, axis=1)
 
@@ -362,7 +363,7 @@ class Preprocessor:
             print('Imputation with Median: %s' % (col))
             dfTrain[col].fillna(dfTrain[col].median(), inplace=True)
 
-        print(dfTrain.describe)
+        #print(dfTrain.describe)
         self.__transactionData = dfTrain
 
     # def get_labels(self):

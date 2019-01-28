@@ -70,7 +70,6 @@ class FeatureFilter:
 
         return feature_score.nlargest(20,'Score')['Features'].tolist()
 
-
     def feature_importance(self, data):
         X = data.drop('loan_status', axis = 1)
         y = data['loan_status']
