@@ -300,7 +300,7 @@ class Models:
         weight_mu = [0.1]
         hidden_act = 'tanh'
         ep = 150
-        plot_losses = PlotLossesCallback()
+        #plot_losses = PlotLossesCallback()
 
         print("Train label converted into vector label")
         Y_test = to_categorical(y_test)

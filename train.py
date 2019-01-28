@@ -15,10 +15,12 @@ print('test began')
 
 #objects
 dataProcessor = Preprocessor()
+dataProcessor.tmp()
 loanData = dataProcessor.get_data() #original given data
 algorithm = Models()
 result = ResultLog()
 miniProcessor = MiniProcessor(loanData)
+miniProcessor.classify_label(loanData)
 #data for training
 X_train = dataProcessor.get_train_attributes()
 y_train = dataProcessor.get_train_labels()
@@ -34,7 +36,7 @@ y_test = dataProcessor.get_test_labels()
 # accuracy = algorithm.logistic_regression(logistic_regression_dict, X_train, y_train, X_test, y_test)
 # result.log_result('logistic_regression', accuracy, logistic_regression_dict)
 
-ff_accuracy = algorithm.ff_network(3, X_train, y_train, X_test, y_test)
+# ff_accuracy = algorithm.ff_network(3, X_train, y_train, X_test, y_test)
 # # accuracy = algorithm.SVM(SVM_dict, X_train, y_train, X_test, y_test)
 # result.log_result('ff_network', ff_accuracy, ff_network_dict)
 
@@ -46,31 +48,31 @@ ff_accuracy = algorithm.ff_network(3, X_train, y_train, X_test, y_test)
 # #save trained model
 # pickle.dump(trainedModel1, open(MODELFILE1, 'wb'))
 
-evaluation = ModelEvaluation(X_test, y_test, X_train, y_train)
-accuracy_first = evaluation.evaluate_model(trainedModel1)
+# evaluation = ModelEvaluation(X_test, y_test, X_train, y_train)
+# accuracy_first = evaluation.evaluate_model(trainedModel1)
 #result.log_result(trainedModel1[0], accuracy_first, XGBClassifier_dict)
 
-y_predicted = evaluation.get_predicted_label()
+# y_predicted = evaluation.get_predicted_label()
 
 #Second learning for more specific labels.
-newData = miniProcessor.get_second_data(3)
+# newData = miniProcessor.get_second_data(3)
 
-trainedModel2 = algorithm.XGBClassifier(XGBClassifier_dict2, newData[2], newData[3], newData[0], newData[1])
+# trainedModel2 = algorithm.XGBClassifier(XGBClassifier_dict2, newData[2], newData[3], newData[0], newData[1])
 
 #save trained model
-pickle.dump(trainedModel2, open(MODELFILE2, 'wb'))
+# pickle.dump(trainedModel2, open(MODELFILE2, 'wb'))
 
 #   evaluate second model
-evaluation2 = ModelEvaluation(newData[0],newData[1],newData[2],newData[3])
-accuracy_second = evaluation2.evaluate_model(trainedModel2)
+# evaluation2 = ModelEvaluation(newData[0],newData[1],newData[2],newData[3])
+# accuracy_second = evaluation2.evaluate_model(trainedModel2)
 
-y_predicted2 = evaluation2.get_predicted_label()
+# y_predicted2 = evaluation2.get_predicted_label()
 
-finalEval = miniProcessor.finalize_label(y_predicted, y_predicted2)
-print(finalEval.unique())
+# finalEval = miniProcessor.finalize_label(y_predicted, y_predicted2)
+# print(finalEval.unique())
 
-accuracy = accuracy_score(np.array(y_test).flatten(), finalEval)
-print(accuracy)
+# accuracy = accuracy_score(np.array(y_test).flatten(), finalEval)
+# print(accuracy)
 
 # accuracy = algorithm.XGBClassifier(XGBClassifier_dict, X_train, y_train, X_test, y_test)
 # result.log_result('XGBClassifier', accuracy, XGBClassifier_dict)

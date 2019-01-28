@@ -85,3 +85,30 @@ class MiniProcessor:
                 j+=1
 
         return finalLabel
+
+    def classify_label(self, loanData):
+        '''
+        converts payment time into labels according to the distribution of payment time
+        nodes classifying the label is defined by the quantile values of the distribution
+        :param = list/dataframe of the payment time, loanData
+        :return = loanData with a new column of label
+        '''
+        tmp = 0.1
+        nodes = dict() 
+        for i in range(0,10):
+            nodes[i] = loanData['payment_time'].quantile(tmp)
+            tmp += 0.1
+        print(nodes)
+        loanData['payment_label'] = loanData['payment_time'].apply(self.classify, args=(nodes,))
+    # def classify(self,val,nodes):
+    #     tmp = 0
+    #     tmp2 = 0
+    #     list_class = range(len(nodes)+ 1)
+    #     for node in nodes:
+    #         if(val > node):
+    #             tmp = 1
+    #         elif(tmp == 1 and val < node):
+    #             return list_class[]
+    #         else:
+    #             tmp = 0
+    #         tmp2 += 1
