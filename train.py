@@ -44,7 +44,7 @@ y_test = dataProcessor.get_test_labels()
 # accuracy = algorithm.logistic_regression(logistic_regression_dict, X_train, y_train, X_test, y_test)
 # result.log_result('logistic_regression', accuracy, logistic_regression_dict)
 
-# ff_accuracy = algorithm.ff_network(3, X_train, y_train, X_test, y_test)
+ff_accuracy = algorithm.ff_network(3, X_train, y_train, X_test, y_test)
 # # accuracy = algorithm.SVM(SVM_dict, X_train, y_train, X_test, y_test)
 # result.log_result('ff_network', ff_accuracy, ff_network_dict)
 #
