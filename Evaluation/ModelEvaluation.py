@@ -18,7 +18,7 @@ class ModelEvaluation:
                 y_test: labels for test
         :return: None
         '''
-
+        #print("Constructor:",X_test)
         self.__X_train = X_train
         self.__y_train = y_train
         self.__X_test = X_test
@@ -62,7 +62,7 @@ class ModelEvaluation:
             visual.draw_log_loss(results)   #log loss
 
             visual.draw_classification_error(results)   #classification error
-        
+
         return accuracy
         #accuracy_per_roc_auc = roc_auc_score(np.array(testLabels).flatten(), y_pred)
         #print("ROC-AUC: %.10f%%" % (accuracy_per_roc_auc * 100))
@@ -83,6 +83,7 @@ class ModelEvaluation:
         y_train = self.__y_train
         X_test = self.__X_test
         y_test = self.__y_test
+
 
         y_pred = model.predict(X_test)
         self.__predicted_label = y_pred

@@ -155,7 +155,7 @@ class Preprocessor:
         '''
         print("split_data running...")
         # TODO: loan status may not be the label -> change to label accordingly.
-        X = self.__transactionData.drop(['label', 'PwC_RowID','difference','payment_label'], axis = 1)
+        X = self.__transactionData.drop(['label', 'difference','payment_label'], axis = 1)
         y = self.__transactionData['label']
 
         self.__true_y = self.__transactionData['label']

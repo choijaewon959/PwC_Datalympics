@@ -44,6 +44,7 @@ trainedModel = algorithm.decision_tree(decision_tree_dict,X_train, y_train, X_te
 #save trained model
 pickle.dump(trainedModel, open(MODELFILE1, 'wb'))
 
+print(X_train.dtypes)
 evaluation = ModelEvaluation(X_test, y_test, X_train, y_train)
 accuracy_first = evaluation.evaluate_model(trainedModel)
 #result.log_result(trainedModel1[0], accuracy_first, XGBClassifier_dict)
@@ -100,6 +101,7 @@ submission.update_paymentTiming(y_predicted)
 '''
 Change the virtual label into more specific label.
 '''
+print(y_predicted.value_counts())
 finalEval = miniProcessor.finalize_label(y_predicted, early_paid_y_predicted, late_paid_y_predicted)
 print(finalEval.unique())
 
