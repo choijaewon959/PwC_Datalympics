@@ -7,8 +7,8 @@ from imblearn.over_sampling import SMOTE
 from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
 
 class MiniProcessor:
-    def __init__(self, loanData):
-        self.__loanData = loanData
+    def __init__(self, Data):
+        self.__transactionData = Data
         self.__currentData = None
 
         #second classifier input
@@ -55,7 +55,7 @@ class MiniProcessor:
         :parameter: Label number
         :return : tuple of label n data, splited into test, train data
         '''
-        dfTrain = self.__loanData
+        dfTrain = self.__transactionData
         dfTrain = dfTrain.drop(dfTrain[dfTrain.loan_status < 3].index)
         dfTrain = dfTrain.drop(dfTrain[dfTrain.loan_status > 5].index)
         y = dfTrain['loan_status']
@@ -68,20 +68,25 @@ class MiniProcessor:
         print("[split_data finished]")
         return (self.__sec_att_test, self.__sec_lab_test,self.__sec_att_train,self.__sec_lab_train)
 
-    def finalize_label(self, y_first, y_second):
+    def finalize_label(self, y_first, y_early, y_late):
         '''
         Convert the virtual label into the real label.
 
         :param: None
         :return: None
         '''
-
         finalLabel = y_first
         j=0
+        k=0
 
+        #TODO:  Change the value 3 into changable form so as to convert the corresponding value.
         for i in range(len(finalLabel)):
-            if finalLabel.iloc[i] == 3:
-                finalLabel.iloc[i] = y_second.iloc[j]
+            if finalLabel.iloc[i] == 0: #early
+                finalLabel.iloc[i] = y_early.iloc[j]
                 j+=1
+
+            if finalLabel.iloc[i] == 2: #late
+                finalLabel.iloc[i] == y_late.iloc[k]
+                k+=1
 
         return finalLabel

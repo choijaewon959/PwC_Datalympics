@@ -24,7 +24,7 @@ class Preprocessor:
         self.__distributionTable = {} # Table having distribution objects (key: name of data, value: distribution object).
         self.__colnames = None # string type keys for the table.
         self.__numOfKeys = 0    # number of keys.
-        self.__loanData = None # data mainly used.
+        self.__transactionData = None # data mainly used.
         self.__meaningfulfeatures=[]
 
         self.__smallData = None
@@ -48,13 +48,13 @@ class Preprocessor:
         self.__featurefilter = FeatureFilter()
 
         self.__retrieve_data()
-        self.__dominant_feature_filter()
+        #self.__dominant_feature_filter()
         # TODO: function call for preprocessing data
 
         self.__temp_data_process()
         #self.add_nodes()
 
-        self.__select_k_best()
+        #self.__select_k_best()
         #self.__extra_tree_classify()
 
         self.__split_data()
@@ -70,8 +70,7 @@ class Preprocessor:
         :param: None
         :return: None
         '''
-        self.__loanData = self.__featurefilter.dominant_feature_filter(self.__loanData)
-
+        self.__transactionData = self.__featurefilter.dominant_feature_filter(self.__transactionData)
 
     def __scale_data(self):
         '''
@@ -99,29 +98,29 @@ class Preprocessor:
     def __select_k_best(self):
 
 
-        self.__meaningfulfeatures = self.__featurefilter.feature_score(self.__loanData.drop('loan_status',axis=1))
+        self.__meaningfulfeatures = self.__featurefilter.feature_score(self.__transactionData.drop('loan_status',axis=1))
 
         cols= self.__meaningfulfeatures
         cols.append('new_loan_status')
         cols.append('loan_status')
 
-        dfdataset=self.__loanData
+        dfdataset=self.__transactionData
         dfdataset= dfdataset[cols]
 
-        self.__loanData=dfdataset
+        self.__transactionData=dfdataset
         print("Select K Best features replaced original feature list")
 
     def __extra_tree_classify(self):
 
-        self.__meaningfulfeatures = self.__featurefilter.feature_score(self.__loanData)
+        self.__meaningfulfeatures = self.__featurefilter.feature_score(self.__transactionData)
 
         cols= self.__meaningfulfeatures
         cols.append('loan_status')
 
-        dfdataset=self.__loanData
+        dfdataset=self.__transactionData
         dfdataset= dfdataset[cols]
 
-        self.__loanData=dfdataset
+        self.__transactionData=dfdataset
         print("Extra_tree_classify() features replaced original feature list")
 
 
@@ -142,7 +141,7 @@ class Preprocessor:
         """
         #data = pd.read_csv(r"C:\Users\lasts\Google Drive\Etc\Coding\Data_lympics\Deeplearning\loan.csv")
         #data = pd.read_csv("Deeplearning/loan.csv")
-        data = pd.read_csv("../loan_data/data/loanfull.csv")
+        data = pd.read_csv("../data/loanfull.csv")
         #low_memory was added to avoid data compression
 
 
@@ -157,7 +156,7 @@ class Preprocessor:
         #data = pd.read_csv("../loanfull.csv")
 
         self.__colnames= data.columns.values
-        self.__loanData = data
+        self.__transactionData = data
         print("[retrieve_data finished]")
 
     def __split_data(self):
@@ -169,10 +168,10 @@ class Preprocessor:
         '''
         print("split_data running...")
         # TODO: loan status may not be the label -> change to label accordingly.
-        X = self.__loanData.drop(['new_loan_status','loan_status'], axis = 1)
-        y = self.__loanData['new_loan_status']
+        X = self.__transactionData.drop(['new_loan_status','loan_status'], axis = 1)
+        y = self.__transactionData['new_loan_status']
 
-        self.__true_y = self.__loanData['loan_status']
+        self.__true_y = self.__transactionData['loan_status']
 
         self.__attributes_train, self.__attributes_test, self.__labels_train, self.__labels_test = train_test_split(X, y, test_size=0.2, random_state = 1, shuffle =True, stratify=y)
         print("[split_data finished]")
@@ -328,7 +327,7 @@ class Preprocessor:
         #--------other debugging messages are omitted/ commented for simplifying purposes -------
         start_time = time.time()
 
-        dfTrain = self.__loanData
+        dfTrain = self.__transactionData
         #copied data to refrain from warnings
         dfTrain= dfTrain.copy()
 
@@ -420,21 +419,21 @@ class Preprocessor:
         #print('Missing value imputation done.')
         self.__currentData = dfTrain[dfTrain.loan_status < 0]
         dfTrain = dfTrain.drop(dfTrain[dfTrain.loan_status < 0].index)
-        self.__loanData = dfTrain
+        self.__transactionData = dfTrain
 
         #add new column which merges certain labels
-        self.__loanData['new_loan_status'] = self.__loanData['loan_status'].apply(self.add_column)
+        self.__transactionData['new_loan_status'] = self.__transactionData['loan_status'].apply(self.add_column)
 
-        print(self.__loanData['new_loan_status'].unique())
+        print(self.__transactionData['new_loan_status'].unique())
         tempProcessTime= time.time() - start_time
         print("[tempProcessTime finished with %.2f seconds]"  % tempProcessTime)
 
     def get_labels(self):
-        print(self.__loanData['loan_status'].unique())
-        return self.__loanData['loan_status'].unique()
+        print(self.__transactionData['loan_status'].unique())
+        return self.__transactionData['loan_status'].unique()
 
     def get_data(self):
-        return self.__loanData
+        return self.__transactionData
 
     def additional_feature(self,val,unique):
         if(val == unique):
@@ -446,20 +445,20 @@ class Preprocessor:
         'dummy' nodes added
         '''
         stop = ['sub_grade','emp_length','loan_status','annual_inc','term','grade', 'delinq_2yrs','inq_last_6mths', 'pub_rec']
-        for col in list(self.__loanData.columns.values):
+        for col in list(self.__transactionData.columns.values):
             try:
                 if(stop.index(col) != -1):
                     continue
             except:
-                if(len(self.__loanData[col].unique()) < 30):
-                    for uniq in self.__loanData[col].unique():
-                        self.__loanData[col+' '+str(uniq)] = self.__loanData[col].apply(self.additional_feature,args=(uniq,))
-        self.__loanData = self.__loanData.drop(['home_ownership', 'initial_list_status','application_type'], axis=1)
-        print(self.__loanData.columns.values)
-        print(len(self.__loanData.columns.values))
+                if(len(self.__transactionData[col].unique()) < 30):
+                    for uniq in self.__transactionData[col].unique():
+                        self.__transactionData[col+' '+str(uniq)] = self.__transactionData[col].apply(self.additional_feature,args=(uniq,))
+        self.__transactionData = self.__transactionData.drop(['home_ownership', 'initial_list_status','application_type'], axis=1)
+        print(self.__transactionData.columns.values)
+        print(len(self.__transactionData.columns.values))
 
     def __graph(self):
-        visual = Visualization(self.__loanData)
+        visual = Visualization(self.__transactionData)
         visual.plot_heatmap()
 
     def add_column(self,val):
