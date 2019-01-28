@@ -30,7 +30,7 @@ from keras.layers import Dense
 from keras.utils import to_categorical
 
 sys.path.append('./learning')
-from num_node import *
+#from num_node import *
 # from livelossplot.keras import PlotLossesCallback
 
 import time
@@ -39,7 +39,6 @@ from evaluation.Visualization import *
 # from keras.models import Sequential
 # from keras.layers import Dense
 # from keras.utils import to_categorical
-from num_node import *
 
 class Models:
     def __init__(self):

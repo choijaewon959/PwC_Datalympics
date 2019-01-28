@@ -92,13 +92,25 @@ def final_result(data, y_predicted):
     :param - Dataframe type column vector y_predicted 
     :return - transaction data with column 'predicted date' appended
     '''
-    data['predicted_date'] = data['PaymentDueDate'] + y_predicted.apply(convert_back)
+    y_predicted = pd.DataFrame(y_predicted)
+    data['predicted_date'] = data['PaymentDueDate'] + y_predicted[0].apply(convert_back)
     data['label'] = data['label'].apply(label2result)
+
+def regression_result(data, y_predicted):
+    '''
+    :param - Dataframe type column vector y_predicted 
+    :return - transaction data with column 'predicted date' appended
+    '''
+    y_predicted = pd.DataFrame(y_predicted)
+    data['predicted_date'] = data['PaymentDueDate'] + y_predicted[0]
+    data['label'] = data['label'].apply(label2result)
+
 def result2csv(data):
     '''
     save result in format of PwC's format
     '''
     data[['PwC_RowID','label','predicted_date']].to_csv('HKU_KD_result.csv')
+
 def csv2score(result_dir,answer):
     '''
     evaluate score of result

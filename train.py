@@ -95,13 +95,3 @@ accuracy_late = late_paid_evaluation.evaluate_model(late_paid_trainedModel)
 
 late_paid_y_predicted = late_paid_evaluation.get_predicted_label()
 
-#log the payment timing (early, on time, late) result.
-submission.update_paymentTiming(y_predicted)
-'''
-Change the virtual label into more specific label.
-'''
-finalEval = miniProcessor.finalize_label(y_predicted, early_paid_y_predicted, late_paid_y_predicted)
-print(finalEval.unique())
-
-accuracy = accuracy_score(np.array(y_test).flatten(), finalEval)
-print(accuracy)
