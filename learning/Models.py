@@ -25,9 +25,9 @@ from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 
-# from keras.models import Sequential
-# from keras.layers import Dense
-# from keras.utils import to_categorical
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.utils import to_categorical
 
 sys.path.append('./learning')
 from num_node import *
@@ -246,7 +246,7 @@ class Models:
         :return: None
         '''
         in_len = X_train.shape[1] # number of input feature
-        out_len = 10 # number of output label
+        out_len = 3 # number of output label
         hidden_layer_l = [25, 15]
         weight_mu = [0.1]
         hidden_act = 'tanh'
@@ -262,9 +262,6 @@ class Models:
         print(Y_train)
         for hidden_layer in hidden_layer_l:
             for weight in weight_mu:
-                class_weight = create_class_weight(y_test,weight)
-                print(class_weight)
-
                 if(n==1):
                     model.add(Dense(hidden_layer,input_dim=in_len,activation=hidden_act))
                 elif(n==2):
@@ -274,7 +271,7 @@ class Models:
                     model.add(Dense(int(num_hidden_layer3(in_len,out_len,len(y_train))[1]), activation=hidden_act))
             model.add(Dense(out_len, activation='softmax'))
             model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-            history = model.fit(X_train, Y_train, epochs=ep, batch_size=20, verbose=1, class_weight=class_weight, validation_data=(X_test, Y_test),callbacks=[plot_losses])
+            history = model.fit(X_train, Y_train, epochs=ep, batch_size=20, verbose=1, validation_data=(X_test, Y_test))
             scores_test = model.evaluate(X_test, Y_test)
             scores_train = model.evaluate(X_train, Y_train)
 

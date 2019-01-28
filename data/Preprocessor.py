@@ -39,7 +39,10 @@ class Preprocessor:
         self.__labels_test = None
 
         self.__true_y = None
-
+        self.late_nodes = None
+        self.early_nodes = None
+        self.__rowid = None
+        
         self.__featurefilter = FeatureFilter()
 
         self.__retrieve_data()
@@ -52,11 +55,8 @@ class Preprocessor:
         #self.__extra_tree_classify()
         self.vendor_column()
         self.__select_k_best()
-
         self.classify_label()
-
         self.__split_data()
-
         self.__resample_data_SMOTE()
 
         print(self.__attributes_train)
@@ -104,11 +104,11 @@ class Preprocessor:
         cols= self.__meaningfulfeatures
         cols.append('label')
         cols.append('difference')
-
         dfdataset=self.__transactionData
         dfdataset= dfdataset[cols]
 
         self.__transactionData=dfdataset
+        print(self.__meaningfulfeatures)
         print("Select K Best features replaced original feature list")
 
     def __extra_tree_classify(self):
@@ -123,7 +123,6 @@ class Preprocessor:
 
         self.__transactionData=dfdataset
         print("Extra_tree_classify() features replaced original feature list")
-
 
     def __retrieve_data(self):
         '''
@@ -145,10 +144,7 @@ class Preprocessor:
         #data = pd.read_csv("../loan_data/data/loanfull.csv")
         #low_memory was added to avoid data compression
 
-        data = pd.read_csv("../datalympics/InvoicePayment-training.csv")
-        #data = pd.read_csv("../datalympics/InvoicePayment-evaluation.csv")
-
-        #data = pd.read_csv("../data/InvoicePayment-evaluation.csv")
+        data = pd.read_csv("../InvoicePayment-training.csv")
 
         self.__colnames= data.columns.values
         self.__transactionData = data
@@ -163,7 +159,7 @@ class Preprocessor:
         '''
         print("split_data running...")
         # TODO: loan status may not be the label -> change to label accordingly.
-        X = self.__transactionData.drop(['label', 'difference'], axis = 1)
+        X = self.__transactionData.drop(['label', 'PwC_RowID','difference','payment_label'], axis = 1)
         y = self.__transactionData['label']
 
         self.__true_y = self.__transactionData['label']
@@ -346,12 +342,11 @@ class Preprocessor:
         'TransactionCode': {'TR 0005':0,'TR 0006':1,'TR 0002':2,'TR 0008':3,'TR 0007':4,'TR 0003':5,'TR 0004':6, 'TR 0001':7},
         }
 
-        col  = ['CompanyName', 'EntryDate', 'DocumentTypeDesc', 'EntryTime',
+        dropcol  = ['CompanyName', 'EntryDate', 'DocumentTypeDesc', 'EntryTime',
                 'InvoiceDate', 'LocalCurrency','PwC_RowID',
                 'PO_PurchasingDocumentNumber', 'PostingDate', 'PurchasingDocumentDate',
                 'ReportingAmount', 'Year', 'PaymentDate', 'PaymentDueDate'
                 ]
-
         dfTrain['UserName'] = dfTrain['UserName'].apply(self.change)
         dfTrain['TransactionCodeDesc'] = dfTrain['TransactionCodeDesc'].apply(self.change2)
         dfTrain['ReferenceDocumentNo'] = dfTrain['ReferenceDocumentNo'].apply(self.change3)
@@ -359,9 +354,10 @@ class Preprocessor:
         dfTrain['PaymentDocumentNo'] = dfTrain['PaymentDocumentNo'].apply(self.change3)
         dfTrain['InvoiceItemDesc'] = dfTrain['InvoiceItemDesc'].apply(self.change3)
         dfTrain['InvoiceDesc'] = dfTrain['InvoiceDesc'].apply(self.change3)
+        self.__rowid= dfTrain['PwC_RowID']
 
         dfTrain = dfTrain.replace(mapping)
-        dfTrain = dfTrain.drop(col, axis=1)
+        dfTrain = dfTrain.drop(dropcol, axis=1)
 
         # dfTrain= dfTrain.loc[dfTrain['VendorCountry'] == 'HK']
 
@@ -489,7 +485,8 @@ class Preprocessor:
             late_nodes[i] = dfTrain.drop(dfTrain[dfTrain.difference > -1].index)['difference'].quantile(tmp)
             tmp += 0.1
         self.__transactionData['payment_label'] = self.__transactionData['difference'].apply(self.classify, args=(early_nodes,late_nodes,))
-        print(early_nodes, late_nodes)
+        self.early_nodes = early_nodes
+        self.late_nodes = late_nodes
 
     def vendor_apply(self,val,name):
         if(val == name):
@@ -535,6 +532,5 @@ class Preprocessor:
         print(dfTrain.columns)
         dfTrain=dfTrain.drop('VendorName', axis=1)
         dfTrain=dfTrain.drop('VendorCountry', axis=1)
-
-        print(dfTrain.dtypes)
+        print(dfTrain.columns.values)
         self.__transactionData = dfTrain

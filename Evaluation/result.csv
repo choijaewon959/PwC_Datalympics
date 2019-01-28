@@ -145,61 +145,6 @@ XGBClassifier,"('XGBClassifier', XGBClassifier(base_score=0.5, booster='gbtree',
 decision_tree,0.9521597911544183,"criterion:gini,splitter:best,max_depth:None,min_samples_split:2,min_samples_leaf:1,min_weight_fraction_leaf:0,max_features:None,random_state:None,max_leaf_nodes:None,min_impurity_decrease:0.0,min_impurity_split:None,class_weight:None,presort:False",2019-01-28 13:57:07.389141
 random_forest,0.9442370154509304,"n_estimators:warn,criterion:gini,max_depth:None,min_samples_split:2,min_samples_leaf:1,min_weight_fraction_leaf:0.0,max_features:auto,max_leaf_nodes:None,min_impurity_decrease:0.0,min_impurity_split:None,bootstrap:True,oob_score:False,n_jobs:None,random_state:None,verbose:0,warm_start:False,class_weight:None",2019-01-28 13:57:16.738136
 decision_tree,0.9523571016604438,"criterion:gini,splitter:best,max_depth:None,min_samples_split:2,min_samples_leaf:1,min_weight_fraction_leaf:0,max_features:None,random_state:None,max_leaf_nodes:None,min_impurity_decrease:0.0,min_impurity_split:None,class_weight:None,presort:False",2019-01-28 13:59:01.152859
-<<<<<<< HEAD
-XGBClassifier,"('XGBClassifier', XGBClassifier(base_score=0.5, booster='gbtree', colsample_bylevel=1,
-       colsample_bytree=0.8, gamma=10, importance_type='gain',
-       learning_rate=0.1, max_delta_step=0, max_depth=4,
-       min_child_weight=1, missing=None, n_estimators=100, n_jobs=3,
-       nthread=None, objective='multi:softprob', random_state=0,
-       reg_alpha=3, reg_lambda=3, scale_pos_weight=1, seed=None,
-       silent=True, subsample=0.8))","max_depth:4,learning_rate:0.1,n_estimators:100,silent:True,objective:multi:softprob,booster:gbtree,n_jobs:3,nthread:None,gamma:10,min_child_weight:1,max_delta_step:0,subsample:0.8,colsample_bytree:0.8,colsample_bylevel:1,reg_alpha:3,reg_lambda:3,scale_pos_weight:1,base_score:0.5,random_state:0,seed:None,missing:None,importance_type:gain",2019-01-28 15:02:27.937823
-decision_tree,0.9068944601698342,"criterion:gini,splitter:best,max_depth:None,min_samples_split:2,min_samples_leaf:1,min_weight_fraction_leaf:0,max_features:None,random_state:None,max_leaf_nodes:None,min_impurity_decrease:0.0,min_impurity_split:None,class_weight:None,presort:False",2019-01-28 15:02:33.920821
-decision_tree,0.9523267461979783,"criterion:gini,splitter:best,max_depth:None,min_samples_split:2,min_samples_leaf:1,min_weight_fraction_leaf:0,max_features:None,random_state:None,max_leaf_nodes:None,min_impurity_decrease:0.0,min_impurity_split:None,class_weight:None,presort:False",2019-01-28 15:29:41.671362
-decision_tree,0.9061868176304084,"criterion:gini,splitter:best,max_depth:None,min_samples_split:2,min_samples_leaf:1,min_weight_fraction_leaf:0,max_features:None,random_state:None,max_leaf_nodes:None,min_impurity_decrease:0.0,min_impurity_split:None,class_weight:None,presort:False",2019-01-28 15:31:21.333009
-XGBClassifier,"('XGBClassifier', XGBClassifier(base_score=0.5, booster='gbtree', colsample_bylevel=1,
-       colsample_bytree=0.8, gamma=10, importance_type='gain',
-       learning_rate=0.1, max_delta_step=0, max_depth=4,
-       min_child_weight=1, missing=None, n_estimators=100, n_jobs=3,
-       nthread=None, objective='multi:softprob', random_state=0,
-       reg_alpha=3, reg_lambda=3, scale_pos_weight=1, seed=None,
-       silent=True, subsample=0.8))","max_depth:4,learning_rate:0.1,n_estimators:100,silent:True,objective:multi:softprob,booster:gbtree,n_jobs:3,nthread:None,gamma:10,min_child_weight:1,max_delta_step:0,subsample:0.8,colsample_bytree:0.8,colsample_bylevel:1,reg_alpha:3,reg_lambda:3,scale_pos_weight:1,base_score:0.5,random_state:0,seed:None,missing:None,importance_type:gain",2019-01-28 15:33:31.881844
-decision_tree,0.9077031945006065,"criterion:gini,splitter:best,max_depth:None,min_samples_split:2,min_samples_leaf:1,min_weight_fraction_leaf:0,max_features:None,random_state:None,max_leaf_nodes:None,min_impurity_decrease:0.0,min_impurity_split:None,class_weight:None,presort:False",2019-01-28 15:33:37.176681
-XGBClassifier,"('XGBClassifier', XGBClassifier(base_score=0.5, booster='gbtree', colsample_bylevel=1,
-       colsample_bytree=0.8, gamma=10, importance_type='gain',
-       learning_rate=0.05, max_delta_step=0, max_depth=4,
-       min_child_weight=1, missing=None, n_estimators=200, n_jobs=3,
-       nthread=None, objective='multi:softprob', random_state=0,
-       reg_alpha=3, reg_lambda=3, scale_pos_weight=1, seed=None,
-       silent=True, subsample=0.8))","max_depth:4,learning_rate:0.05,n_estimators:200,silent:True,objective:multi:softprob,booster:gbtree,n_jobs:3,nthread:None,gamma:10,min_child_weight:1,max_delta_step:0,subsample:0.8,colsample_bytree:0.8,colsample_bylevel:1,reg_alpha:3,reg_lambda:3,scale_pos_weight:1,base_score:0.5,random_state:0,seed:None,missing:None,importance_type:gain",2019-01-28 15:34:45.487971
-decision_tree,0.9063890012131015,"criterion:gini,splitter:best,max_depth:None,min_samples_split:2,min_samples_leaf:1,min_weight_fraction_leaf:0,max_features:None,random_state:None,max_leaf_nodes:None,min_impurity_decrease:0.0,min_impurity_split:None,class_weight:None,presort:False",2019-01-28 15:34:48.621588
-XGBClassifier,"('XGBClassifier', XGBClassifier(base_score=0.5, booster='gbtree', colsample_bylevel=1,
-       colsample_bytree=0.8, gamma=10, importance_type='gain',
-       learning_rate=0.01, max_delta_step=0, max_depth=4,
-       min_child_weight=1, missing=None, n_estimators=200, n_jobs=3,
-       nthread=None, objective='multi:softprob', random_state=0,
-       reg_alpha=3, reg_lambda=3, scale_pos_weight=1, seed=None,
-       silent=True, subsample=0.8))","max_depth:4,learning_rate:0.01,n_estimators:200,silent:True,objective:multi:softprob,booster:gbtree,n_jobs:3,nthread:None,gamma:10,min_child_weight:1,max_delta_step:0,subsample:0.8,colsample_bytree:0.8,colsample_bylevel:1,reg_alpha:3,reg_lambda:3,scale_pos_weight:1,base_score:0.5,random_state:0,seed:None,missing:None,importance_type:gain",2019-01-28 15:35:20.252984
-decision_tree,0.9045693489688638,"criterion:gini,splitter:best,max_depth:None,min_samples_split:2,min_samples_leaf:1,min_weight_fraction_leaf:0,max_features:None,random_state:None,max_leaf_nodes:None,min_impurity_decrease:0.0,min_impurity_split:None,class_weight:None,presort:False",2019-01-28 15:35:22.076109
-XGBClassifier,"('XGBClassifier', XGBClassifier(base_score=0.5, booster='gbtree', colsample_bylevel=1,
-       colsample_bytree=0.8, gamma=10, importance_type='gain',
-       learning_rate=0.01, max_delta_step=0, max_depth=4,
-       min_child_weight=1, missing=None, n_estimators=200, n_jobs=3,
-       nthread=None, objective='multi:softprob', random_state=0,
-       reg_alpha=3, reg_lambda=3, scale_pos_weight=1, seed=None,
-       silent=True, subsample=0.8))","max_depth:4,learning_rate:0.01,n_estimators:200,silent:True,objective:multi:softprob,booster:gbtree,n_jobs:3,nthread:None,gamma:10,min_child_weight:1,max_delta_step:0,subsample:0.8,colsample_bytree:0.8,colsample_bylevel:1,reg_alpha:3,reg_lambda:3,scale_pos_weight:1,base_score:0.5,random_state:0,seed:None,missing:None,importance_type:gain",2019-01-28 15:36:09.973002
-decision_tree,0.9071977355438738,"criterion:gini,splitter:best,max_depth:None,min_samples_split:2,min_samples_leaf:1,min_weight_fraction_leaf:0,max_features:None,random_state:None,max_leaf_nodes:None,min_impurity_decrease:0.0,min_impurity_split:None,class_weight:None,presort:False",2019-01-28 15:36:14.278486
-decision_tree,0.9523267461979783,"criterion:gini,splitter:best,max_depth:None,min_samples_split:2,min_samples_leaf:1,min_weight_fraction_leaf:0,max_features:None,random_state:None,max_leaf_nodes:None,min_impurity_decrease:0.0,min_impurity_split:None,class_weight:None,presort:False",2019-01-28 15:41:47.393081
-XGBClassifier,"('XGBClassifier', XGBClassifier(base_score=0.5, booster='gbtree', colsample_bylevel=1,
-       colsample_bytree=0.8, gamma=10, importance_type='gain',
-       learning_rate=0.01, max_delta_step=0, max_depth=4,
-       min_child_weight=1, missing=None, n_estimators=200, n_jobs=3,
-       nthread=None, objective='multi:softprob', random_state=0,
-       reg_alpha=3, reg_lambda=3, scale_pos_weight=1, seed=None,
-       silent=True, subsample=0.8))","max_depth:4,learning_rate:0.01,n_estimators:200,silent:True,objective:multi:softprob,booster:gbtree,n_jobs:3,nthread:None,gamma:10,min_child_weight:1,max_delta_step:0,subsample:0.8,colsample_bytree:0.8,colsample_bylevel:1,reg_alpha:3,reg_lambda:3,scale_pos_weight:1,base_score:0.5,random_state:0,seed:None,missing:None,importance_type:gain",2019-01-28 15:47:44.892271
-decision_tree,0.9528124335974258,"criterion:gini,splitter:best,max_depth:None,min_samples_split:2,min_samples_leaf:1,min_weight_fraction_leaf:0,max_features:None,random_state:None,max_leaf_nodes:None,min_impurity_decrease:0.0,min_impurity_split:None,class_weight:None,presort:False",2019-01-28 15:47:52.481007
-decision_tree,1.0,"criterion:gini,splitter:best,max_depth:None,min_samples_split:2,min_samples_leaf:1,min_weight_fraction_leaf:0,max_features:None,random_state:None,max_leaf_nodes:None,min_impurity_decrease:0.0,min_impurity_split:None,class_weight:None,presort:False",2019-01-28 15:51:16.528716
-decision_tree,0.8148148148148148,"criterion:gini,splitter:best,max_depth:None,min_samples_split:2,min_samples_leaf:1,min_weight_fraction_leaf:0,max_features:None,random_state:None,max_leaf_nodes:None,min_impurity_decrease:0.0,min_impurity_split:None,class_weight:None,presort:False",2019-01-28 15:53:06.084688
-decision_tree,0.8148148148148148,"criterion:gini,splitter:best,max_depth:None,min_samples_split:2,min_samples_leaf:1,min_weight_fraction_leaf:0,max_features:None,random_state:None,max_leaf_nodes:None,min_impurity_decrease:0.0,min_impurity_split:None,class_weight:None,presort:False",2019-01-28 16:20:37.946963
-decision_tree,0.8518518518518519,"criterion:gini,splitter:best,max_depth:None,min_samples_split:2,min_samples_leaf:1,min_weight_fraction_leaf:0,max_features:None,random_state:None,max_leaf_nodes:None,min_impurity_decrease:0.0,min_impurity_split:None,class_weight:None,presort:False",2019-01-28 16:23:41.067729
-=======
->>>>>>> 7a08c67cd3859ff5e9c8ec35f6b7b68cb5f131a6
+>>>>>>> 1924396094ff3705205e95879b6e44710fe69bff
+decision_tree,0.952463345779073,"criterion:gini,splitter:best,max_depth:None,min_samples_split:2,min_samples_leaf:1,min_weight_fraction_leaf:0,max_features:None,random_state:None,max_leaf_nodes:None,min_impurity_decrease:0.0,min_impurity_split:None,class_weight:None,presort:False",2019-01-28 15:49:16.974644
+>>>>>>> cf40e816e66d684c828b0d41bbba292d7fbfb61f

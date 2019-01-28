@@ -20,7 +20,6 @@ print('test began')
 #objects
 dataProcessor = Preprocessor()
 transactionData = dataProcessor.get_data() #original given data
-print(transactionData)
 algorithm = Models()
 result = ResultLog()
 miniProcessor = MiniProcessor(transactionData)
@@ -34,7 +33,7 @@ y_train = dataProcessor.get_train_labels()
 X_test = dataProcessor.get_test_attributes()
 y_test = dataProcessor.get_test_labels()
 
-print(X_train.columns)
+
 
 '''
 First Learning to classify the rows into early, ontime, late
@@ -52,9 +51,6 @@ accuracy_first = evaluation.evaluate_model(trainedModel)
 y_predicted = evaluation.get_predicted_label()
 
 #TODO: convery y value to string
-#log the submission result.
-# submission.update_paymentTiming(y_predicted)    # update the timing value to csv. (early, ontime, late)
-# submission.update_PwC_RowID(y_predicted)    # update the row ID.
 
 '''
 Learning for data with early paid label.
