@@ -49,7 +49,7 @@ def datetime_data(data):
     """
     return data with difference/ label with it
     """
-    print(data['difference'].value_counts())
+    #print(data['diff'].value_counts())
     return data
 
 def add_label(val):

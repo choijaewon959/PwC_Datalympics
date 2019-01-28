@@ -53,8 +53,10 @@ class Preprocessor:
         self.__loanData = datetime_data(self.__loanData)
 
         self.__data_preprocess()
-        self.vendor_column()
+
+
         #print(self.__loanData)
+
         #self.__dominant_feature_filter()
         # TODO: function call for preprocessing data
 
@@ -64,7 +66,7 @@ class Preprocessor:
         #self.__select_k_best()
         #self.__extra_tree_classify()
 
-        #self.__split_data()
+        self.__split_data()
         #self.__resample_data_SMOTE()
 
         #self.__scale_data()
@@ -176,10 +178,10 @@ class Preprocessor:
         '''
         print("split_data running...")
         # TODO: loan status may not be the label -> change to label accordingly.
-        X = self.__loanData.drop(['new_loan_status','loan_status'], axis = 1)
-        y = self.__loanData['new_loan_status']
+        X = self.__loanData.drop(['difference', 'label'], axis = 1)
+        y = self.__loanData['label']
 
-        self.__true_y = self.__loanData['loan_status']
+        self.__true_y = self.__loanData['label']
 
         self.__attributes_train, self.__attributes_test, self.__labels_train, self.__labels_test = train_test_split(X, y, test_size=0.2, random_state = 1, shuffle =True, stratify=y)
         print("[split_data finished]")
@@ -438,7 +440,7 @@ class Preprocessor:
 
     def get_data(self):
         return self.__loanData
-    
+
     def change(self,val):
         return int(val[-2:])
     def change2(self,val):
@@ -457,7 +459,16 @@ class Preprocessor:
        'Period', 'PO_FLag', 'PO_PurchasingDocumentNumber', 'PostingDate',
        'PurchasingDocumentDate', 'ReferenceDocumentNo', 'ReportingAmount',
        'TransactionCode', 'TransactionCodeDesc', 'UserName', 'VendorName',
-       'VendorCountry', 'Year', 'PaymentDueDate']]
+       'VendorCountry', 'Year', 'PaymentDueDate', 'difference', 'label']]
+
+        print(dfTrain['VendorCountry'].unique().tolist())
+        li= dfTrain['VendorCountry'].unique().tolist()
+
+        mapping={}
+
+        num=0
+        for i in li:
+            mapping['VendorCountry']= { i : num }
 
 
         mapping = {'BusinessTransaction': {'Business transaction type 0002': 2 , 'Business transaction type 0003': 3, 'Business transaction type 0001': 1},
@@ -465,15 +476,24 @@ class Preprocessor:
         'DocumentType': {'T03':3,'T04':4,'T02':2,'T01':1,'T09':9,'T07':7,'T06':6,'T08':8},
         'DocumentTypeDesc': {'Vendor invoice': 0, 'Invoice receipt':1,'Vendor credit memo':2,'Vendor document':3,'TOMS (Jul2003)/ TWMS':4 ,'Interf.with SMIS-CrM':5,'Interf.with SMIS-IV':6 ,'Interface with PIMS':7},
         'PO_FLag': {'N': 0 , 'Y':1},
-        'TransactionCode': {'TR 0005':0,'TR 0006':1,'TR 0002':2,'TR 0008':3,'TR 0007':4,'TR 0003':5,'TR 0004':6, 'TR 0001':7}
+        'TransactionCode': {'TR 0005':0,'TR 0006':1,'TR 0002':2,'TR 0008':3,'TR 0007':4,'TR 0003':5,'TR 0004':6, 'TR 0001':7},
+
         }
-        col  = ['CompanyName', 'DocumentNo']
+
+        col  = ['CompanyName', 'DocumentNo', 'EntryDate', 'DocumentTypeDesc', 'EntryTime',
+                'InvoiceDate', 'InvoiceDesc', 'InvoiceItemDesc', 'LocalCurrency', 'PaymentDocumentNo',
+                'Period', 'PO_PurchasingDocumentNumber', 'PostingDate', 'PurchasingDocumentDate', 'ReferenceDocumentNo',
+                'ReportingAmount', 'TransactionCodeDesc', 'Year', 'VendorName' , 'VendorCountry', 'PaymentDate', 'PaymentDueDate'
+                ]
+
         dfTrain['UserName'] = dfTrain['UserName'].apply(self.change)
         dfTrain['TransactionCodeDesc'] = dfTrain['TransactionCodeDesc'].apply(self.change2)
         dfTrain = dfTrain.replace(mapping)
-        dfTrain.drop(col, axis=1)
+        dfTrain = dfTrain.drop(col, axis=1)
 
-        self.loanData = dfTrain
+        print(dfTrain.dtypes)
+
+        self.__loanData = dfTrain
 
     def get_labels(self):
         print(self.__loanData['loan_status'].unique())
@@ -582,7 +602,7 @@ class Preprocessor:
                 return 48
             elif(val>= late_nodes[0]):
                 return 49
-            return 50   
+            return 50
     def classify_label(self):
         '''
         converts payment time into labels according to the distribution of payment time
@@ -592,7 +612,7 @@ class Preprocessor:
         '''
         tmp = 0.1
         early_nodes = dict()
-        late_nodes = dict() 
+        late_nodes = dict()
         dfTrain = self.__loanData
         for i in range(0,10):
             early_nodes[i] = dfTrain.drop(dfTrain[dfTrain.difference < 1].index)['difference'].quantile(tmp)
@@ -601,7 +621,7 @@ class Preprocessor:
         self.__loanData['payment_label'] = self.__loanData['difference'].apply(self.classify, args=(early_nodes,late_nodes,))
         print(early_nodes, late_nodes)
         print(self.__loanData[['payment_label','difference']])
-        
+
     def vendor_apply(self,val,name):
         if(val == name):
             return 1
