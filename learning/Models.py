@@ -27,11 +27,7 @@ from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 # from keras.utils import to_categorical
 
 sys.path.append('./learning')
-<<<<<<< HEAD
 #from num_node import *
-=======
-# from num_node import *
->>>>>>> c58fb75a95901f3e005ef1beb8d5c0c8e368ae9f
 # from livelossplot.keras import PlotLossesCallback
 
 import time
@@ -40,11 +36,7 @@ from evaluation.Visualization import *
 # from keras.models import Sequential
 # from keras.layers import Dense
 # from keras.utils import to_categorical
-<<<<<<< HEAD
 #from num_node import *
-=======
-# from num_node import *
->>>>>>> c58fb75a95901f3e005ef1beb8d5c0c8e368ae9f
 
 class Models:
     def __init__(self):

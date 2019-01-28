@@ -120,25 +120,4 @@ class MiniProcessor:
         print("[split_data finished]")
         return (self.__sec_att_test, self.__sec_lab_test,self.__sec_att_train,self.__sec_lab_train)
 
-    def finalize_label(self, y_first, y_early, y_late):
-        '''
-        Convert the virtual label into the real label.
-
-        :param: None
-        :return: None
-        '''
-        finalLabel = y_first
-        j=0
-        k=0
-
-        #TODO:  Change the value 3 into changable form so as to convert the corresponding value.
-        for i in range(len(finalLabel)):
-            if finalLabel.iloc[i] == 0: #early
-                finalLabel.iloc[i] = y_early.iloc[j]
-                j+=1
-
-            if finalLabel.iloc[i] == 2: #late
-                finalLabel.iloc[i] == y_late.iloc[k]
-                k+=1
-
-        return finalLabel
+    

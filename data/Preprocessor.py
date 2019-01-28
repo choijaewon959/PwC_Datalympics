@@ -50,8 +50,9 @@ class Preprocessor:
         #self.__select_k_best()
         #self.__extra_tree_classify()
         self.vendor_column()
-        self.__split_data()
         self.classify_label()
+
+        self.__split_data()
         self.__resample_data_SMOTE()
 
         #self.__scale_data()
@@ -137,7 +138,7 @@ class Preprocessor:
         #data = pd.read_csv("../loan_data/data/loanfull.csv")
         #low_memory was added to avoid data compression
 
-        data = pd.read_csv("../data/InvoicePayment-evaluation.csv")
+        data = pd.read_csv("../data/InvoicePayment-training.csv")
 
         self.__transactionData = data
         print("[retrieve_data finished]")
@@ -321,7 +322,7 @@ class Preprocessor:
        'Period', 'PO_FLag', 'PO_PurchasingDocumentNumber', 'PostingDate',
        'PurchasingDocumentDate', 'ReferenceDocumentNo', 'ReportingAmount',
        'TransactionCode', 'TransactionCodeDesc', 'UserName', 'VendorName',
-       'VendorCountry', 'Year', 'PaymentDueDate', 'difference', 'label']]
+       'VendorCountry', 'Year', 'PaymentDueDate', 'difference', 'label', 'duration']]
 
         # print(dfTrain['VendorCountry'].unique().tolist())
         # li= dfTrain['VendorCountry'].unique().tolist()
@@ -357,7 +358,7 @@ class Preprocessor:
 
         cols = [ 'BusinessTransaction', 'CompanyCode', 'DocumentType',
        'InvoiceAmount', 'PO_FLag', 'TransactionCode', 'UserName', 'difference',
-       'label']
+       'label','duration']
 
         for col in cols:
             print('Imputation with Median: %s' % (col))
@@ -500,4 +501,6 @@ class Preprocessor:
         dfTrain=dfTrain.drop('VendorCountry', axis=1)
 
         print(dfTrain.dtypes)
+        dfTrain[dfTrain.columns].to_csv("Featurelist.csv",sep=',',index=False,
+        header="feature")
         self.__transactionData = dfTrain

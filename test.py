@@ -47,7 +47,7 @@ Testing file
 print("Reading Test case data...")
 #data = pd.read_csv(sys.argv[1])
 
-data = pd.read_csv("../InvoicePayment-evaluation.csv")
+data = pd.read_csv("../data/InvoicePayment-evaluation.csv")
 
 """
 The data given is supposed to have attributes of Training dataset
@@ -61,7 +61,7 @@ data= datetime_data(data)
 file = open("Featurelist.txt", "r")
 
 cols= pd.read_csv("Featurelist.csv")
-li= cols['Features'].unique()
+li= list(cols.columns)
 
 
 cleaned_data, answer= clean_data(data,li)
@@ -119,11 +119,12 @@ evaluated_result3 = eval3.get_predicted_label()
 late_rows['Third_classification']=evaluated_result3
 
 cleaned_data['Third_classification']=evaluated_result3
-
-#print(late_rows)
-#combine both
-#print(cleaned_data)
+finalLabel = finalize_label(evaluated_result,evaluated_result2,evaluated_result3)
 
 
-
-#origin.to_csv("Prediction.csv", sep=',')
+early_nodes, late_nodes = generate_node(data)
+print(early_nodes,late_nodes)
+final_result(data,finalLabel,early_nodes,late_nodes)
+print(data['PaymentDueDate'])
+result2csv(data)
+print(csv2score('HKU_KD_result.csv',origin))
