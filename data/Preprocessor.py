@@ -23,10 +23,14 @@ class Preprocessor:
 
         :param: data file to be converted into Distribution objects
         '''
+        self.__distributionTable = {} # Table having distribution objects (key: name of data, value: distribution object).
         self.__colnames = None # string type keys for the table.
         self.__numOfKeys = 0    # number of keys.
         self.__transactionData = None # data mainly used.
         self.__meaningfulfeatures=[]
+
+        self.__smallData = None
+        self.__currentData = None
 
         self.__attributes_train = None
         self.__labels_train = None
@@ -35,9 +39,6 @@ class Preprocessor:
         self.__labels_test = None
 
         self.__true_y = None
-        self.late_nodes = None
-        self.early_nodes = None
-        self.__rowid = None
 
         self.__featurefilter = FeatureFilter()
 
@@ -46,16 +47,13 @@ class Preprocessor:
 
         self.__data_preprocess()
 
-        #self.__dominant_feature_filter()
-
+        #self.__select_k_best()
         #self.__extra_tree_classify()
         self.vendor_column()
-        self.__select_k_best()
         self.classify_label()
+
         self.__split_data()
         self.__resample_data_SMOTE()
-
-        print(self.__attributes_train)
 
         #self.__scale_data()
         #self.__graph()
@@ -95,16 +93,16 @@ class Preprocessor:
 
     def __select_k_best(self):
 
-        self.__meaningfulfeatures = self.__featurefilter.feature_score(self.__transactionData)
+        self.__meaningfulfeatures = self.__featurefilter.feature_score(self.__transactionData.drop('loan_status',axis=1))
 
         cols= self.__meaningfulfeatures
-        cols.append('label')
-        cols.append('difference')
+        cols.append('new_loan_status')
+        cols.append('loan_status')
+
         dfdataset=self.__transactionData
         dfdataset= dfdataset[cols]
 
         self.__transactionData=dfdataset
-        print(self.__meaningfulfeatures)
         print("Select K Best features replaced original feature list")
 
     def __extra_tree_classify(self):
@@ -140,9 +138,8 @@ class Preprocessor:
         #data = pd.read_csv("../loan_data/data/loanfull.csv")
         #low_memory was added to avoid data compression
 
-        data = pd.read_csv("../InvoicePayment-training.csv")
+        data = pd.read_csv("../data/InvoicePayment-training.csv")
 
-        self.__colnames= data.columns.values
         self.__transactionData = data
         print("[retrieve_data finished]")
 
@@ -155,7 +152,7 @@ class Preprocessor:
         '''
         print("split_data running...")
         # TODO: loan status may not be the label -> change to label accordingly.
-        X = self.__transactionData.drop(['label','difference','payment_label'], axis = 1)
+        X = self.__transactionData.drop(['label', 'difference','payment_label'], axis = 1)
         y = self.__transactionData['label']
 
         self.__true_y = self.__transactionData['label']
@@ -176,7 +173,7 @@ class Preprocessor:
 
         sm = SMOTE(random_state=12)
         X_train_res, y_train_res = sm.fit_resample(self.__attributes_train, self.__labels_train)
-        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res, columns=name_train), pd.Series(y_train_res)
+        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res, columns=name_train), pd.DataFrame(y_train_res)
 
         print("[respamling finished]")
 
@@ -192,8 +189,34 @@ class Preprocessor:
         print("resampling data...")
         nm = NearMiss(random_state=6)
         X_train_res, y_train_res = nm.fit_resample(self.__attributes_train, self.__labels_train)
-        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res, columns = name_train), pd.Series(y_train_res)
+        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res, columns = name_train), pd.DataFrame(y_train_res)
         print("[respamling finished]")
+
+    def __scale_data(self):
+        '''
+        Normalize data.
+
+        :param: data to be normalized. (Data frame)
+        :return: nomalized data. (Data frame)
+        '''
+        X_train = self.__attributes_train
+        X_test = self.__attributes_test
+
+        names_train = X_train.columns
+        names_test = X_test.columns
+
+        # #Standard Scaler
+        # scaling = preprocessing.StandardScaler()
+        # scaled = scaling.fit_transform(X_train)
+
+        #Minimax Scaler
+        scaling = preprocessing.MinMaxScaler(feature_range= (-1,1))
+
+        X_train_scaled = scaling.fit_transform(X_train)
+        X_test_scaled = scaling.fit_transform(X_test)
+
+        self.__attributes_train = pd.DataFrame(X_train_scaled, columns = names_train)
+        self.__attributes_test = pd.DataFrame(X_test_scaled, columns = names_test)
 
     def get_train_attributes(self):
         '''
@@ -247,6 +270,9 @@ class Preprocessor:
         :param:None
         :return: set of strings that represent each feature.
         '''
+        data = self.__transactionData
+        self.__colnames= data.columns.values
+
         return self.__colnames
 
     def get_feature_size(self):
@@ -258,18 +284,36 @@ class Preprocessor:
         '''
         return self.__numOfKeys
 
+    def convert_label(self,Y):
+        '''
+        Converting the label into binary vector forms for keras neural network output layer.
+
+        :param: label
+        :return: converted label (int vector)
+        '''
+        l = np.array([[0,0,0,0,0,0,0,0,0,0]])
+        tmp = np.array([0,0,0,0,0,0,0,0,0,0])
+        for i in Y:
+            tmp[int(i)] = 1
+            l = np.append(l,[tmp],axis=0)
+            tmp = np.array([0,0,0,0,0,0,0,0,0,0])
+        l = np.delete(l,0,0)
+        YY = pd.DataFrame(l)
+        return YY
+
     def change(self,val):
         return int(val[-2:])
     def change2(self,val):
         return int(val[-1:])
+
     def change3(self,val):
         return int(val[-6:])
-    def change4(self,val):
-        return int(val[-3:])
 
     def __data_preprocess(self):
 
         dfTrain = self.__transactionData
+        #copied data to refrain from warnings
+        #dfTrain= dfTrain.copy()
 
         dfTrain= dfTrain[['PwC_RowID', 'BusinessTransaction', 'CompanyCode', 'CompanyName',
        'DocumentNo', 'DocumentType', 'DocumentTypeDesc', 'EntryDate',
@@ -278,9 +322,12 @@ class Preprocessor:
        'Period', 'PO_FLag', 'PO_PurchasingDocumentNumber', 'PostingDate',
        'PurchasingDocumentDate', 'ReferenceDocumentNo', 'ReportingAmount',
        'TransactionCode', 'TransactionCodeDesc', 'UserName', 'VendorName',
-       'VendorCountry', 'Year', 'PaymentDueDate', 'difference', 'label','duration']]
+       'VendorCountry', 'Year', 'PaymentDueDate', 'difference', 'label', 'duration']]
 
-        mapping = {'BusinessTransaction': {'Business transaction type 0002': 2 , 'Business transaction type 0003': 3, 'Business transaction type 0001': 1},
+        # print(dfTrain['VendorCountry'].unique().tolist())
+        # li= dfTrain['VendorCountry'].unique().tolist()
+
+        mapping = {'BusinessTransaction': {'Business transaction type 0001': 1,'Business transaction type 0002': 2 , 'Business transaction type 0003': 3},
         'CompanyCode' : {'C002':2, 'C001':1, 'C003':3},
         'DocumentType': {'T03':3,'T04':4,'T02':2,'T01':1,'T09':9,'T07':7,'T06':6,'T08':8, 'T05':5},
         'DocumentTypeDesc': {'Vendor invoice': 0, 'Invoice receipt':1,'Vendor credit memo':2,'Vendor document':3,'TOMS (Jul2003)/ TWMS':4 ,'Interf.with SMIS-CrM':5,'Interf.with SMIS-IV':6 ,'Interface with PIMS':7},
@@ -288,11 +335,12 @@ class Preprocessor:
         'TransactionCode': {'TR 0005':0,'TR 0006':1,'TR 0002':2,'TR 0008':3,'TR 0007':4,'TR 0003':5,'TR 0004':6, 'TR 0001':7},
         }
 
-        dropcol  = ['CompanyName', 'EntryDate', 'DocumentTypeDesc', 'EntryTime',
-                'InvoiceDate', 'LocalCurrency','PwC_RowID',
+        col  = ['CompanyName', 'EntryDate', 'DocumentTypeDesc', 'EntryTime',
+                'InvoiceDate', 'LocalCurrency', 'PwC_RowID',
                 'PO_PurchasingDocumentNumber', 'PostingDate', 'PurchasingDocumentDate',
-                'ReportingAmount', 'Year', 'PaymentDate', 'PaymentDueDate'
-                ]
+                'ReportingAmount', 'TransactionCodeDesc', 'Year', 'PaymentDate', 'PaymentDueDate'
+            ]
+
         dfTrain['UserName'] = dfTrain['UserName'].apply(self.change)
         dfTrain['TransactionCodeDesc'] = dfTrain['TransactionCodeDesc'].apply(self.change2)
         dfTrain['ReferenceDocumentNo'] = dfTrain['ReferenceDocumentNo'].apply(self.change3)
@@ -300,21 +348,28 @@ class Preprocessor:
         dfTrain['PaymentDocumentNo'] = dfTrain['PaymentDocumentNo'].apply(self.change3)
         dfTrain['InvoiceItemDesc'] = dfTrain['InvoiceItemDesc'].apply(self.change3)
         dfTrain['InvoiceDesc'] = dfTrain['InvoiceDesc'].apply(self.change3)
-        self.__rowid= dfTrain['PwC_RowID']
 
         dfTrain = dfTrain.replace(mapping)
-        dfTrain = dfTrain.drop(dropcol, axis=1)
+        dfTrain = dfTrain.drop(col, axis=1)
 
-        cols = ['BusinessTransaction', 'CompanyCode', 'DocumentType',
-       'InvoiceAmount', 'PO_FLag', 'TransactionCode', 'TransactionCodeDesc', 'UserName', 'difference',
+        # dfTrain= dfTrain.loc[dfTrain['VendorCountry'] == 'HK']
+
+        #print(dfTrain.columns)
+
+        cols = [ 'BusinessTransaction', 'CompanyCode', 'DocumentType',
+       'InvoiceAmount', 'PO_FLag', 'TransactionCode', 'UserName', 'difference',
        'label','duration']
 
         for col in cols:
             print('Imputation with Median: %s' % (col))
             dfTrain[col].fillna(dfTrain[col].median(), inplace=True)
 
-        print(dfTrain.head())
+        #print(dfTrain.describe)
         self.__transactionData = dfTrain
+
+    # def get_labels(self):
+    #     print(self.__transactionData['loan_status'].unique())
+    #     return self.__transactionData['loan_status'].unique()
 
     def get_data(self):
         return self.__transactionData
@@ -324,10 +379,31 @@ class Preprocessor:
             return 1
         return 0
 
+    def add_nodes(self):
+        '''
+        'dummy' nodes added
+        '''
+        stop = ['sub_grade','emp_length','loan_status','annual_inc','term','grade', 'delinq_2yrs','inq_last_6mths', 'pub_rec']
+        for col in list(self.__transactionData.columns.values):
+            try:
+                if(stop.index(col) != -1):
+                    continue
+            except:
+                if(len(self.__transactionData[col].unique()) < 30):
+                    for uniq in self.__transactionData[col].unique():
+                        self.__transactionData[col+' '+str(uniq)] = self.__transactionData[col].apply(self.additional_feature,args=(uniq,))
+        self.__transactionData = self.__transactionData.drop(['home_ownership', 'initial_list_status','application_type'], axis=1)
+        print(self.__transactionData.columns.values)
+        print(len(self.__transactionData.columns.values))
+
     def __graph(self):
         visual = Visualization(self.__transactionData)
         visual.plot_heatmap()
 
+    def add_column(self,val):
+        if(val == 5 or val == 4):
+            return 3
+        return val
 
     def get_true_y(self):
         '''
@@ -402,52 +478,29 @@ class Preprocessor:
             late_nodes[i] = dfTrain.drop(dfTrain[dfTrain.difference > -1].index)['difference'].quantile(tmp)
             tmp += 0.1
         self.__transactionData['payment_label'] = self.__transactionData['difference'].apply(self.classify, args=(early_nodes,late_nodes,))
-        self.early_nodes = early_nodes
-        self.late_nodes = late_nodes
+        print(early_nodes, late_nodes)
 
     def vendor_apply(self,val,name):
         if(val == name):
             return 1
         return 0
 
-    def country_parse1(self,row):
-        developed= ['GB', 'AE', 'PL', 'LU', 'US', 'HK', 'CY', 'NZ', 'SA', 'TW', 'PT', 'MY', 'KR', 'JP', 'LT', 'NL', 'MO', 'IE', 'ES']
-        if row['VendorCountry'] in developed:
-            return 1
-        return 0
-
-    def country_parse2(self, row):
-        underdeveloped = ['BM', 'MU', 'MM', 'AD', 'CN', 'ZA', 'SN', 'TH']
-        if row['VendorCountry'] in underdeveloped:
-            return 1
-        return 0
-
     def vendor_column(self):
         for name in list(self.__transactionData['VendorName'].unique()):
-            if(len(self.__transactionData[self.__transactionData.VendorName == name].index)> 5000):
+            if(len(self.__transactionData[self.__transactionData.VendorName == name].index)> 10000):
                 self.__transactionData[name] = self.__transactionData['VendorName'].apply(self.vendor_apply, args=(name,))
         #print(self.__transactionData)
-        for name in list(self.__transactionData['VendorCountry'].unique()):
-            if(len(self.__transactionData[self.__transactionData.VendorCountry == name].index)> 5000):
-                self.__transactionData[name] = self.__transactionData['VendorCountry'].apply(self.vendor_apply, args=(name,))
-
-        # developed= ['GB', 'AE', 'PL', 'LU', 'US', 'HK', 'CY', 'NZ', 'SA', 'TW', 'PT', 'MY', 'KR', 'JP', 'LT', 'NL', 'MO', 'IE', 'ES']
-        # underdeveloped = ['BM', 'MU', 'MM', 'AD', 'CN', 'ZA', 'SN', 'TH']
-        # #UN 2014 report
-        #
-        #
-        # self.__transactionData['developed'] = self.__transactionData.apply(self.country_parse1,axis=1)
-        # self.__transactionData['underdeveloped'] = self.__transactionData.apply(self.country_parse2,axis=1)
-        #
-        #
-        # print(self.__transactionData)
-        # print(self.__transactionData['developed'].value_counts())
-        # print(self.__transactionData['underdeveloped'].value_counts())
-
+        for country in list(self.__transactionData['VendorCountry'].unique()):
+            if(len(self.__transactionData[self.__transactionData.VendorCountry == country].index)> 10000):
+                self.__transactionData[country] = self.__transactionData['VendorCountry'].apply(self.vendor_apply, args=(name,))
 
         dfTrain =self.__transactionData.copy()
-        print(dfTrain.columns)
+        #print(dfTrain.loc[dfTrain.index[dfTrain['VendorName'] == 'Vendor 01024'].tolist()])
+        #print(dfTrain['Vendor 01899'].value_counts())
         dfTrain=dfTrain.drop('VendorName', axis=1)
         dfTrain=dfTrain.drop('VendorCountry', axis=1)
-        print(dfTrain.columns.values)
+
+        print(dfTrain.dtypes)
+        dfTrain[dfTrain.columns].to_csv("Featurelist.csv",sep=',',index=False,
+        header="feature")
         self.__transactionData = dfTrain

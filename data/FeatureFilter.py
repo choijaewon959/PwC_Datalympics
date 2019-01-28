@@ -67,16 +67,16 @@ class FeatureFilter:
         print("20 features are selected and saved to Featurelist.txt")
         #plt.show()
         #print(feature_score.nlargest(20,'Score')['Features'].tolist())
-        text_file = open("Featurelist.txt", "w")
+        feature_score.nlargest(20,'Score')['Features'].to_csv("Featurelist.csv",sep=',',index=False,
+        header="feature")
 
         #text_file.write("feature_score by SELECTKBEST :\n")
-        text_file.write(str(feature_score.nlargest(20,'Score')['Features'].tolist()))
-
-        text_file.close()
+        # text_file.write(str(feature_score.nlargest(20,'Score')['Features'].tolist()))
+        #
+        # text_file.close()
 
 
         return feature_score.nlargest(20,'Score')['Features'].tolist()
-
 
     def feature_importance(self, data):
         X = data.drop('loan_status', axis = 1)

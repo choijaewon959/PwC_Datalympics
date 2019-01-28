@@ -20,7 +20,7 @@ decision_tree_dict = {
                  'min_samples_leaf' : 1,
                  'min_weight_fraction_leaf': 0,
                  'max_features' : None,
-                 'random_state' : None,
+                 'random_state' : 1,
                  'max_leaf_nodes' : None,
                  'min_impurity_decrease' : 0.,
                  'min_impurity_split' : None,
@@ -50,7 +50,7 @@ random_forest_dict = {
 }
 
 XGBClassifier_dict = {
-     'max_depth':4, #default: 3
+     'max_depth':5, #default: 3
      'learning_rate':0.01,
      'n_estimators':200,
      'silent':True,
@@ -58,7 +58,7 @@ XGBClassifier_dict = {
      'booster':'gbtree',
      'n_jobs':3,
      'nthread':None,
-     'gamma':0, #0 : no regularization, 1: medium regularization, 5: high regularization
+     'gamma':1, #0 : no regularization, 1: medium regularization, 5: high regularization
      'min_child_weight':1,
      'max_delta_step':0,
      'subsample':0.8,
@@ -75,21 +75,21 @@ XGBClassifier_dict = {
 }
 
 XGBClassifier_dict2 = {
-     'max_depth':4, #default: 3
-     'learning_rate':0.0001,
-     'n_estimators':50,
+     'max_depth':5, #default: 3
+     'learning_rate':0.01,
+     'n_estimators':200,
      'silent':True,
-     'objective':'binary:logistic',
+     'objective':'multi:softprob',
      'booster':'gbtree',
      'n_jobs':3,
      'nthread':None,
-     'gamma':10, #0 : no regularization, 1: medium regularization, 5: high regularization
+     'gamma':5, #0 : no regularization, 1: medium regularization, 5: high regularization
      'min_child_weight':1,
      'max_delta_step':0,
      'subsample':0.8,
      'colsample_bytree':0.8,
      'colsample_bylevel':1,
-     'reg_alpha':3,
+     'reg_alpha':0,
      'reg_lambda':3,
      'scale_pos_weight':1,
      'base_score':0.5,
@@ -125,22 +125,22 @@ XGBClassifier_dict2 = {
 # }
 
 XGBClassifier_dict3 = {
-     'max_depth':4, #default: 3
-     'learning_rate':0.0075,
-     'n_estimators':100,
+     'max_depth':5, #default: 3
+     'learning_rate':0.01,
+     'n_estimators':200,
      'silent':True,
      'objective':'multi:softprob',
      'booster':'gbtree',
      'n_jobs':3,
      'nthread':None,
-     'gamma':10, #0 : no regularization, 1: medium regularization, 5: high regularization
+     'gamma':5, #0 : no regularization, 1: medium regularization, 5: high regularization
      'min_child_weight':1,
      'max_delta_step':0,
      'subsample':0.8,
      'colsample_bytree':0.8,
      'colsample_bylevel':1,
-     'reg_alpha':3,
-     'reg_lambda':3,
+     'reg_alpha':0,
+     'reg_lambda':1,
      'scale_pos_weight':1,
      'base_score':0.5,
      'random_state':0,
@@ -170,17 +170,64 @@ logistic_regression_dict = {
     'penalty' : 'l2',
     'dual' : False,
     'tol' : 0.0001,
-    'C' : 0.001,
+    'C' : 10,
     'fit_intercept' : True,
     'intercept_scaling' : 1,
     'class_weight' : None,
-    'random_state' : 1,
-    'solver' : 'liblinear',
-    'max_iter' : 100,
-    'multi_class' : 'ovr',
+    'random_state' : 42,
+    'solver' : 'newton-cg',
+    'max_iter' : 400,
+    'multi_class' : 'multinomial',
     'verbose' : 0,
     'warm_start' : False,
     'n_jobs' : None
+}
+
+linear_regression_dict = {
+    'fit_intercept' : True,
+    'normalize' : False,
+    'copy_X' : True,
+    'n_jobs' : None
+}
+
+polynomial_regression_dict = {
+    'fit_intercept' : True,
+    'normalize' : False,
+    'copy_X' : True,
+    'n_jobs' : None
+}
+
+polynomial_regression_dict2 = {
+    'fit_intercept' : True,
+    'normalize' : True,
+    'copy_X' : True,
+    'n_jobs' : None
+}
+
+ridge_regression_dict = {
+    'alpha' : 1.0,
+    'fit_intercept' : True,
+    'normalize' : False,
+    'copy_X' : True,
+    'max_iter' : None,
+    'tol' : 0.001,
+    'solver' : 'auto',
+    'random_state' : None
+}
+
+decision_tree_regressor_dict = {
+    'criterion':'mse', 
+    'splitter':'best', 
+    'max_depth':None, 
+    'min_samples_split':2, 
+    'min_samples_leaf':1, 
+    'min_weight_fraction_leaf':0.0, 
+    'max_features':None, 
+    'random_state':None, 
+    'max_leaf_nodes':None, 
+    'min_impurity_decrease':0.0, 
+    'min_impurity_split':None, 
+    'presort':False
 }
 
 ff_network_dict = {
