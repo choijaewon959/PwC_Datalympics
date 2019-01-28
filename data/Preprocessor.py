@@ -59,7 +59,6 @@ class Preprocessor:
         #self.__scale_data()
         #self.__graph()
 
-
     def __dominant_feature_filter(self):
         '''
         Filter out the dominant term to avoid overfitting
@@ -289,7 +288,7 @@ class Preprocessor:
         'TransactionCode': {'TR 0005':0,'TR 0006':1,'TR 0002':2,'TR 0008':3,'TR 0007':4,'TR 0003':5,'TR 0004':6, 'TR 0001':7},
         }
 
-        col  = ['CompanyName', 'EntryDate', 'DocumentTypeDesc', 'EntryTime',
+        dropcol  = ['CompanyName', 'EntryDate', 'DocumentTypeDesc', 'EntryTime',
                 'InvoiceDate', 'LocalCurrency', 'PwC_RowID',
                 'PO_PurchasingDocumentNumber', 'PostingDate', 'PurchasingDocumentDate',
                 'ReportingAmount', 'TransactionCodeDesc', 'Year', 'PaymentDate', 'PaymentDueDate'
