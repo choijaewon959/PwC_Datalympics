@@ -50,8 +50,6 @@ class ModelEvaluation:
         accuracy = accuracy_score(np.array(y_test).flatten(), y_pred)
         print("Accuracy: %.10f%%" % (accuracy * 100.0))
 
-        results = model.evals_result()
-
         #visualization
         visual = Visualization(y_pred)
 
@@ -59,12 +57,12 @@ class ModelEvaluation:
         visual.plot_confusion_matrix(y_train, y_test)
         visual.classification_report(y_train, y_test)
 
-        #log loss
-        visual.draw_log_loss(results)
+        if modelName == "XGBClassifier":
+            results = model.evals_result()
+            visual.draw_log_loss(results)   #log loss
 
-        #classification error
-        visual.draw_classification_error(results)
-
+            visual.draw_classification_error(results)   #classification error
+        
         return accuracy
         #accuracy_per_roc_auc = roc_auc_score(np.array(testLabels).flatten(), y_pred)
         #print("ROC-AUC: %.10f%%" % (accuracy_per_roc_auc * 100))

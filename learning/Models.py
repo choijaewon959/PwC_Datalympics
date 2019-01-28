@@ -74,9 +74,10 @@ class Models:
         return accuracy
 
     def decision_tree(self, paramDic, X_train, y_train, X_test, y_test):
-        start_time = time.time()
 
-        clf = DecisionTreeClassifier(
+        modelName = "decision_tree"
+
+        dt = DecisionTreeClassifier(
                  criterion=paramDic['criterion'],
                  splitter=paramDic['splitter'],
                  max_depth=paramDic['max_depth'],
@@ -90,19 +91,9 @@ class Models:
                  min_impurity_split=paramDic['min_impurity_split'],
                  presort=paramDic['presort'])
 
-        clf.fit(X_train, y_train)
-        y_pred = clf.predict(X_test)
-        learningtime= time.time() - start_time
-        print("---decision_tree took : %.2f seconds---"  % learningtime)
+        dt.fit(X_train, y_train)
 
-        accuracy = accuracy_score(y_test, y_pred)
-        print("[decision_tree Accuracy: %.4f ]" % (accuracy*100) )
-
-        visual = Visualization(y_pred)
-        visual.plot_confusion_matrix(y_train, y_test)
-        visual.classification_report(y_train, y_test)
-
-        return accuracy
+        return (modelName, dt)
 
     def random_forest(self, paramDic, X_train, y_train, X_test, y_test):
         start_time = time.time()
@@ -168,7 +159,8 @@ class Models:
             scale_pos_weight=paramDic['scale_pos_weight'],
             base_score=paramDic['base_score'],
             random_state=paramDic['random_state'],
-            seed=paramDic['seed'], missing=paramDic['missing'],
+            seed=paramDic['seed'], 
+            missing=paramDic['missing'],
             importance_type=paramDic['importance_type']
         )
 
@@ -181,38 +173,6 @@ class Models:
 
         return (modelName, xgb)
 
-
-    def linear_SVM(self, X_train, y_train, X_test, y_test):
-        '''
-        Support Vector Machine algorithm for categorical classification.
-        Kernel: linear
-
-        :param: None
-        :return None
-        '''
-
-        svm_model_linear = SVC(kernel = 'linear', C = 1).fit(X_train, y_train)
-        y_pred = svm_model_linear.predict(X_test)
-
-        #train svm model
-        # print("Learning...")
-        # svclassifier = SVC(kernel = 'linear')
-        # svclassifier.fit(X_train, y_train)
-
-        print("Learning...")
-        svclassifier = SVC(
-            C = 10000,
-            kernel = 'linear'
-        )
-        svclassifier.fit(X_train, y_train)
-
-        #make prediction
-        #label_prediction = svclassifier.predict(X_test)
-
-        #evaluation
-        print("Accuracy: ", accuracy_score(y_test, y_pred))
-
-
     def SVM(self, paramDic, X_train, y_train, X_test, y_test):
         '''
         Support Vector Machine algorithm for categorical classification.
@@ -221,6 +181,9 @@ class Models:
         :param: None
         :return: None
         '''
+
+        modelName = "SVC"
+
         #train svm model
         print("Learning...")
         svclassifier = SVC(
@@ -241,13 +204,7 @@ class Models:
         )
         svclassifier.fit(X_train, y_train)
 
-        #make prediction
-        label_prediction = svclassifier.predict(X_test)
-
-        #evaluation
-        accuracy = accuracy_score(y_test, label_prediction)
-        print("Accuracy: ", accuracy)
-        return accuracy
+        return (modelName, svclassifier)
 
     def logistic_regression(self, paramDic, X_train, y_train, X_test, y_test):
         '''
@@ -256,8 +213,10 @@ class Models:
         :param: None
         :return: None
         '''
+
+        modelName = "logistic_regression"
+
         print("Training logistic regression...")
-        start_time = time.time()
         lg = LogisticRegression(
             penalty=paramDic['penalty'],
             dual=paramDic['dual'],
@@ -274,23 +233,10 @@ class Models:
             warm_start=paramDic['warm_start'],
             n_jobs=paramDic['n_jobs']
         )
+
         lg.fit(X_train, y_train)
-        lg_pred = lg.predict(X_test)
-        num_of_folds = 10
 
-        accuracy = accuracy_score(y_test, lg_pred)
-
-        cross_valid_accuracy = cross_val_score(lg, X_train, y_train, scoring='accuracy', cv = num_of_folds).mean()/num_of_folds
-        print("Accuracy: ", accuracy)
-        print("cross validation accuracy ", cross_valid_accuracy)
-        #print("Logistic Regression training time: %.2f sec" % time.time() - start_time)
-
-        #visualize
-        visual = Visualization(lg_pred)
-        visual.plot_confusion_matrix(X_train, y_train, X_test, y_test)
-        visual.classification_report(X_train, y_train, X_test, y_test)
-
-        return accuracy
+        return (modelName, lg)
 
     def ff_network(self, n, X_train, y_train, X_test, y_test):
         '''
@@ -305,7 +251,7 @@ class Models:
         weight_mu = [0.1]
         hidden_act = 'tanh'
         ep = 150
-        plot_losses = PlotLossesCallback()
+        #plot_losses = PlotLossesCallback()
 
         print("Train label converted into vector label")
         Y_test = to_categorical(y_test)
@@ -328,7 +274,7 @@ class Models:
                     model.add(Dense(int(num_hidden_layer3(in_len,out_len,len(y_train))[1]), activation=hidden_act))
             model.add(Dense(out_len, activation='softmax'))
             model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-            model.fit(X_train, Y_train, epochs=ep, batch_size=20, verbose=1, class_weight=class_weight, validation_data=(X_test, Y_test),callbacks=[plot_losses])
+            history = model.fit(X_train, Y_train, epochs=ep, batch_size=20, verbose=1, class_weight=class_weight, validation_data=(X_test, Y_test),callbacks=[plot_losses])
             scores_test = model.evaluate(X_test, Y_test)
             scores_train = model.evaluate(X_train, Y_train)
 
@@ -339,21 +285,27 @@ class Models:
             print("y_pred == ", y_pred)
             print("confusion matrix printed")
             visual.classification_report(y_train, y_test)
+            # summarize history for loss
+            plt.plot(history.history['loss'])
+            plt.plot(history.history['val_loss'])
+            plt.title('model loss')
+            plt.ylabel('loss')
+            plt.xlabel('epoch')
+            plt.legend(['train', 'test'], loc='upper left')
+            plt.show()
+            # out = "Accuracy : "+ str(scores_test[1]) + ", Hidden layer activation : " + hidden_act +" Epoch:"+str(ep) +'\n'
+            # f = open(str(weight)+"_"+str(n)+"_"+str(hidden_layer)+".txt", "a")
+            # f.write(out)
+            # f.write("Test file Accurcy= "+str(scores_test))
+            # f.write("Train file Accurcy= "+str(scores_train))
+            # f.write(visual.plot_confusion_matrix(y_train, y_test))
 
-
-            out = "Accuracy : "+ str(scores_test[1]) + ", Hidden layer activation : " + hidden_act +" Epoch:"+str(ep) +'\n'
-            f = open(str(weight)+"_"+str(n)+"_"+str(hidden_layer)+".txt", "a")
-            f.write(out)
-            f.write("Test file Accurcy= "+str(scores_test))
-            f.write("Train file Accurcy= "+str(scores_train))
-            f.write(visual.plot_confusion_matrix(y_train, y_test))
-
-            #save model
-            model_json = model.to_json()
-            with open("model.json", "w") as json_file:
-                json_file.write(model_json)
-            model.save_weights("model.h5")
-            print("Saved model to disk")
+            # #save model
+            # model_json = model.to_json()
+            # with open("model.json", "w") as json_file:
+            #     json_file.write(model_json)
+            # model.save_weights("model.h5")
+            # print("Saved model to disk")
 
         return scores[1]
 
