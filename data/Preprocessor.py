@@ -56,14 +56,14 @@ class Preprocessor:
 
         #self.__select_k_best()
         #self.__extra_tree_classify()
-        exit()
+
         self.__split_data()
         self.classify_label()
 
         self.__resample_data_SMOTE()
 
         #self.__scale_data()
-        self.__graph()
+        #self.__graph()
 
     def __dominant_feature_filter(self):
         '''
@@ -145,7 +145,7 @@ class Preprocessor:
         #data = pd.read_csv("../loan_data/data/loanfull.csv")
         #low_memory was added to avoid data compression
 
-        data = pd.read_csv("../datalympics/InvoicePayment-evaluation.csv")
+        data = pd.read_csv("../datalympics/InvoicePayment-training.csv")
         #data = pd.read_csv("../datalympics/InvoicePayment-evaluation.csv")
 
         #data = pd.read_csv("../data/InvoicePayment-evaluation.csv")
@@ -354,7 +354,16 @@ class Preprocessor:
 
         # dfTrain= dfTrain.loc[dfTrain['VendorCountry'] == 'HK']
 
-        print(dfTrain.dtypes)
+        print(dfTrain.columns)
+
+        cols = ['PwC_RowID', 'BusinessTransaction', 'CompanyCode', 'DocumentType',
+       'InvoiceAmount', 'PO_FLag', 'TransactionCode', 'UserName', 'difference',
+       'label']
+
+        for col in cols:
+            print('Imputation with Median: %s' % (col))
+            dfTrain[col].fillna(dfTrain[col].median(), inplace=True)
+
 
         self.__transactionData = dfTrain
 

@@ -29,14 +29,6 @@ submission = Submission()
 X_train = dataProcessor.get_train_attributes()
 y_train = dataProcessor.get_train_labels()
 
-# #data for training
-# X_train = dataProcessor.get_train_attributes()
-# y_train = dataProcessor.get_train_labels()
-#
-#data for training
-X_train = dataProcessor.get_train_attributes()
-y_train = dataProcessor.get_train_labels()
-
 #data for test
 X_test = dataProcessor.get_test_attributes()
 y_test = dataProcessor.get_test_labels()
