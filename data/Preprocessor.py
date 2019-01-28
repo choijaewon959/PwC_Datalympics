@@ -13,6 +13,8 @@ from imblearn.under_sampling import NearMiss, CondensedNearestNeighbour
 from imblearn.combine import SMOTETomek
 from evaluation.Visualization import *
 from data.FeatureFilter import FeatureFilter
+from data.datehandler import *
+
 
 class Preprocessor:
     def __init__(self):
@@ -48,10 +50,17 @@ class Preprocessor:
         self.__featurefilter = FeatureFilter()
 
         self.__retrieve_data()
-        self.__dominant_feature_filter()
+        self.__loanData = datetime_data(self.__loanData)
+
+        self.__data_preprocess()
+        print(self.__loanData)
+
+
+        exit()
+        #self.__dominant_feature_filter()
         # TODO: function call for preprocessing data
 
-        self.__temp_data_process()
+        #self.__temp_data_process()
         #self.add_nodes()
 
         self.__select_k_best()
@@ -142,19 +151,10 @@ class Preprocessor:
         """
         #data = pd.read_csv(r"C:\Users\lasts\Google Drive\Etc\Coding\Data_lympics\Deeplearning\loan.csv")
         #data = pd.read_csv("Deeplearning/loan.csv")
-        data = pd.read_csv("../loan_data/data/loanfull.csv")
+        #data = pd.read_csv("../loan_data/data/loanfull.csv")
         #low_memory was added to avoid data compression
 
-
-        # #Using sklearn datasets
-        # iris = datasets.load_wine()
-
-        # data = pd.DataFrame(data= np.c_[iris['data'], iris['target']],
-        #              columns= iris['feature_names'] + ['target'])
-
-        #Taemin's debugging tool@!!
-        #data = pd.read_csv("Deeplearning/loan.csv")
-        #data = pd.read_csv("../loanfull.csv")
+        data = pd.read_csv("../datalympics/InvoicePayment-training.csv")
 
         self.__colnames= data.columns.values
         self.__loanData = data
@@ -428,6 +428,45 @@ class Preprocessor:
         print(self.__loanData['new_loan_status'].unique())
         tempProcessTime= time.time() - start_time
         print("[tempProcessTime finished with %.2f seconds]"  % tempProcessTime)
+
+
+    def change(self,val):
+        return int(val[-2:])
+    def change2(self,val):
+        return int(val[-1:])
+    def __data_preprocess(self):
+
+        dfTrain = self.__loanData
+        #copied data to refrain from warnings
+        dfTrain= dfTrain.copy()
+
+
+        dfTrain= dfTrain[['PwC_RowID', 'BusinessTransaction', 'CompanyCode', 'CompanyName',
+       'DocumentNo', 'DocumentType', 'DocumentTypeDesc', 'EntryDate',
+       'EntryTime', 'InvoiceAmount', 'InvoiceDate', 'InvoiceDesc',
+       'InvoiceItemDesc', 'LocalCurrency', 'PaymentDate', 'PaymentDocumentNo',
+       'Period', 'PO_FLag', 'PO_PurchasingDocumentNumber', 'PostingDate',
+       'PurchasingDocumentDate', 'ReferenceDocumentNo', 'ReportingAmount',
+       'TransactionCode', 'TransactionCodeDesc', 'UserName', 'VendorName',
+       'VendorCountry', 'Year', 'PaymentDueDate']]
+
+
+        mapping = {'BusinessTransaction': {'Business transaction type 0002': 2 , 'Business transaction type 0003': 3, 'Business transaction type 0001': 1},
+        'CompanyCode' : {'C002':2, 'C001':1, 'C003':3},
+        'DocumentType': {'T03':3,'T04':4,'T02':2,'T01':1,'T09':9,'T07':7,'T06':6,'T08':8},
+        'DocumentTypeDesc': {'Vendor invoice': 0, 'Invoice receipt':1,'Vendor credit memo':2,'Vendor document':3,'TOMS (Jul2003)/ TWMS':4 ,'Interf.with SMIS-CrM':5,'Interf.with SMIS-IV':6 ,'Interface with PIMS':7},
+        'PO_FLag': {'N': 0 , 'Y':1},
+        'TransactionCode': {'TR 0005':0,'TR 0006':1,'TR 0002':2,'TR 0008':3,'TR 0007':4,'TR 0003':5,'TR 0004':6, 'TR 0001':7}
+        }
+        col  = ['CompanyName', 'DocumentNo']
+        dfTrain['UserName'] = dfTrain['UserName'].apply(self.change)
+        dfTrain['TransactionCodeDesc'] = dfTrain['TransactionCodeDesc'].apply(self.change2)
+        dfTrain = dfTrain.replace(mapping)
+        dfTrain.drop(col, axis=1)
+
+        print(dfTrain)
+
+        self.loanData = dfTrain
 
     def get_labels(self):
         print(self.__loanData['loan_status'].unique())
