@@ -13,17 +13,14 @@ import sys
 
 from sklearn.svm import SVC
 from sklearn.svm import SVR
-from sklearn import preprocessing
+from sklearn import preprocessing, linear_model
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import auc
-from sklearn.metrics import roc_auc_score
-from sklearn.metrics import classification_report
+from sklearn.metrics import accuracy_score, classification_report, roc_auc_score, auc
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 
 # from keras.models import Sequential
 # from keras.layers import Dense
@@ -96,7 +93,6 @@ class Models:
         return (modelName, dt)
 
     def random_forest(self, paramDic, X_train, y_train, X_test, y_test):
-        start_time = time.time()
         rfc = RandomForestClassifier(
                  n_estimators=paramDic['n_estimators'],
                  criterion=paramDic['criterion'],
@@ -116,22 +112,9 @@ class Models:
                  warm_start=paramDic['warm_start'],
                  class_weight=paramDic['class_weight'])
 
-        fit=rfc.fit(X_train, y_train)
+        rf=rfc.fit(X_train, y_train)
         #fit.summary()
-        y_pred = rfc.predict(X_test)
-        learningtime= time.time() - start_time
-        print("---random_forest took : %.2f seconds---"  % learningtime)
-
-        # acc_rfc = (y_pred == y_test).sum().astype(float) / len(y_pred)*100
-        # print("Scikit-Learn's Random Forest Classifier's prediction accuracy is: %3.2f" % (acc_rfc))
-
-        accuracy = accuracy_score(y_test, y_pred)
-        print("[Random Forest Classifier Accuracy: %.4f %%]" % (accuracy *100) )
-
-        visual = Visualization(y_pred)
-        visual.plot_confusion_matrix(y_train, y_test)
-        visual.classification_report(y_train, y_test)
-        return accuracy
+        return rf
 
     def XGBClassifier(self, paramDic, X_train, y_train, X_test, y_test):
 
@@ -165,11 +148,6 @@ class Models:
         )
 
         xgb.fit(X_train, y_train, eval_metric=["merror", "mlogloss"], eval_set=eval_set, verbose=True)
-        y_pred = xgb.predict(X_test)
-
-        visual = Visualization(y_pred)
-        visual.plot_confusion_matrix(y_train, y_test)
-        visual.classification_report(y_train, y_test)
 
         return (modelName, xgb)
 
@@ -237,6 +215,117 @@ class Models:
         lg.fit(X_train, y_train)
 
         return (modelName, lg)
+
+    def linear_regression(self, paramDic, X_train, y_train, X_test, y_test):
+        '''
+        Linear regression model being used for the second learning phase.
+
+        :param: paramDic:   Dictionary containing all the necessary hyperparameters.
+                X_train:    Training attributes.
+                y_train:    Training labels.
+                X_test:     Test attributes.
+                y_test:     Test labels.
+        :return: (model name, trained model)
+        '''
+        modelName = "linear_regression"
+
+        lr = linear_model.LinearRegression(
+            fit_intercept = paramDic['fit_intercept'],
+            normalize = paramDic['normalize'],
+            copy_X = paramDic['copy_X'],
+            n_jobs = paramDic['n_jobs']
+        )
+
+        lr.fit(X_train, y_train)
+
+        return (modelName, lr)
+
+    def polynomial_regression(self,  paramDic, X_train, y_train, X_test, y_test):
+        '''
+        Polynomial regression model being used for the second learning phase.
+
+        :param: paramDic:   Dictionary containing all the necessary hyperparameters.
+                X_train:    Training attributes.
+                y_train:    Training labels.
+                X_test:     Test attributes.
+                y_test:     Test labels.
+        :return: (model name, trained model)
+        '''
+        modelName = "polynomial_regression"
+        
+        poly = preprocessing.PolynomialFeatures(2)
+        x_poly = poly.fit_transform(X_train)
+
+        pr = linear_model.LinearRegression(
+            fit_intercept = paramDic['fit_intercept'],
+            normalize = paramDic['normalize'],
+            copy_X = paramDic['copy_X'],
+            n_jobs = paramDic['n_jobs']
+        )
+        print(x_poly.shape,y_train.shape)
+        pr.fit(x_poly,y_train)
+
+        return (modelName, pr)
+
+    def ridge_regression(self,  paramDic, X_train, y_train, X_test, y_test):
+        '''
+        Polynomial regression model being used for the second learning phase.
+
+        :param: paramDic:   Dictionary containing all the necessary hyperparameters.
+                X_train:    Training attributes.
+                y_train:    Training labels.
+                X_test:     Test attributes.
+                y_test:     Test labels.
+        :return: (model name, trained model)
+        '''
+        modelName = "ridge_regression"
+
+        rr = linear_model.Ridge(
+            alpha = paramDic['alpha'],
+            fit_intercept = paramDic['fit_intercept'],
+            normalize = paramDic['normalize'],
+            copy_X = paramDic['copy_X'],
+            max_iter = paramDic['max_iter'],
+            tol = paramDic['tol'],
+            solver = paramDic['solver'],
+            random_state = paramDic['random_state']
+        )
+
+        rr.fit(X_train,y_train)
+
+        return (modelName, rr)
+
+    def decision_tree_regressor(self, paramDic, X_train, y_train, X_test, y_test):
+        '''
+        Decision tree regression model being used for the second learning phase.
+
+        :param: paramDic:   Dictionary containing all the necessary hyperparameters.
+                X_train:    Training attributes.
+                y_train:    Training labels.
+                X_test:     Test attributes.
+                y_test:     Test labels.
+        :return: (model name, trained model)
+        '''
+        modelName = "decision_tree_regressor"
+
+        dtr = DecisionTreeRegressor(
+            criterion=paramDic['criterion'], 
+            splitter=paramDic['splitter'], 
+            max_depth=paramDic['max_depth'], 
+            min_samples_split=paramDic['min_samples_split'], 
+            min_samples_leaf=paramDic['min_samples_leaf'], 
+            min_weight_fraction_leaf=paramDic['min_weight_fraction_leaf'], 
+            max_features=paramDic['max_features'], 
+            random_state=paramDic['random_state'], 
+            max_leaf_nodes=paramDic['max_leaf_nodes'], 
+            min_impurity_decrease=paramDic['min_impurity_decrease'], 
+            min_impurity_split=paramDic['min_impurity_split'], 
+            presort=paramDic['presort']
+        )
+
+        dtr.fit(X_train,y_train)
+
+        return (modelName, dtr)
 
     def ff_network(self, n, X_train, y_train, X_test, y_test):
         '''

@@ -28,6 +28,9 @@ class Preprocessor:
         self.__transactionData = None # data mainly used.
         self.__meaningfulfeatures=[]
 
+        self.__smallData = None
+        self.__currentData = None
+
         self.__attributes_train = None
         self.__labels_train = None
 
@@ -46,16 +49,12 @@ class Preprocessor:
 
         self.__data_preprocess()
 
-        #self.__dominant_feature_filter()
-
+        #self.__select_k_best()
         #self.__extra_tree_classify()
         self.vendor_column()
-        self.__select_k_best()
-        self.classify_label()
         self.__split_data()
+        self.classify_label()
         self.__resample_data_SMOTE()
-
-        print(self.__attributes_train)
 
         #self.__scale_data()
         #self.__graph()
@@ -140,9 +139,8 @@ class Preprocessor:
         #data = pd.read_csv("../loan_data/data/loanfull.csv")
         #low_memory was added to avoid data compression
 
-        data = pd.read_csv("../InvoicePayment-training.csv")
+        data = pd.read_csv("../data/InvoicePayment-evaluation.csv")
 
-        self.__colnames= data.columns.values
         self.__transactionData = data
         print("[retrieve_data finished]")
 
@@ -176,7 +174,7 @@ class Preprocessor:
 
         sm = SMOTE(random_state=12)
         X_train_res, y_train_res = sm.fit_resample(self.__attributes_train, self.__labels_train)
-        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res, columns=name_train), pd.Series(y_train_res)
+        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res, columns=name_train), pd.DataFrame(y_train_res)
 
         print("[respamling finished]")
 
@@ -192,7 +190,7 @@ class Preprocessor:
         print("resampling data...")
         nm = NearMiss(random_state=6)
         X_train_res, y_train_res = nm.fit_resample(self.__attributes_train, self.__labels_train)
-        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res, columns = name_train), pd.Series(y_train_res)
+        self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res, columns = name_train), pd.DataFrame(y_train_res)
         print("[respamling finished]")
 
     def get_train_attributes(self):
@@ -247,6 +245,9 @@ class Preprocessor:
         :param:None
         :return: set of strings that represent each feature.
         '''
+        data = self.__transactionData
+        self.__colnames= data.columns.values
+
         return self.__colnames
 
     def get_feature_size(self):
@@ -280,7 +281,7 @@ class Preprocessor:
        'TransactionCode', 'TransactionCodeDesc', 'UserName', 'VendorName',
        'VendorCountry', 'Year', 'PaymentDueDate', 'difference', 'label','duration']]
 
-        mapping = {'BusinessTransaction': {'Business transaction type 0002': 2 , 'Business transaction type 0003': 3, 'Business transaction type 0001': 1},
+        mapping = {'BusinessTransaction': {'Business transaction type 0001': 1,'Business transaction type 0002': 2 , 'Business transaction type 0003': 3},
         'CompanyCode' : {'C002':2, 'C001':1, 'C003':3},
         'DocumentType': {'T03':3,'T04':4,'T02':2,'T01':1,'T09':9,'T07':7,'T06':6,'T08':8, 'T05':5},
         'DocumentTypeDesc': {'Vendor invoice': 0, 'Invoice receipt':1,'Vendor credit memo':2,'Vendor document':3,'TOMS (Jul2003)/ TWMS':4 ,'Interf.with SMIS-CrM':5,'Interf.with SMIS-IV':6 ,'Interface with PIMS':7},
@@ -288,11 +289,12 @@ class Preprocessor:
         'TransactionCode': {'TR 0005':0,'TR 0006':1,'TR 0002':2,'TR 0008':3,'TR 0007':4,'TR 0003':5,'TR 0004':6, 'TR 0001':7},
         }
 
-        dropcol  = ['CompanyName', 'EntryDate', 'DocumentTypeDesc', 'EntryTime',
-                'InvoiceDate', 'LocalCurrency','PwC_RowID',
+        col  = ['CompanyName', 'EntryDate', 'DocumentTypeDesc', 'EntryTime',
+                'InvoiceDate', 'LocalCurrency', 'PwC_RowID',
                 'PO_PurchasingDocumentNumber', 'PostingDate', 'PurchasingDocumentDate',
-                'ReportingAmount', 'Year', 'PaymentDate', 'PaymentDueDate'
-                ]
+                'ReportingAmount', 'TransactionCodeDesc', 'Year', 'PaymentDate', 'PaymentDueDate'
+            ]
+
         dfTrain['UserName'] = dfTrain['UserName'].apply(self.change)
         dfTrain['TransactionCodeDesc'] = dfTrain['TransactionCodeDesc'].apply(self.change2)
         dfTrain['ReferenceDocumentNo'] = dfTrain['ReferenceDocumentNo'].apply(self.change3)
@@ -305,15 +307,15 @@ class Preprocessor:
         dfTrain = dfTrain.replace(mapping)
         dfTrain = dfTrain.drop(dropcol, axis=1)
 
-        cols = ['BusinessTransaction', 'CompanyCode', 'DocumentType',
-       'InvoiceAmount', 'PO_FLag', 'TransactionCode', 'TransactionCodeDesc', 'UserName', 'difference',
-       'label','duration']
+        cols = [ 'BusinessTransaction', 'CompanyCode', 'DocumentType',
+       'InvoiceAmount', 'PO_FLag', 'TransactionCode', 'UserName', 'difference',
+       'label']
 
         for col in cols:
             print('Imputation with Median: %s' % (col))
             dfTrain[col].fillna(dfTrain[col].median(), inplace=True)
 
-        print(dfTrain.head())
+        #print(dfTrain.describe)
         self.__transactionData = dfTrain
 
     def get_data(self):

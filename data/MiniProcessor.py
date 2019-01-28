@@ -5,11 +5,13 @@ import pandas as pd
 import numpy as np
 from imblearn.over_sampling import SMOTE
 from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
+from sklearn import datasets, preprocessing
 
 class MiniProcessor:
     def __init__(self, Data):
         self.__transactionData = Data
-        self.__currentData = None
+
+        self.__filteredData = None
 
         #second classifier input
         self.__sec_att_train = None
@@ -31,27 +33,44 @@ class MiniProcessor:
 
         sm = SMOTE(random_state=6)
         X_train_res, y_train_res = sm.fit_resample(self.__sec_att_train, self.__sec_lab_train)
-        self.__sec_att_train, self.__sec_lab_train = pd.DataFrame(X_train_res, columns=name_train), pd.Series(y_train_res)
+        self.__sec_att_train, self.__sec_lab_train = pd.DataFrame(X_train_res, columns=name_train), pd.DataFrame(y_train_res)
+        
+        # self.__sec_att_test = pd.DataFrame(self.__sec_att_test)
+        # self.__sec_att_train = pd.DataFrame(self.__sec_att_train)
 
         print("[respamling finished]")
+ 
+    def __scale_data(self):
+        '''
+        Normalize data.
 
-    # def merge_dataframes(self):
-    #     '''
-    #     Merge all the columns that were previously plitted to obtain more specific labels
+        :param: data to be normalized. (Data frame)
+        :return: nomalized data. (Data frame)
+        '''
+        X_train = self.__sec_att_train
+        X_test = self.__sec_att_test
 
-    #     :param: df1: left data columns to be merged.    (Dataframe)
-    #             df2: middle data columns to be merged.   (Dataframe)
-    #             df3: right data columns to be merged.  (Datafrmae)
-    #     :return: mergedFrame: Merged data columns. (Data Frame)
-    #     '''
-    #     frames = [df1, df2, df3]
-    #     mergedFrame = pd.concat(frames)
+        names_train = X_train.columns
+        names_test = X_test.columns
 
-    #     return mergedFrame.sort_index()
+        # #Standard Scaler
+        # scaling = preprocessing.StandardScaler()
+        # scaled = scaling.fit_transform(X_train)
+
+        #Minimax Scaler
+        scaling = preprocessing.StandardScaler()
+
+        X_train_scaled = scaling.fit_transform(X_train)
+        X_test_scaled = scaling.fit_transform(X_test)
+
+        self.__sec_att_train = pd.DataFrame(X_train_scaled, columns = names_train)
+        self.__sec_att_test = pd.DataFrame(X_test_scaled, columns = names_test)
 
     def get_second_data(self,n):
         '''
-        Split the data into train and test data for second classifier
+        Split the data into train and test data for second classifier.
+        Only used for classification model.
+
         :parameter: Label number
         :return : tuple of label n data, splited into test, train data
         '''
@@ -64,11 +83,40 @@ class MiniProcessor:
             dfTrain = dfTrain.drop(dfTrain[dfTrain.payment_label > 50].index)
         y = dfTrain['payment_label']
         X = dfTrain.drop(['label','payment_label','difference'], axis=1)
+
         self.__sec_att_train ,self.__sec_att_test, self.__sec_lab_train,self.__sec_lab_test = train_test_split(X, y, test_size=0.2, random_state = 1, shuffle =True, stratify=y)
-        print(self.__sec_lab_test)
-        print(self.__sec_lab_train)
         self.__resample_data_SMOTE()
 
+        # self.__sec_att_test = pd.DataFrame(self.__sec_att_test)
+        # self.__sec_att_train = pd.DataFrame(self.__sec_att_train)
+
+        print("[split_data finished]")
+        return (self.__sec_att_test, self.__sec_lab_test,self.__sec_att_train,self.__sec_lab_train)
+
+    def get_poly_data(self,n):
+        '''
+        Split the data into train and test data for second classifier.
+        Only used for regression model.
+
+        :parameter: Label number
+        :return : tuple of label n data, splited into test, train data
+        '''
+
+        dfTrain = self.__transactionData
+        if(n == 0):
+            dfTrain = dfTrain.drop(dfTrain[dfTrain.label < n].index)
+            dfTrain = dfTrain.drop(dfTrain[dfTrain.label > n].index)
+        elif(n==2):
+            dfTrain = dfTrain.drop(dfTrain[dfTrain.label < n].index)
+            dfTrain = dfTrain.drop(dfTrain[dfTrain.label > n].index)
+        y = dfTrain['difference']
+        X = dfTrain.drop(['label','payment_label','difference'], axis=1)
+
+        self.__sec_att_train ,self.__sec_att_test, self.__sec_lab_train,self.__sec_lab_test = train_test_split(X, y, test_size=0.2, random_state = 1, shuffle =True)
+        #self.__resample_data_SMOTE()
+
+        #scale to use PCA
+        self.__scale_data()
         print("[split_data finished]")
         return (self.__sec_att_test, self.__sec_lab_test,self.__sec_att_train,self.__sec_lab_train)
 

@@ -55,42 +55,42 @@ class Visualization:
         result = np.unique(np.concatenate((features,testfeatures),0))
         #print (result)
 
-        def ploting(cm, classes,
-                          normalize=False,
-                          title='Confusion matrix',
-                          cmap=plt.cm.Blues):
-            """
-            This inner function plots the confusion matrix.
-            Normalization can be applied by setting `normalize=True`.
+    def ploting(cm, classes,
+                        normalize=False,
+                        title='Confusion matrix',
+                        cmap=plt.cm.Blues):
+        """
+        This inner function plots the confusion matrix.
+        Normalization can be applied by setting `normalize=True`.
 
-            :param: cm/ConfusionMatrixo object, normalize=true/false, title=(str) , cmap= plt.cm.Blues ( color )
-            :return: None
-            """
-            if normalize:
-                cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-                print("Normalized confusion matrix")
-            else:
-                print('Confusion matrix, without normalization')
+        :param: cm/ConfusionMatrixo object, normalize=true/false, title=(str) , cmap= plt.cm.Blues ( color )
+        :return: None
+        """
+        if normalize:
+            cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+            print("Normalized confusion matrix")
+        else:
+            print('Confusion matrix, without normalization')
 
-            print(cm)
+        print(cm)
 
-            plt.imshow(cm, interpolation='nearest', cmap=cmap)
-            plt.title(title)
-            plt.colorbar()
-            tick_marks = np.arange(len(classes))
-            plt.xticks(tick_marks, classes, rotation=45)
-            plt.yticks(tick_marks, classes)
+        plt.imshow(cm, interpolation='nearest', cmap=cmap)
+        plt.title(title)
+        plt.colorbar()
+        tick_marks = np.arange(len(classes))
+        plt.xticks(tick_marks, classes, rotation=45)
+        plt.yticks(tick_marks, classes)
 
-            fmt = '.2f' if normalize else 'd'
-            thresh = cm.max() / 2.
-            for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
-                plt.text(j, i, format(cm[i, j], fmt),
-                         horizontalalignment="center",
-                         color="white" if cm[i, j] > thresh else "black")
+        fmt = '.2f' if normalize else 'd'
+        thresh = cm.max() / 2.
+        for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+            plt.text(j, i, format(cm[i, j], fmt),
+                        horizontalalignment="center",
+                        color="white" if cm[i, j] > thresh else "black")
 
-            plt.ylabel('True label')
-            plt.xlabel('Predicted label')
-            plt.tight_layout()
+        plt.ylabel('True label')
+        plt.xlabel('Predicted label')
+        plt.tight_layout()
 
 
         # Compute confusion matrix
@@ -100,12 +100,12 @@ class Visualization:
         # Plot non-normalized confusion matrix
         plt.figure()
         ploting(cnf_matrix, classes=result,
-                              title='Confusion matrix, without normalization')
+                                title='Confusion matrix, without normalization')
 
         # Plot normalized confusion matrix
         plt.figure()
         ploting(cnf_matrix, classes=result, normalize=True,
-                              title='Normalized confusion matrix')
+                                title='Normalized confusion matrix')
 
         plt.show()
 

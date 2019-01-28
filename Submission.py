@@ -17,8 +17,8 @@ class Submission:
         :param: values: row containing values of the payment.
         :return None
         '''
-        for i in range(len(values)):
-            self.__dataFrame[i]['PwC_RowID'] = i+1
+        for i in self.__dataFrame['PwC_RowID']:
+            self.__dataFrame['PwC_RowID'] = self.__dataFrame['PwC_RowID'].apply(change)
         
     def update_paymentTiming(self, values):
         '''
