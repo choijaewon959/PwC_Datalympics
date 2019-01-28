@@ -36,9 +36,9 @@ from num_node import *
 import time
 import itertools
 from evaluation.Visualization import *
-# from keras.models import Sequential
-# from keras.layers import Dense
-# from keras.utils import to_categorical
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.utils import to_categorical
 from num_node import *
 
 class Models:
@@ -246,7 +246,7 @@ class Models:
         weight_mu = [0.1]
         hidden_act = 'tanh'
         ep = 150
-        plot_losses = PlotLossesCallback()
+        #plot_losses = PlotLossesCallback()
 
         print("Train label converted into vector label")
         Y_test = to_categorical(y_test)
@@ -269,7 +269,7 @@ class Models:
                     model.add(Dense(int(num_hidden_layer3(in_len,out_len,len(y_train))[1]), activation=hidden_act))
             model.add(Dense(out_len, activation='softmax'))
             model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-            model.fit(X_train, Y_train, epochs=ep, batch_size=20, verbose=1, class_weight=class_weight, validation_data=(X_test, Y_test),callbacks=[plot_losses])
+            history = model.fit(X_train, Y_train, epochs=ep, batch_size=20, verbose=1, class_weight=class_weight, validation_data=(X_test, Y_test),callbacks=[plot_losses])
             scores_test = model.evaluate(X_test, Y_test)
             scores_train = model.evaluate(X_train, Y_train)
 
@@ -280,21 +280,27 @@ class Models:
             print("y_pred == ", y_pred)
             print("confusion matrix printed")
             visual.classification_report(y_train, y_test)
+            # summarize history for loss
+            plt.plot(history.history['loss'])
+            plt.plot(history.history['val_loss'])
+            plt.title('model loss')
+            plt.ylabel('loss')
+            plt.xlabel('epoch')
+            plt.legend(['train', 'test'], loc='upper left')
+            plt.show()
+            # out = "Accuracy : "+ str(scores_test[1]) + ", Hidden layer activation : " + hidden_act +" Epoch:"+str(ep) +'\n'
+            # f = open(str(weight)+"_"+str(n)+"_"+str(hidden_layer)+".txt", "a")
+            # f.write(out)
+            # f.write("Test file Accurcy= "+str(scores_test))
+            # f.write("Train file Accurcy= "+str(scores_train))
+            # f.write(visual.plot_confusion_matrix(y_train, y_test))
 
-
-            out = "Accuracy : "+ str(scores_test[1]) + ", Hidden layer activation : " + hidden_act +" Epoch:"+str(ep) +'\n'
-            f = open(str(weight)+"_"+str(n)+"_"+str(hidden_layer)+".txt", "a")
-            f.write(out)
-            f.write("Test file Accurcy= "+str(scores_test))
-            f.write("Train file Accurcy= "+str(scores_train))
-            f.write(visual.plot_confusion_matrix(y_train, y_test))
-
-            #save model
-            model_json = model.to_json()
-            with open("model.json", "w") as json_file:
-                json_file.write(model_json)
-            model.save_weights("model.h5")
-            print("Saved model to disk")
+            # #save model
+            # model_json = model.to_json()
+            # with open("model.json", "w") as json_file:
+            #     json_file.write(model_json)
+            # model.save_weights("model.h5")
+            # print("Saved model to disk")
 
         return scores[1]
 

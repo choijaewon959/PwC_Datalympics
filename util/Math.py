@@ -22,7 +22,7 @@ def create_class_weight(transactionData,mu=0.9):
     total = transactionData.shape[0]
     labels_dict = pd.value_counts(transactionData)
     class_weight = dict()
-    for num ,tmp in zip(labels_dict, [0,2,3,6,7,8,9]):
+    for num ,tmp in zip(labels_dict, [0,2,3,4,5,6,7,8,9]):
         sco = math.log(mu*total/float(num))
         class_weight[tmp] = sco if sco > 1.0 else 1.0
         tmp = tmp + 1

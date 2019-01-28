@@ -19,7 +19,20 @@ print('test began')
 
 #objects
 dataProcessor = Preprocessor()
+<<<<<<< HEAD
 transactionData = dataProcessor.get_data() #original given data
+=======
+loanData = dataProcessor.get_data() #original given data
+dataProcessor.classify_label()
+algorithm = Models()
+result = ResultLog()
+miniProcessor = MiniProcessor(loanData)
+#data for training
+X_train = dataProcessor.get_train_attributes()
+y_train = dataProcessor.get_train_labels()
+
+# loanData = dataProcessor.get_data() #original given data
+>>>>>>> fc1dd3335167a53881957f7fdb9d179e37f45972
 algorithm = Models()
 result = ResultLog()
 miniProcessor = MiniProcessor(transactionData)

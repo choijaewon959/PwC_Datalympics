@@ -40,7 +40,18 @@ class Preprocessor:
 
         self.__true_y = None
 
+<<<<<<< HEAD
         self.__featurefilter = FeatureFilter()
+=======
+        #second classifier input
+        self.sec_att_train = None
+        self.sec_lab_train = None
+
+        self.sec_att_test = None
+        self.sec_lab_train = None
+
+        #self.__featurefilter = FeatureFilter()
+>>>>>>> fc1dd3335167a53881957f7fdb9d179e37f45972
 
         self.__retrieve_data()
         self.__transactionData = datetime_data(self.__transactionData)
@@ -145,7 +156,20 @@ class Preprocessor:
         #data = pd.read_csv("../loan_data/data/loanfull.csv")
         #low_memory was added to avoid data compression
 
+<<<<<<< HEAD
         data = pd.read_csv("../data/InvoicePayment-training.csv")
+=======
+
+        # #Using sklearn datasets
+        # iris = datasets.load_wine()
+
+        # data = pd.DataFrame(data= np.c_[iris['data'], iris['target']],
+        #              columns= iris['feature_names'] + ['target'])
+
+        #Taemin's debugging tool@!!
+        #data = pd.read_csv("Deeplearning/loan.csv")
+        data = pd.read_csv("../InvoicePayment-training.csv")
+>>>>>>> fc1dd3335167a53881957f7fdb9d179e37f45972
 
         self.__colnames= data.columns.values
         self.__transactionData = data
@@ -179,7 +203,7 @@ class Preprocessor:
         name_train = self.__attributes_train.columns
         print("resampling data...")
 
-        sm = SMOTE(random_state=6)
+        sm = SMOTE(random_state=12)
         X_train_res, y_train_res = sm.fit_resample(self.__attributes_train, self.__labels_train)
         self.__attributes_train, self.__labels_train = pd.DataFrame(X_train_res, columns=name_train), pd.Series(y_train_res)
 
@@ -420,6 +444,12 @@ class Preprocessor:
         tempProcessTime= time.time() - start_time
         print("[tempProcessTime finished with %.2f seconds]"  % tempProcessTime)
 
+<<<<<<< HEAD
+=======
+    def get_data(self):
+        return self.__loanData
+
+>>>>>>> fc1dd3335167a53881957f7fdb9d179e37f45972
     def change(self,val):
         return int(val[-2:])
     def change2(self,val):
@@ -520,3 +550,97 @@ class Preprocessor:
         :return: true_y
         '''
         return self.__true_y
+
+    def change(self,val):
+        return int(val[-2:])
+    def change2(self,val):
+        return int(val[-1:])
+    def __data_process(self):
+            mapping = {'BusinessTransaction': {'Business transaction type 0002': 2 , 'Business transaction type 0003': 3, 'Business transaction type 0001': 1},
+                       'CompanyCode' : {'C002':2, 'C001':1, 'C003':3},
+                       'DocumentType': {'T03':3,'T04':4,'T02':2,'T01':1,'T09':9,'T07':7,'T06':6,'T08':8},
+                       'DocumentTypeDesc': {'Vendor invoice': 0, 'Invoice receipt':1,'Vendor credit memo':2,'Vendor document':3,'TOMS (Jul2003)/ TWMS':4 ,'Interf.with SMIS-CrM':5,'Interf.with SMIS-IV':6 ,'Interface with PIMS':7},
+                       'PO_FLag': {'N': 0 , 'Y':1},
+                       'TransactionCode': {'TR 0005':0,'TR 0006':1,'TR 0002':2,'TR 0008':3,'TR 0007':4,'TR 0003':5,'TR 0004':6, 'TR 0001':7}
+            }
+            col  = ['CompanyName', 'DocumentNo']
+            self.__loanData['UserName'] = self.__loanData['UserName'].apply(self.change)
+            self.__loanData['TransactionCodeDesc'] = self.__loanData['TransactionCodeDesc'].apply(self.change2)
+            self.__loanData = self.__loanData.replace(mapping)
+            self.__loanData.drop(col,axis=1)
+
+    def classify(self,val,early_nodes, late_nodes):
+        if(val == 0):
+            return 0
+        elif(val > 0):
+            if(val >= early_nodes[9]):
+                return 20
+            elif(val>= early_nodes[8]):
+                return 19
+            elif(val>= early_nodes[7]):
+                return 18
+            elif(val>= early_nodes[6]):
+                return 17
+            elif(val>= early_nodes[5]):
+                return 16
+            elif(val>= early_nodes[4]):
+                return 15
+            elif(val>= early_nodes[3]):
+                return 14
+            elif(val>= early_nodes[2]):
+                return 13
+            elif(val>= early_nodes[1]):
+                return 12
+            elif(val>= early_nodes[0]):
+                return 11
+            return 10
+        elif(val < 0):
+            if(val >= late_nodes[9]):
+                return 40
+            elif(val>= late_nodes[8]):
+                return 41
+            elif(val>= late_nodes[7]):
+                return 42
+            elif(val>= late_nodes[6]):
+                return 43
+            elif(val>= late_nodes[5]):
+                return 44
+            elif(val>= late_nodes[4]):
+                return 45
+            elif(val>= late_nodes[3]):
+                return 46
+            elif(val>= late_nodes[2]):
+                return 47
+            elif(val>= late_nodes[1]):
+                return 48
+            elif(val>= late_nodes[0]):
+                return 49
+            return 50
+            
+    def classify_label(self):
+        '''
+        converts payment time into labels according to the distribution of payment time
+        nodes classifying the label is defined by the quantile values of the distribution
+        :param = list/dataframe of the payment time, loanData
+        :return = loanData with a new column of label
+        '''
+        tmp = 0.1
+        early_nodes = dict()
+        late_nodes = dict()
+        dfTrain = self.__loanData
+        for i in range(0,10):
+            early_nodes[i] = dfTrain.drop(dfTrain[dfTrain.difference < 1].index)['difference'].quantile(tmp)
+            late_nodes[i] = dfTrain.drop(dfTrain[dfTrain.difference > -1].index)['difference'].quantile(tmp)
+            tmp += 0.1
+        self.__loanData['payment_label'] = self.__loanData['difference'].apply(self.classify, args=(early_nodes,late_nodes,))
+        print(early_nodes, late_nodes)
+        print(self.__loanData[['payment_label','difference']])
+
+    def vendor_apply(self,val,name):
+        if(val == name):
+            return 1
+        return 0
+    def vendor_column(self):
+        for name in list(self.__loanData['VendorName'].unique()):
+            if(len(self.__loanData[self.__loanData.VendorName == name].index)> 10000):
+                self.__loanData[name] = self.__loanData['VendorName'].apply(self.vendor_apply, args=(name,))
