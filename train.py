@@ -27,7 +27,6 @@ submission = Submission()
 #data for training
 X_train = dataProcessor.get_train_attributes()
 y_train = dataProcessor.get_train_labels()
-print(X_train)
 
 #data for test
 X_test = dataProcessor.get_test_attributes()
@@ -47,7 +46,7 @@ y_test = dataProcessor.get_test_labels()
 First Learning to classify the rows into early, ontime, late
 '''
 
-trainedModel = algorithm.decision_tree(decision_tree_dict,X_train, y_train, X_test, y_test)
+trainedModel = algorithm.XGBClassifier(XGBClassifier_dict,X_train, y_train, X_test, y_test)
 
 #save trained model
 pickle.dump(trainedModel, open(MODELFILE1, 'wb'))
