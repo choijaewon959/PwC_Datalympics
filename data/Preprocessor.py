@@ -53,9 +53,8 @@ class Preprocessor:
         #self.__extra_tree_classify()
         self.vendor_column()
         self.__select_k_best()
-
-        self.__split_data()
         self.classify_label()
+        self.__split_data()
         self.__resample_data_SMOTE()
 
         print(self.__attributes_train)
@@ -102,7 +101,7 @@ class Preprocessor:
 
         cols= self.__meaningfulfeatures
         cols.append('label')
-
+        cols.append('difference')
         dfdataset=self.__transactionData
         dfdataset= dfdataset[cols]
 
@@ -158,7 +157,7 @@ class Preprocessor:
         '''
         print("split_data running...")
         # TODO: loan status may not be the label -> change to label accordingly.
-        X = self.__transactionData.drop(['difference', 'label', 'PwC_RowID'], axis = 1)
+        X = self.__transactionData.drop(['label', 'PwC_RowID','difference','payment_label'], axis = 1)
         y = self.__transactionData['label']
 
         self.__true_y = self.__transactionData['label']
@@ -491,11 +490,11 @@ class Preprocessor:
 
     def vendor_column(self):
         for name in list(self.__transactionData['VendorName'].unique()):
-            if(len(self.__transactionData[self.__transactionData.VendorName == name].index)> 3000):
+            if(len(self.__transactionData[self.__transactionData.VendorName == name].index)> 10000):
                 self.__transactionData[name] = self.__transactionData['VendorName'].apply(self.vendor_apply, args=(name,))
         #print(self.__transactionData)
         for country in list(self.__transactionData['VendorCountry'].unique()):
-            if(len(self.__transactionData[self.__transactionData.VendorCountry == country].index)> 3000):
+            if(len(self.__transactionData[self.__transactionData.VendorCountry == country].index)> 10000):
                 self.__transactionData[country] = self.__transactionData['VendorCountry'].apply(self.vendor_apply, args=(name,))
 
         dfTrain =self.__transactionData.copy()
@@ -503,6 +502,5 @@ class Preprocessor:
         #print(dfTrain['Vendor 01899'].value_counts())
         dfTrain=dfTrain.drop('VendorName', axis=1)
         dfTrain=dfTrain.drop('VendorCountry', axis=1)
-        print("XXXXXXXXXXXXXX")
         print(dfTrain.columns.values)
         self.__transactionData = dfTrain
