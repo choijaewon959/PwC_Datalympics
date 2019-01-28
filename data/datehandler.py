@@ -41,13 +41,13 @@ def datetime_data(data):
     #return those with negative days (days passed due date)
     #lateday = data.loc[data['result'] < 0]
 
-    # print(data['diff'])
+    # print(data['difference'])
     # print(data['label'])
 
     #print(data)
 
     """
-    return data with diff/ label with it
+    return data with difference/ label with it
     """
     #print(data['diff'].value_counts())
     return data
