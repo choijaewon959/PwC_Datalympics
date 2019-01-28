@@ -40,12 +40,13 @@ class Preprocessor:
 
         self.__true_y = None
 
-        #self.__featurefilter = FeatureFilter()
+        self.__featurefilter = FeatureFilter()
 
         self.__retrieve_data()
         self.__transactionData = datetime_data(self.__transactionData)
 
         self.__data_preprocess()
+        exit()
         #print(self.__loanData)
 
         #self.__dominant_feature_filter()
@@ -145,7 +146,7 @@ class Preprocessor:
         #data = pd.read_csv("../loan_data/data/loanfull.csv")
         #low_memory was added to avoid data compression
 
-        data = pd.read_csv("../data/InvoicePayment-evaluation.csv")
+        data = pd.read_csv("../data/InvoicePayment-evaluation.csv", low_memory=False)
 
         self.__colnames= data.columns.values
         self.__transactionData = data
@@ -326,7 +327,7 @@ class Preprocessor:
        'VendorCountry', 'Year', 'PaymentDueDate', 'difference', 'label']]
 
         #print(dfTrain['VendorCountry'].unique().tolist())
-        li= dfTrain['VendorCountry'].unique().tolist()
+        #li= dfTrain['VendorCountry'].unique().tolist()
 
         mapping={}
 

@@ -1,6 +1,6 @@
 import numpy as np
 import pickle
-
+from pandas import DataFrame
 from data.Preprocessor import Preprocessor
 from data.MiniProcessor import MiniProcessor
 from data.FeatureFilter import FeatureFilter
@@ -55,7 +55,7 @@ y_test = dataProcessor.get_test_labels()
 First Learning to classify the rows into early, ontime, late
 '''
 
-trainedModel = algorithm.XGBClassifier(XGBClassifier_dict,X_train, y_train, X_test, y_test)
+trainedModel = algorithm.decision_tree(decision_tree_dict,X_train, y_train, X_test, y_test)
 
 #save trained model
 pickle.dump(trainedModel, open(MODELFILE1, 'wb'))
@@ -78,8 +78,6 @@ Specifically predict the date the user with 'early paid' would pay.
 #TODO:  change the n value to retrieve the data.
 #Retrieve the data to be used for early paid training.
 early_paid_Data = miniProcessor.get_second_data(0)
-# print(early_paid_Data[2].value_counts())
-# print(early_paid_Data[3].value_counts())
 
 #Retrieve the trained model.
 early_paid_trainedModel = algorithm.XGBClassifier(XGBClassifier_dict2, early_paid_Data[2], early_paid_Data[3], early_paid_Data[0], early_paid_Data[1])
@@ -92,7 +90,6 @@ early_paid_evaluation = ModelEvaluation(early_paid_Data[0],early_paid_Data[1],ea
 accuracy_early = early_paid_evaluation.evaluate_model(early_paid_trainedModel)
 
 early_paid_y_predicted = early_paid_evaluation.get_predicted_label()
-
 
 '''
 Learning for data with late paid label.
@@ -116,6 +113,7 @@ late_paid_y_predicted = late_paid_evaluation.get_predicted_label()
 
 #log the payment timing (early, on time, late) result.
 submission.update_paymentTiming(y_predicted)
+
 '''
 Change the virtual label into more specific label.
 '''
