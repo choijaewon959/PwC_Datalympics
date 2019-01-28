@@ -12,11 +12,29 @@ from evaluation.ModelEvaluation import ModelEvaluation
 from evaluation.Visualization import Visualization
 from data.Cleaningdata import *
 
-
 import pickle
 from config import *
 import sys
 
+"""
+test.py
+
+Testing file
+
+1. Parse input parameter from commandline
+1a. Load the testing file
+
+2. Load Trained models
+3. Evaluate the test file with loaded model
+4. Save the evaluated data onto the original testing file
+5. With the result of 3, load specific labels to each dataframe
+6. Run second model for each labels
+7. Write results while joining with first classification
+
+8. Export result(Prediction) to csv file
+
+
+"""
 #Commandline Parse input
 if len(sys.argv) < 2 :
     print("Usage: Python test.py [~.csv] ")
