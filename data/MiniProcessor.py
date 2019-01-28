@@ -56,7 +56,7 @@ class MiniProcessor:
         :return : tuple of label n data, splited into test, train data
         '''
         dfTrain = self.__transactionData
-        if(n ==0):
+        if(n == 0):
             dfTrain = dfTrain.drop(dfTrain[dfTrain.payment_label < 10].index)
             dfTrain = dfTrain.drop(dfTrain[dfTrain.payment_label > 19].index)
         elif(n==2):
@@ -94,4 +94,3 @@ class MiniProcessor:
                 k+=1
 
         return finalLabel
-
