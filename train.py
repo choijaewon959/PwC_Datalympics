@@ -15,12 +15,11 @@ print('test began')
 
 #objects
 dataProcessor = Preprocessor()
-dataProcessor.tmp()
 loanData = dataProcessor.get_data() #original given data
+dataProcessor.classify_label()
 algorithm = Models()
 result = ResultLog()
 miniProcessor = MiniProcessor(loanData)
-miniProcessor.classify_label(loanData)
 #data for training
 X_train = dataProcessor.get_train_attributes()
 y_train = dataProcessor.get_train_labels()

@@ -32,24 +32,24 @@ def datetime_data(data):
     #data['paid_off_time']=pd.to_datetime(data['paid_off_time'])
 
     #make new column with result which keep track of dates belated or early
-    data['diff']=data['PaymentDueDate']-data['PaymentDate']
+    data['difference']=data['PaymentDueDate']-data['PaymentDate']
     #format into integer format
-    data['diff']=data['diff'].dt.days
+    data['difference']=data['difference'].dt.days
 
-    data['label'] = data['diff'].apply(add_label)
+    data['label'] = data['difference'].apply(add_label)
 
     #return those with negative days (days passed due date)
     #lateday = data.loc[data['result'] < 0]
 
-    # print(data['diff'])
+    # print(data['difference'])
     # print(data['label'])
 
     #print(data)
 
     """
-    return data with diff/ label with it
+    return data with difference/ label with it
     """
-    print(data['diff'].value_counts())
+    print(data['difference'].value_counts())
     return data
 
 def add_label(val):

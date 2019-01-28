@@ -53,10 +53,8 @@ class Preprocessor:
         self.__loanData = datetime_data(self.__loanData)
 
         self.__data_preprocess()
-        print(self.__loanData)
-
-
-        exit()
+        self.vendor_column()
+        #print(self.__loanData)
         #self.__dominant_feature_filter()
         # TODO: function call for preprocessing data
 
@@ -438,7 +436,9 @@ class Preprocessor:
         tempProcessTime= time.time() - start_time
         print("[tempProcessTime finished with %.2f seconds]"  % tempProcessTime)
 
-
+    def get_data(self):
+        return self.__loanData
+    
     def change(self,val):
         return int(val[-2:])
     def change2(self,val):
@@ -473,16 +473,11 @@ class Preprocessor:
         dfTrain = dfTrain.replace(mapping)
         dfTrain.drop(col, axis=1)
 
-        print(dfTrain)
-
         self.loanData = dfTrain
 
     def get_labels(self):
         print(self.__loanData['loan_status'].unique())
         return self.__loanData['loan_status'].unique()
-
-    def get_data(self):
-        return self.__loanData
 
     def additional_feature(self,val,unique):
         if(val == unique):
@@ -523,17 +518,7 @@ class Preprocessor:
         :return: true_y
         '''
         return self.__true_y
-    def tmp(self):
-        for col in list(self.__loanData.columns.values):
-            if(len(self.__loanData[col].unique()) < 30):
-                print(col)
-                print(self.__loanData[col].unique())
-        #     if(len(self.__loanData[col].unique()) < 30):
-        #         for uniq in self.__loanData[col].unique():
-        #             self.__loanData[col+' '+str(uniq)] = self.__loanData[col].apply(self.additional_feature,args=(uniq,))
-        # self.__loanData = self.__loanData.drop(['home_ownership', 'initial_list_status','application_type'], axis=1)
-        # print(self.__loanData.columns.values)
-        # print(len(self.__loanData.columns.values))
+
     def change(self,val):
         return int(val[-2:])
     def change2(self,val):
@@ -551,3 +536,77 @@ class Preprocessor:
             self.__loanData['TransactionCodeDesc'] = self.__loanData['TransactionCodeDesc'].apply(self.change2)
             self.__loanData = self.__loanData.replace(mapping)
             self.__loanData.drop(col,axis=1)
+    def classify(self,val,early_nodes, late_nodes):
+        if(val == 0):
+            return 0
+        elif(val > 0):
+            if(val >= early_nodes[9]):
+                return 20
+            elif(val>= early_nodes[8]):
+                return 19
+            elif(val>= early_nodes[7]):
+                return 18
+            elif(val>= early_nodes[6]):
+                return 17
+            elif(val>= early_nodes[5]):
+                return 16
+            elif(val>= early_nodes[4]):
+                return 15
+            elif(val>= early_nodes[3]):
+                return 14
+            elif(val>= early_nodes[2]):
+                return 13
+            elif(val>= early_nodes[1]):
+                return 12
+            elif(val>= early_nodes[0]):
+                return 11
+            return 10
+        elif(val < 0):
+            if(val >= late_nodes[9]):
+                return 40
+            elif(val>= late_nodes[8]):
+                return 41
+            elif(val>= late_nodes[7]):
+                return 42
+            elif(val>= late_nodes[6]):
+                return 43
+            elif(val>= late_nodes[5]):
+                return 44
+            elif(val>= late_nodes[4]):
+                return 45
+            elif(val>= late_nodes[3]):
+                return 46
+            elif(val>= late_nodes[2]):
+                return 47
+            elif(val>= late_nodes[1]):
+                return 48
+            elif(val>= late_nodes[0]):
+                return 49
+            return 50   
+    def classify_label(self):
+        '''
+        converts payment time into labels according to the distribution of payment time
+        nodes classifying the label is defined by the quantile values of the distribution
+        :param = list/dataframe of the payment time, loanData
+        :return = loanData with a new column of label
+        '''
+        tmp = 0.1
+        early_nodes = dict()
+        late_nodes = dict() 
+        dfTrain = self.__loanData
+        for i in range(0,10):
+            early_nodes[i] = dfTrain.drop(dfTrain[dfTrain.difference < 1].index)['difference'].quantile(tmp)
+            late_nodes[i] = dfTrain.drop(dfTrain[dfTrain.difference > -1].index)['difference'].quantile(tmp)
+            tmp += 0.1
+        self.__loanData['payment_label'] = self.__loanData['difference'].apply(self.classify, args=(early_nodes,late_nodes,))
+        print(early_nodes, late_nodes)
+        print(self.__loanData[['payment_label','difference']])
+        
+    def vendor_apply(self,val,name):
+        if(val == name):
+            return 1
+        return 0
+    def vendor_column(self):
+        for name in list(self.__loanData['VendorName'].unique()):
+            if(len(self.__loanData[self.__loanData.VendorName == name].index)> 10000):
+                self.__loanData[name] = self.__loanData['VendorName'].apply(self.vendor_apply, args=(name,))
