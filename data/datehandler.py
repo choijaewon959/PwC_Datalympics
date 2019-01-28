@@ -15,10 +15,7 @@ def datetime_data(data):
     :param: dataset (pandas dataframe)
     :return: dataset (pandas dataframe) column added
     """
-    # data = pd.read_csv("../paymentdata.csv")
-
-    print("[retrieve_data finished]")
-
+    # data = pd.read_csv("../paymentdata.csv"
 
     #process each column into datetimeIndex dataframe
     data['InvoiceDate']=pd.to_datetime(data['InvoiceDate'])
@@ -50,15 +47,17 @@ def datetime_data(data):
     return data with difference/ label with it
     """
     #print(data['diff'].value_counts())
+    print("[datetime conversion finished]")
+
     return data
 
 def add_label(val):
     if val > 0 :
-        return 0
+        return -1
     elif val < 0:
-        return 2
-    else:
         return 1
+    else:
+        return 0
 
 #data,lateday = retrieve_data()
 #data=comparison_check(data)

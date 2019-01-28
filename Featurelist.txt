@@ -1,1 +1,0 @@
-['out_prncp', 'out_prncp_inv', 'total_rec_prncp', 'last_pymnt_amnt', 'total_pymnt_inv', 'total_pymnt', 'recoveries', 'annual_inc', 'revol_bal', 'collection_recovery_fee', 'total_rec_int', 'funded_amnt', 'loan_amnt', 'total_rec_late_fee', 'installment', 'sub_grade', 'revol_util', 'inq_last_6mths', 'dti', 'int_rate']

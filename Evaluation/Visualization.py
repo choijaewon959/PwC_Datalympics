@@ -26,7 +26,7 @@ class Visualization:
         # plot the heatmap
         sns.heatmap(corr,
         xticklabels=corr.columns,
-        yticklabels=corr.columns, vmin=-1 , vmax=1, cmap="RdBu" )
+        yticklabels=corr.columns, vmin=-1 , vmax=1, cmap="RdBu", annot=True )
         plt.show()
 
 
@@ -138,7 +138,7 @@ class Visualization:
         '''
         epochs = len(results['validation_0']['mlogloss'])
         x_axis = range(0, epochs)
-        
+
         # plot log loss
         fig, ax = plt.subplots()
         ax.plot(x_axis, results['validation_0']['mlogloss'], label='Train')
@@ -166,4 +166,3 @@ class Visualization:
         plt.ylabel('Classification Error')
         plt.title('XGBoost Classification Error')
         plt.show()
-

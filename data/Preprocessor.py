@@ -26,7 +26,7 @@ class Preprocessor:
         self.__distributionTable = {} # Table having distribution objects (key: name of data, value: distribution object).
         self.__colnames = None # string type keys for the table.
         self.__numOfKeys = 0    # number of keys.
-        self.__loanData = None # data mainly used.
+        self.__transactionData = None # data mainly used.
         self.__meaningfulfeatures=[]
 
         self.__smallData = None
@@ -40,21 +40,12 @@ class Preprocessor:
 
         self.__true_y = None
 
-        #second classifier input
-        self.sec_att_train = None
-        self.sec_lab_train = None
-
-        self.sec_att_test = None
-        self.sec_lab_train = None
-
         #self.__featurefilter = FeatureFilter()
 
         self.__retrieve_data()
-        self.__loanData = datetime_data(self.__loanData)
+        self.__transactionData = datetime_data(self.__transactionData)
 
         self.__data_preprocess()
-
-
         #print(self.__loanData)
 
         #self.__dominant_feature_filter()
@@ -65,12 +56,14 @@ class Preprocessor:
 
         #self.__select_k_best()
         #self.__extra_tree_classify()
-
+        exit()
         self.__split_data()
-        #self.__resample_data_SMOTE()
+        self.classify_label()
+
+        self.__resample_data_SMOTE()
 
         #self.__scale_data()
-        #self.__graph()
+        self.__graph()
 
     def __dominant_feature_filter(self):
         '''
@@ -79,8 +72,7 @@ class Preprocessor:
         :param: None
         :return: None
         '''
-        self.__loanData = self.__featurefilter.dominant_feature_filter(self.__loanData)
-
+        self.__transactionData = self.__featurefilter.dominant_feature_filter(self.__transactionData)
 
     def __scale_data(self):
         '''
@@ -107,30 +99,29 @@ class Preprocessor:
 
     def __select_k_best(self):
 
-
-        self.__meaningfulfeatures = self.__featurefilter.feature_score(self.__loanData.drop('loan_status',axis=1))
+        self.__meaningfulfeatures = self.__featurefilter.feature_score(self.__transactionData.drop('loan_status',axis=1))
 
         cols= self.__meaningfulfeatures
         cols.append('new_loan_status')
         cols.append('loan_status')
 
-        dfdataset=self.__loanData
+        dfdataset=self.__transactionData
         dfdataset= dfdataset[cols]
 
-        self.__loanData=dfdataset
+        self.__transactionData=dfdataset
         print("Select K Best features replaced original feature list")
 
     def __extra_tree_classify(self):
 
-        self.__meaningfulfeatures = self.__featurefilter.feature_score(self.__loanData)
+        self.__meaningfulfeatures = self.__featurefilter.feature_score(self.__transactionData)
 
         cols= self.__meaningfulfeatures
         cols.append('loan_status')
 
-        dfdataset=self.__loanData
+        dfdataset=self.__transactionData
         dfdataset= dfdataset[cols]
 
-        self.__loanData=dfdataset
+        self.__transactionData=dfdataset
         print("Extra_tree_classify() features replaced original feature list")
 
 
@@ -154,19 +145,13 @@ class Preprocessor:
         #data = pd.read_csv("../loan_data/data/loanfull.csv")
         #low_memory was added to avoid data compression
 
+        data = pd.read_csv("../datalympics/InvoicePayment-evaluation.csv")
+        #data = pd.read_csv("../datalympics/InvoicePayment-evaluation.csv")
 
-        # #Using sklearn datasets
-        # iris = datasets.load_wine()
-
-        # data = pd.DataFrame(data= np.c_[iris['data'], iris['target']],
-        #              columns= iris['feature_names'] + ['target'])
-
-        #Taemin's debugging tool@!!
-        #data = pd.read_csv("Deeplearning/loan.csv")
-        data = pd.read_csv("../InvoicePayment-training.csv")
+        #data = pd.read_csv("../data/InvoicePayment-evaluation.csv")
 
         self.__colnames= data.columns.values
-        self.__loanData = data
+        self.__transactionData = data
         print("[retrieve_data finished]")
 
     def __split_data(self):
@@ -178,10 +163,10 @@ class Preprocessor:
         '''
         print("split_data running...")
         # TODO: loan status may not be the label -> change to label accordingly.
-        X = self.__loanData.drop(['difference', 'label'], axis = 1)
-        y = self.__loanData['label']
+        X = self.__transactionData.drop(['difference', 'label'], axis = 1)
+        y = self.__transactionData['label']
 
-        self.__true_y = self.__loanData['label']
+        self.__true_y = self.__transactionData['label']
 
         self.__attributes_train, self.__attributes_test, self.__labels_train, self.__labels_test = train_test_split(X, y, test_size=0.2, random_state = 1, shuffle =True, stratify=y)
         print("[split_data finished]")
@@ -324,133 +309,16 @@ class Preprocessor:
         YY = pd.DataFrame(l)
         return YY
 
-    def __temp_data_process(self):
-        '''
-        temporary data processor for loan.csv file
-        erase unrelated columns and imputation is done.
-        prints some debugging messages.
-
-        :param: none
-        :return: none
-        '''
-        print("__temp_data_process running...")
-        #--------other debugging messages are omitted/ commented for simplifying purposes -------
-        start_time = time.time()
-
-        dfTrain = self.__loanData
-        #copied data to refrain from warnings
-        dfTrain= dfTrain.copy()
-
-        # TODO: when dealing with real data, columns has to be selected otherwise
-        #erase unrelated columns
-        dfTrain= dfTrain[['loan_amnt', 'funded_amnt',
-               'term', 'int_rate', 'installment', 'sub_grade',
-               'emp_length', 'annual_inc', 'loan_status', 'dti', 'delinq_2yrs', 'inq_last_6mths'
-               ,'mths_since_last_delinq', 'mths_since_last_record', 'open_acc', 'pub_rec'
-               ,'revol_bal', 'revol_util', 'total_acc', 'out_prncp', 'out_prncp_inv', 'total_pymnt'
-               ,'total_pymnt_inv', 'total_rec_prncp', 'total_rec_int', 'total_rec_late_fee'
-               ,'recoveries', 'collection_recovery_fee', 'last_pymnt_amnt'
-            ]]
-
-        # TODO: Feature transformation can be done beforehand or after
-        # when the data is normalized to numerical data, these steps should be omitted.
-        dfTrain['term'].replace(to_replace=' months', value='', regex=True, inplace=True)
-        dfTrain['term'] = dfTrain['term'].astype(int)
-
-        # dfTrain['term']= pd.to_numeric(dfTrain['term'], errors='coerce')
-        #dfTrain['term'] = dfTrain.term.astype(float)
-
-
-        #print('Transform: sub_grade...')
-        dfTrain['sub_grade'].replace(to_replace='A', value='0', regex=True, inplace=True)
-        dfTrain['sub_grade'].replace(to_replace='B', value='1', regex=True, inplace=True)
-        dfTrain['sub_grade'].replace(to_replace='C', value='2', regex=True, inplace=True)
-        dfTrain['sub_grade'].replace(to_replace='D', value='3', regex=True, inplace=True)
-        dfTrain['sub_grade'].replace(to_replace='E', value='4', regex=True, inplace=True)
-        dfTrain['sub_grade'].replace(to_replace='F', value='5', regex=True, inplace=True)
-        dfTrain['sub_grade'].replace(to_replace='G', value='6', regex=True, inplace=True)
-        dfTrain['sub_grade'] = pd.to_numeric(dfTrain['sub_grade'], errors='coerce')
-
-        #print('Transform: emp_length...')
-        dfTrain['emp_length'].replace('n/a', '0', inplace=True)
-        dfTrain['emp_length'].replace(to_replace='\+ years', value='', regex=True, inplace=True)
-        dfTrain['emp_length'].replace(to_replace=' years', value='', regex=True, inplace=True)
-        dfTrain['emp_length'].replace(to_replace='< 1 year', value='0', regex=True, inplace=True)
-        dfTrain['emp_length'].replace(to_replace=' year', value='', regex=True, inplace=True)
-        dfTrain['emp_length'] = pd.to_numeric(dfTrain['emp_length'], errors='coerce')
-
-        #print('Transform: annual_inc...')
-        dfTrain['annual_inc']= pd.to_numeric(dfTrain['annual_inc'], errors='coerce')
-
-        #print('Transform: loan_status...')
-        # for loan status just gave random 0 / 1 of binary representation of good or bad loan
-        mapping = {'loan_status': {'Fully Paid': 0 , 'Current': -1, 'Charged Off': 2,
-                    'In Grace Period': 3, 'Late (31-120 days)': 4, 'Late (16-30 days)': 5,
-                    'Issued': 6, 'Default': 7, 'Does not meet the credit policy. Status:Fully Paid': 8,
-                    'Does not meet the credit policy. Status:Charged Off': 9}
-        }
-        dfTrain= dfTrain.replace(mapping)
-
-        # dfTrain['loan_status'].replace('n/a', '0', inplace=True)
-        # dfTrain['loan_status'].replace(to_replace='Fully Paid', value='0', regex=True, inplace=True)
-        # dfTrain['loan_status'].replace(to_replace='Current', value='1', regex=True, inplace=True)
-        # dfTrain['loan_status'].replace(to_replace='Charged Off', value='2', regex=True, inplace=True)
-        # dfTrain['loan_status'].replace(to_replace='In Grace Period', value='3', regex=True, inplace=True)
-        # dfTrain['loan_status'].replace(to_replace='Late (31-120 days)', value='4', regex=True, inplace=True)
-        # dfTrain['loan_status'].replace(to_replace='Late (16-30 days)', value='5', regex=True, inplace=True)
-        # dfTrain['loan_status'].replace(to_replace='Issued', value='6', regex=True, inplace=True)
-        # dfTrain['loan_status'].replace(to_replace='Default', value='7', regex=True, inplace=True)
-        # dfTrain['loan_status'].replace(to_replace='Does not meet the credit policy. Status:Fully Paid Off', value='8', regex=True, inplace=True)
-        # dfTrain['loan_status'].replace(to_replace='Does not meet the credit policy. Status:Charged Off', value='9', regex=True, inplace=True)
-        # dfTrain['loan_status'] = pd.to_numeric(dfTrain['loan_status'], errors='coerce')
-
-        # print(dfTrain['loan_status'].unique())
-
-        '''
-        #data imputation
-        '''
-        cols = ['loan_amnt', 'funded_amnt',
-               'term', 'int_rate', 'installment', 'sub_grade',
-               'emp_length', 'annual_inc', 'dti', 'delinq_2yrs', 'inq_last_6mths'
-               ,'mths_since_last_delinq', 'mths_since_last_record', 'open_acc', 'pub_rec'
-               ,'revol_bal', 'revol_util', 'total_acc', 'out_prncp', 'out_prncp_inv', 'total_pymnt'
-               ,'total_pymnt_inv', 'total_rec_prncp', 'total_rec_int', 'total_rec_late_fee'
-               ,'recoveries', 'collection_recovery_fee', 'last_pymnt_amnt'
-            ]
-
-        for col in cols:
-            #print('Imputation with Median: %s' % (col))
-            dfTrain[col].fillna(dfTrain[col].median(), inplace=True)
-
-        cols=['loan_status']
-        for col in cols:
-            #print('Imputation with Zero: %s' % (col))
-            dfTrain[col].fillna(0, inplace=True)
-        #print('Missing value imputation done.')
-        self.__currentData = dfTrain[dfTrain.loan_status < 0]
-        dfTrain = dfTrain.drop(dfTrain[dfTrain.loan_status < 0].index)
-        self.__loanData = dfTrain
-
-        #add new column which merges certain labels
-        self.__loanData['new_loan_status'] = self.__loanData['loan_status'].apply(self.add_column)
-
-        print(self.__loanData['new_loan_status'].unique())
-        tempProcessTime= time.time() - start_time
-        print("[tempProcessTime finished with %.2f seconds]"  % tempProcessTime)
-
-    def get_data(self):
-        return self.__loanData
-
     def change(self,val):
         return int(val[-2:])
     def change2(self,val):
         return int(val[-1:])
+
     def __data_preprocess(self):
 
-        dfTrain = self.__loanData
+        dfTrain = self.__transactionData
         #copied data to refrain from warnings
-        dfTrain= dfTrain.copy()
-
+        #dfTrain= dfTrain.copy()
 
         dfTrain= dfTrain[['PwC_RowID', 'BusinessTransaction', 'CompanyCode', 'CompanyName',
        'DocumentNo', 'DocumentType', 'DocumentTypeDesc', 'EntryDate',
@@ -461,29 +329,22 @@ class Preprocessor:
        'TransactionCode', 'TransactionCodeDesc', 'UserName', 'VendorName',
        'VendorCountry', 'Year', 'PaymentDueDate', 'difference', 'label']]
 
-        print(dfTrain['VendorCountry'].unique().tolist())
-        li= dfTrain['VendorCountry'].unique().tolist()
-
-        mapping={}
-
-        num=0
-        for i in li:
-            mapping['VendorCountry']= { i : num }
-
+        # print(dfTrain['VendorCountry'].unique().tolist())
+        # li= dfTrain['VendorCountry'].unique().tolist()
 
         mapping = {'BusinessTransaction': {'Business transaction type 0002': 2 , 'Business transaction type 0003': 3, 'Business transaction type 0001': 1},
         'CompanyCode' : {'C002':2, 'C001':1, 'C003':3},
-        'DocumentType': {'T03':3,'T04':4,'T02':2,'T01':1,'T09':9,'T07':7,'T06':6,'T08':8},
+        'DocumentType': {'T03':3,'T04':4,'T02':2,'T01':1,'T09':9,'T07':7,'T06':6,'T08':8, 'T05':5},
         'DocumentTypeDesc': {'Vendor invoice': 0, 'Invoice receipt':1,'Vendor credit memo':2,'Vendor document':3,'TOMS (Jul2003)/ TWMS':4 ,'Interf.with SMIS-CrM':5,'Interf.with SMIS-IV':6 ,'Interface with PIMS':7},
         'PO_FLag': {'N': 0 , 'Y':1},
         'TransactionCode': {'TR 0005':0,'TR 0006':1,'TR 0002':2,'TR 0008':3,'TR 0007':4,'TR 0003':5,'TR 0004':6, 'TR 0001':7},
-
         }
 
         col  = ['CompanyName', 'DocumentNo', 'EntryDate', 'DocumentTypeDesc', 'EntryTime',
                 'InvoiceDate', 'InvoiceDesc', 'InvoiceItemDesc', 'LocalCurrency', 'PaymentDocumentNo',
                 'Period', 'PO_PurchasingDocumentNumber', 'PostingDate', 'PurchasingDocumentDate', 'ReferenceDocumentNo',
-                'ReportingAmount', 'TransactionCodeDesc', 'Year', 'VendorName' , 'VendorCountry', 'PaymentDate', 'PaymentDueDate'
+                'ReportingAmount', 'TransactionCodeDesc', 'Year', 'PaymentDate', 'PaymentDueDate','VendorName',
+                'VendorCountry'
                 ]
 
         dfTrain['UserName'] = dfTrain['UserName'].apply(self.change)
@@ -491,13 +352,18 @@ class Preprocessor:
         dfTrain = dfTrain.replace(mapping)
         dfTrain = dfTrain.drop(col, axis=1)
 
+        # dfTrain= dfTrain.loc[dfTrain['VendorCountry'] == 'HK']
+
         print(dfTrain.dtypes)
 
-        self.__loanData = dfTrain
+        self.__transactionData = dfTrain
 
-    def get_labels(self):
-        print(self.__loanData['loan_status'].unique())
-        return self.__loanData['loan_status'].unique()
+    # def get_labels(self):
+    #     print(self.__transactionData['loan_status'].unique())
+    #     return self.__transactionData['loan_status'].unique()
+
+    def get_data(self):
+        return self.__transactionData
 
     def additional_feature(self,val,unique):
         if(val == unique):
@@ -509,20 +375,20 @@ class Preprocessor:
         'dummy' nodes added
         '''
         stop = ['sub_grade','emp_length','loan_status','annual_inc','term','grade', 'delinq_2yrs','inq_last_6mths', 'pub_rec']
-        for col in list(self.__loanData.columns.values):
+        for col in list(self.__transactionData.columns.values):
             try:
                 if(stop.index(col) != -1):
                     continue
             except:
-                if(len(self.__loanData[col].unique()) < 30):
-                    for uniq in self.__loanData[col].unique():
-                        self.__loanData[col+' '+str(uniq)] = self.__loanData[col].apply(self.additional_feature,args=(uniq,))
-        self.__loanData = self.__loanData.drop(['home_ownership', 'initial_list_status','application_type'], axis=1)
-        print(self.__loanData.columns.values)
-        print(len(self.__loanData.columns.values))
+                if(len(self.__transactionData[col].unique()) < 30):
+                    for uniq in self.__transactionData[col].unique():
+                        self.__transactionData[col+' '+str(uniq)] = self.__transactionData[col].apply(self.additional_feature,args=(uniq,))
+        self.__transactionData = self.__transactionData.drop(['home_ownership', 'initial_list_status','application_type'], axis=1)
+        print(self.__transactionData.columns.values)
+        print(len(self.__transactionData.columns.values))
 
     def __graph(self):
-        visual = Visualization(self.__loanData)
+        visual = Visualization(self.__transactionData)
         visual.plot_heatmap()
 
     def add_column(self,val):
@@ -539,26 +405,9 @@ class Preprocessor:
         '''
         return self.__true_y
 
-    def change(self,val):
-        return int(val[-2:])
-    def change2(self,val):
-        return int(val[-1:])
-    def __data_process(self):
-            mapping = {'BusinessTransaction': {'Business transaction type 0002': 2 , 'Business transaction type 0003': 3, 'Business transaction type 0001': 1},
-                       'CompanyCode' : {'C002':2, 'C001':1, 'C003':3},
-                       'DocumentType': {'T03':3,'T04':4,'T02':2,'T01':1,'T09':9,'T07':7,'T06':6,'T08':8},
-                       'DocumentTypeDesc': {'Vendor invoice': 0, 'Invoice receipt':1,'Vendor credit memo':2,'Vendor document':3,'TOMS (Jul2003)/ TWMS':4 ,'Interf.with SMIS-CrM':5,'Interf.with SMIS-IV':6 ,'Interface with PIMS':7},
-                       'PO_FLag': {'N': 0 , 'Y':1},
-                       'TransactionCode': {'TR 0005':0,'TR 0006':1,'TR 0002':2,'TR 0008':3,'TR 0007':4,'TR 0003':5,'TR 0004':6, 'TR 0001':7}
-            }
-            col  = ['CompanyName', 'DocumentNo']
-            self.__loanData['UserName'] = self.__loanData['UserName'].apply(self.change)
-            self.__loanData['TransactionCodeDesc'] = self.__loanData['TransactionCodeDesc'].apply(self.change2)
-            self.__loanData = self.__loanData.replace(mapping)
-            self.__loanData.drop(col,axis=1)
     def classify(self,val,early_nodes, late_nodes):
         if(val == 0):
-            return 0
+            return 1
         elif(val > 0):
             if(val >= early_nodes[9]):
                 return 19
@@ -603,6 +452,7 @@ class Preprocessor:
             elif(val>= late_nodes[0]):
                 return 49
             return 50
+
     def classify_label(self):
         '''
         converts payment time into labels according to the distribution of payment time
@@ -613,20 +463,33 @@ class Preprocessor:
         tmp = 0.1
         early_nodes = dict()
         late_nodes = dict()
-        dfTrain = self.__loanData
+        dfTrain = self.__transactionData
         for i in range(0,10):
             early_nodes[i] = dfTrain.drop(dfTrain[dfTrain.difference < 1].index)['difference'].quantile(tmp)
             late_nodes[i] = dfTrain.drop(dfTrain[dfTrain.difference > -1].index)['difference'].quantile(tmp)
             tmp += 0.1
-        self.__loanData['payment_label'] = self.__loanData['difference'].apply(self.classify, args=(early_nodes,late_nodes,))
+        self.__transactionData['payment_label'] = self.__transactionData['difference'].apply(self.classify, args=(early_nodes,late_nodes,))
         print(early_nodes, late_nodes)
-        print(self.__loanData[['payment_label','difference']])
-        print(self.__loanData['payment_label'].value_counts())
+
     def vendor_apply(self,val,name):
         if(val == name):
             return 1
         return 0
+
     def vendor_column(self):
         for name in list(self.__loanData['VendorName'].unique()):
-            if(len(self.__loanData[self.__loanData.VendorName == name].index)> 10000):
+            if(len(self.__loanData[self.__loanData.VendorName == name].index)> 1000):
                 self.__loanData[name] = self.__loanData['VendorName'].apply(self.vendor_apply, args=(name,))
+        #print(self.__loanData)
+        for country in list(self.__loanData['VendorCountry'].unique()):
+            if(len(self.__loanData[self.__loanData.VendorCountry == country].index)> 1000):
+                self.__loanData[country] = self.__loanData['VendorCountry'].apply(self.vendor_apply, args=(name,))
+
+        dfTrain =self.__loanData.copy()
+        #print(dfTrain.loc[dfTrain.index[dfTrain['VendorName'] == 'Vendor 01024'].tolist()])
+        #print(dfTrain['Vendor 01899'].value_counts())
+        dfTrain=dfTrain.drop('VendorName', axis=1)
+        dfTrain=dfTrain.drop('VendorCountry', axis=1)
+
+        print(dfTrain.dtypes)
+        self.__loanData = dfTrain

@@ -36,9 +36,9 @@ from num_node import *
 import time
 import itertools
 from evaluation.Visualization import *
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.utils import to_categorical
+# from keras.models import Sequential
+# from keras.layers import Dense
+# from keras.utils import to_categorical
 from num_node import *
 
 class Models:
@@ -74,9 +74,10 @@ class Models:
         return accuracy
 
     def decision_tree(self, paramDic, X_train, y_train, X_test, y_test):
-        start_time = time.time()
 
-        clf = DecisionTreeClassifier(
+        modelName = "decision_tree"
+
+        dt = DecisionTreeClassifier(
                  criterion=paramDic['criterion'],
                  splitter=paramDic['splitter'],
                  max_depth=paramDic['max_depth'],
@@ -90,19 +91,9 @@ class Models:
                  min_impurity_split=paramDic['min_impurity_split'],
                  presort=paramDic['presort'])
 
-        clf.fit(X_train, y_train)
-        y_pred = clf.predict(X_test)
-        learningtime= time.time() - start_time
-        print("---decision_tree took : %.2f seconds---"  % learningtime)
+        dt.fit(X_train, y_train)
 
-        accuracy = accuracy_score(y_test, y_pred)
-        print("[decision_tree Accuracy: %.4f ]" % (accuracy*100) )
-
-        visual = Visualization(y_pred)
-        visual.plot_confusion_matrix(y_train, y_test)
-        visual.classification_report(y_train, y_test)
-
-        return accuracy
+        return (modelName, dt)
 
     def random_forest(self, paramDic, X_train, y_train, X_test, y_test):
         start_time = time.time()
@@ -168,45 +159,19 @@ class Models:
             scale_pos_weight=paramDic['scale_pos_weight'],
             base_score=paramDic['base_score'],
             random_state=paramDic['random_state'],
-            seed=paramDic['seed'], missing=paramDic['missing'],
+            seed=paramDic['seed'], 
+            missing=paramDic['missing'],
             importance_type=paramDic['importance_type']
         )
 
         xgb.fit(X_train, y_train, eval_metric=["merror", "mlogloss"], eval_set=eval_set, verbose=True)
+        y_pred = xgb.predict(X_test)
+
+        visual = Visualization(y_pred)
+        visual.plot_confusion_matrix(y_train, y_test)
+        visual.classification_report(y_train, y_test)
 
         return (modelName, xgb)
-
-
-    def linear_SVM(self, X_train, y_train, X_test, y_test):
-        '''
-        Support Vector Machine algorithm for categorical classification.
-        Kernel: linear
-
-        :param: None
-        :return None
-        '''
-
-        svm_model_linear = SVC(kernel = 'linear', C = 1).fit(X_train, y_train)
-        y_pred = svm_model_linear.predict(X_test)
-
-        #train svm model
-        # print("Learning...")
-        # svclassifier = SVC(kernel = 'linear')
-        # svclassifier.fit(X_train, y_train)
-
-        print("Learning...")
-        svclassifier = SVC(
-            C = 10000,
-            kernel = 'linear'
-        )
-        svclassifier.fit(X_train, y_train)
-
-        #make prediction
-        #label_prediction = svclassifier.predict(X_test)
-
-        #evaluation
-        print("Accuracy: ", accuracy_score(y_test, y_pred))
-
 
     def SVM(self, paramDic, X_train, y_train, X_test, y_test):
         '''
@@ -216,6 +181,9 @@ class Models:
         :param: None
         :return: None
         '''
+
+        modelName = "SVC"
+
         #train svm model
         print("Learning...")
         svclassifier = SVC(
@@ -236,13 +204,7 @@ class Models:
         )
         svclassifier.fit(X_train, y_train)
 
-        #make prediction
-        label_prediction = svclassifier.predict(X_test)
-
-        #evaluation
-        accuracy = accuracy_score(y_test, label_prediction)
-        print("Accuracy: ", accuracy)
-        return accuracy
+        return (modelName, svclassifier)
 
     def logistic_regression(self, paramDic, X_train, y_train, X_test, y_test):
         '''
@@ -251,8 +213,10 @@ class Models:
         :param: None
         :return: None
         '''
+
+        modelName = "logistic_regression"
+
         print("Training logistic regression...")
-        start_time = time.time()
         lg = LogisticRegression(
             penalty=paramDic['penalty'],
             dual=paramDic['dual'],
@@ -269,23 +233,10 @@ class Models:
             warm_start=paramDic['warm_start'],
             n_jobs=paramDic['n_jobs']
         )
+
         lg.fit(X_train, y_train)
-        lg_pred = lg.predict(X_test)
-        num_of_folds = 10
 
-        accuracy = accuracy_score(y_test, lg_pred)
-
-        cross_valid_accuracy = cross_val_score(lg, X_train, y_train, scoring='accuracy', cv = num_of_folds).mean()/num_of_folds
-        print("Accuracy: ", accuracy)
-        print("cross validation accuracy ", cross_valid_accuracy)
-        #print("Logistic Regression training time: %.2f sec" % time.time() - start_time)
-
-        #visualize
-        visual = Visualization(lg_pred)
-        visual.plot_confusion_matrix(X_train, y_train, X_test, y_test)
-        visual.classification_report(X_train, y_train, X_test, y_test)
-
-        return accuracy
+        return (modelName, lg)
 
     def ff_network(self, n, X_train, y_train, X_test, y_test):
         '''

@@ -18,9 +18,9 @@ def mse(predictionData, actualData):
 
     return sqrdError / dataLength
     
-def create_class_weight(loanData,mu=0.9):
-    total = loanData.shape[0]
-    labels_dict = pd.value_counts(loanData)
+def create_class_weight(transactionData,mu=0.9):
+    total = transactionData.shape[0]
+    labels_dict = pd.value_counts(transactionData)
     class_weight = dict()
     for num ,tmp in zip(labels_dict, [0,2,3,4,5,6,7,8,9]):
         sco = math.log(mu*total/float(num))
