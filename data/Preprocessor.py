@@ -32,7 +32,7 @@ class Preprocessor:
         self.__smallData = None
         self.__currentData = None
 
-        self.__attributes_train = None 
+        self.__attributes_train = None
         self.__labels_train = None
 
         self.__attributes_test = None
@@ -151,7 +151,7 @@ class Preprocessor:
         '''
         print("split_data running...")
         # TODO: loan status may not be the label -> change to label accordingly.
-        X = self.__transactionData.drop(['difference', 'label'], axis = 1)
+        X = self.__transactionData.drop(['label', 'difference','payment_label'], axis = 1)
         y = self.__transactionData['label']
 
         self.__true_y = self.__transactionData['label']

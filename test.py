@@ -11,6 +11,7 @@ import pandas as pd
 from evaluation.ModelEvaluation import ModelEvaluation
 from evaluation.Visualization import Visualization
 from data.Cleaningdata import *
+from data.datehandler import *
 
 import pickle
 from config import *
@@ -36,15 +37,18 @@ Testing file
 
 """
 #Commandline Parse input
-if len(sys.argv) < 2 :
-    print("Usage: Python test.py [~.csv] ")
-    exit()
-
-print (sys.argv[1])
+# if len(sys.argv) < 2 :
+#     print("Usage: Python test.py [~.csv] ")
+#     exit()
+#
+# print (sys.argv[1])
 
 #Retrieve and Save test data
 print("Reading Test case data...")
-data = pd.read_csv(sys.argv[1])
+#data = pd.read_csv(sys.argv[1])
+
+data = pd.read_csv("../InvoicePayment-evaluation.csv")
+
 """
 The data given is supposed to have attributes of Training dataset
 Labels are erased or omitted.
@@ -52,45 +56,74 @@ Labels are erased or omitted.
 :format: pandas Datafrmae
 """
 origin= data.copy()
-
-data= clean_data(data)
+data= datetime_data(data)
 
 file = open("Featurelist.txt", "r")
 
-cols= file.read()
-print(cols)
+cols= pd.read_csv("Featurelist.csv")
+li= cols['Features'].unique()
 
+
+cleaned_data, answer= clean_data(data,li)
 #load the trained data.
 trainedModel1 = pickle.load(open(MODELFILE1, 'rb'))
 trainedModel2 = pickle.load(open(MODELFILE2, 'rb'))
+trainedModel3 = pickle.load(open(MODELFILE3, 'rb'))
 
 #New object to evaluate the given dataset
-eval = ModelEvaluation(data)
+
+
+eval = ModelEvaluation(cleaned_data)
 eval.run_model(trainedModel1)
+
+
 evaluated_result = eval.get_predicted_label()
 
-print( evaluated_result)
+#print("1st classification:", evaluated_result)
 
 #Add new column with predicted data
-data['label']=evaluated_result
-origin['First_classification']= evaluated_result
+cleaned_data['label']=evaluated_result
+
+#print(data.dtypes)
+#origin['First_classification']= evaluated_result
+
+data_labeled =cleaned_data
 
 #Gather data with specific label
-data = get_specific_label(data,3)
-
+early_rows = get_specific_label(data_labeled,0)
 #drop predicted column because model cannot use the column
-data= data.drop('loan_status', axis=1 )
-print(data)
+early_rows= early_rows.drop('label', axis=1 )
+#############################################################
 
 #Second classification model with grouped data
-eval2 = ModelEvaluation(data)
+eval2 = ModelEvaluation(early_rows)
 eval2.run_model(trainedModel2)
+
 evaluated_result2 = eval2.get_predicted_label()
-data['Second_classification']=evaluated_result2
-origin['Second_classification']=evaluated_result2
+#print("1st evaluated_result2:", evaluated_result2)
+
+early_rows['Second_classification']=evaluated_result2
+#print(early_rows)
+
+#print("data labeled:: " , data_labeled)
+#Gather data with specific label
+late_rows = get_specific_label(data_labeled,2)
+
+#drop predicted column because model cannot use the column
+late_rows= late_rows.drop('label', axis=1 )
+
+#Second classification model with grouped data
+eval3 = ModelEvaluation(late_rows)
+eval3.run_model(trainedModel3)
+evaluated_result3 = eval3.get_predicted_label()
+late_rows['Third_classification']=evaluated_result3
+
+cleaned_data['Third_classification']=evaluated_result3
+
+#print(late_rows)
 #combine both
-print(origin)
-exit()
+#print(cleaned_data)
 
 
-origin.to_csv("Prediction.csv", sep=',')
+
+#origin.to_csv("Prediction.csv", sep=',')

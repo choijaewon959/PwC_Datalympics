@@ -20,7 +20,7 @@ decision_tree_dict = {
                  'min_samples_leaf' : 1,
                  'min_weight_fraction_leaf': 0,
                  'max_features' : None,
-                 'random_state' : None,
+                 'random_state' : 1,
                  'max_leaf_nodes' : None,
                  'min_impurity_decrease' : 0.,
                  'min_impurity_split' : None,

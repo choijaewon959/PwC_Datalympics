@@ -19,7 +19,7 @@ class ModelEvaluation:
                 y_test: labels for test
         :return: None
         '''
-
+        #print("Constructor:",X_test)
         self.__X_train = X_train
         self.__y_train = y_train
         self.__X_test = X_test
@@ -55,7 +55,7 @@ class ModelEvaluation:
         #visualization
         visual = Visualization(y_pred)
 
-        
+
 
         #when regression model is used.
         if modelName == "linear_regression" or modelName == "polynomial_regression" or modelName == "ridge_regression":
@@ -63,9 +63,9 @@ class ModelEvaluation:
             print('Coefficients: ', model.coef_)
             print('Mean squared error: ', mean_squared_error(y_test, y_pred))
             print('Variance score: ', r2_score(y_test, y_pred))
-        
+
             return None
-        
+
         if modelName == "XGBClassifier":
             results = model.evals_result()
             visual.draw_log_loss(results)   #log loss
@@ -98,6 +98,7 @@ class ModelEvaluation:
         y_train = self.__y_train
         X_test = self.__X_test
         y_test = self.__y_test
+
 
         y_pred = model.predict(X_test)
         self.__predicted_label = y_pred

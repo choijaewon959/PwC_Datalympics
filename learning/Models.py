@@ -22,12 +22,16 @@ from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.utils import to_categorical
+# from keras.models import Sequential
+# from keras.layers import Dense
+# from keras.utils import to_categorical
 
 sys.path.append('./learning')
+<<<<<<< HEAD
 #from num_node import *
+=======
+# from num_node import *
+>>>>>>> c58fb75a95901f3e005ef1beb8d5c0c8e368ae9f
 # from livelossplot.keras import PlotLossesCallback
 
 import time
@@ -36,7 +40,11 @@ from evaluation.Visualization import *
 # from keras.models import Sequential
 # from keras.layers import Dense
 # from keras.utils import to_categorical
+<<<<<<< HEAD
 #from num_node import *
+=======
+# from num_node import *
+>>>>>>> c58fb75a95901f3e005ef1beb8d5c0c8e368ae9f
 
 class Models:
     def __init__(self):
@@ -142,7 +150,7 @@ class Models:
             scale_pos_weight=paramDic['scale_pos_weight'],
             base_score=paramDic['base_score'],
             random_state=paramDic['random_state'],
-            seed=paramDic['seed'], 
+            seed=paramDic['seed'],
             missing=paramDic['missing'],
             importance_type=paramDic['importance_type']
         )
