@@ -55,8 +55,6 @@ class ModelEvaluation:
         #visualization
         visual = Visualization(y_pred)
 
-
-
         #when regression model is used.
         if modelName == "linear_regression" or modelName == "polynomial_regression" or modelName == "ridge_regression":
             print("model: ", modelName)
@@ -99,8 +97,14 @@ class ModelEvaluation:
         X_test = self.__X_test
         y_test = self.__y_test
 
+        if modelName == "polynomial_regression":
+            poly_feature = PolynomialFeatures(2)
+            x_test_poly = poly_feature.fit_transform(X_test)
+            y_pred = model.predict(x_test_poly)
+        else:
+            y_pred = model.predict(X_test)
+            self.__predicted_label = y_pred
 
-        y_pred = model.predict(X_test)
         self.__predicted_label = y_pred
 
     def get_predicted_label(self):
@@ -110,4 +114,4 @@ class ModelEvaluation:
         :param: None
         :return: predicted numpy array
         '''
-        return pd.Series(self.__predicted_label)
+        return pd.DataFrame(self.__predicted_label)

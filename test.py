@@ -72,10 +72,8 @@ trainedModel3 = pickle.load(open(MODELFILE3, 'rb'))
 
 #New object to evaluate the given dataset
 
-
 eval = ModelEvaluation(cleaned_data)
 eval.run_model(trainedModel1)
-
 
 evaluated_result = eval.get_predicted_label()
 
