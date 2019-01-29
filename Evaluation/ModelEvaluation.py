@@ -114,4 +114,4 @@ class ModelEvaluation:
         :param: None
         :return: predicted numpy array
         '''
-        return pd.DataFrame(self.__predicted_label)
+        return pd.Series(self.__predicted_label)

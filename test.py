@@ -47,7 +47,7 @@ Testing file
 print("Reading Test case data...")
 #data = pd.read_csv(sys.argv[1])
 
-data = pd.read_csv("../InvoicePayment-evaluation.csv")
+data = pd.read_csv("../data/InvoicePayment-evaluation.csv")
 
 """
 The data given is supposed to have attributes of Training dataset
@@ -112,13 +112,13 @@ late_rows= late_rows.drop('label', axis=1 )
 
 #Second classification model with grouped data
 eval3 = ModelEvaluation(late_rows)
+print(late_rows['DocumentType'].unique())
 eval3.run_model(trainedModel3)
 evaluated_result3 = eval3.get_predicted_label()
 late_rows['Third_classification']=evaluated_result3
 
 cleaned_data['Third_classification']=evaluated_result3
 finalLabel = finalize_label(evaluated_result,evaluated_result2,evaluated_result3)
-
 
 early_nodes, late_nodes = generate_node(data)
 print(early_nodes,late_nodes)

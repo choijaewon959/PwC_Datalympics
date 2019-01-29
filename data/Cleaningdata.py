@@ -32,7 +32,7 @@ def clean_data(data, featurelist):
    'EntryTime', 'InvoiceAmount', 'InvoiceDate', 'InvoiceDesc',
    'InvoiceItemDesc', 'LocalCurrency', 'PaymentDate', 'PaymentDocumentNo',
    'Period', 'PO_FLag', 'PO_PurchasingDocumentNumber', 'PostingDate',
-   'PurchasingDocumentDate', 'ReferenceDocumentNo', 'ReportingAmount',
+   'PurchasingDocumentDate', 'ReferenceDocumentNo', 
    'TransactionCode', 'TransactionCodeDesc', 'UserName', 'VendorName',
    'VendorCountry', 'Year', 'PaymentDueDate', 'difference', 'label','duration']
 
@@ -41,7 +41,7 @@ def clean_data(data, featurelist):
    'EntryTime', 'InvoiceAmount', 'InvoiceDate', 'InvoiceDesc',
    'InvoiceItemDesc', 'LocalCurrency', 'PaymentDate', 'PaymentDocumentNo',
    'Period', 'PO_FLag', 'PO_PurchasingDocumentNumber', 'PostingDate',
-   'PurchasingDocumentDate', 'ReferenceDocumentNo', 'ReportingAmount',
+   'PurchasingDocumentDate', 'ReferenceDocumentNo', 
    'TransactionCode', 'TransactionCodeDesc', 'UserName', 'VendorName',
    'VendorCountry', 'Year', 'PaymentDueDate', 'difference', 'label','duration']]
 
@@ -56,7 +56,7 @@ def clean_data(data, featurelist):
     dropcol  = ['CompanyName', 'EntryDate', 'DocumentTypeDesc', 'EntryTime',
             'InvoiceDate', 'LocalCurrency','PwC_RowID',
             'PO_PurchasingDocumentNumber', 'PostingDate', 'PurchasingDocumentDate',
-            'ReportingAmount', 'Year', 'PaymentDate', 'PaymentDueDate','TransactionCodeDesc','difference'
+            'Year', 'PaymentDate', 'PaymentDueDate','TransactionCodeDesc','difference'
             ]
 
 

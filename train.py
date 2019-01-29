@@ -63,7 +63,7 @@ filtered_X_test = featureFilter.PCA(early_paid_Data[0], 10)
 
 #Retrieve the trained model.
 #1.without PCA
-early_paid_trainedModel = algorithm.polynomial_regression(polynomial_regression_dict, early_paid_Data[2], early_paid_Data[3],early_paid_Data[0], early_paid_Data[1])
+early_paid_trainedModel = algorithm.decision_tree(decision_tree_dict, early_paid_Data[2], early_paid_Data[3],early_paid_Data[0], early_paid_Data[1])
 #2.PCA
 #early_paid_trainedModel = algorithm.SVM(SVM_dict, filtered_X_train, early_paid_Data[3],filtered_X_test, early_paid_Data[1])
 
@@ -93,7 +93,7 @@ filtered_X_test = featureFilter.PCA(late_paid_Data[0], 10)
 
 #Retrieve the trained model.
 #1.without PCA
-late_paid_trainedModel = algorithm.polynomial_regression(polynomial_regression_dict, late_paid_Data[2], late_paid_Data[3], late_paid_Data[0], late_paid_Data[1])
+late_paid_trainedModel = algorithm.XGBClassifier(XGBClassifier_dict, late_paid_Data[2], late_paid_Data[3], late_paid_Data[0], late_paid_Data[1])
 #2.PCA
 #late_paid_trainedModel = algorithm.SVM(SVM_dict, filtered_X_train, late_paid_Data[3], filtered_X_test, late_paid_Data[1])
 
@@ -108,7 +108,6 @@ late_paid_evaluation = ModelEvaluation(late_paid_Data[0],late_paid_Data[1],late_
 accuracy_late = late_paid_evaluation.evaluate_model(late_paid_trainedModel)
 
 late_paid_y_predicted = late_paid_evaluation.get_predicted_label()
-<<<<<<< HEAD
 print(late_paid_y_predicted)
 
 # accuracy = algorithm.XGBClassifier(XGBClassifier_dict, X_train, y_train, X_test, y_test)
@@ -123,5 +122,3 @@ print(late_paid_y_predicted)
 # for i in range(1,4):
 #     accuracy = algorithm.ff_network(i, X_train, y_train, X_test, y_test)
 #     result.log_result('ff_network', accuracy, ff_network_dict)
-=======
->>>>>>> 206bc7e6c573c7ec0b489c1379302e726a8063c5
